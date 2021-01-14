@@ -3,6 +3,7 @@ package org.example.downloader.graphics;
 import java.util.Arrays;
 
 public class Launcher {
+    //TODO: animetoast.com -> Downloadwebsite
     public static void main(String[] args) {
         if (!Arrays.asList(args).contains("nogui")) {
             GUI.main(args);
