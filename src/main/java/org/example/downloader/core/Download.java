@@ -33,19 +33,18 @@ public class Download implements AutoCloseable {
                 onRead);
         this.dest = dest;
         this.size = urlConnection.getContentLength();
-        this.downloaded = 0;
     }
 
     /**
      * Creates a download based on parameters.
      *
-     * @param file      File object which is written to
-     * @param urlString URL referencing the the source of the download
-     * @param onRead    the action on byte reads
+     * @param file   File object which is written to
+     * @param url    URL referencing the the source of the download
+     * @param onRead the action on byte reads
      * @throws IOException error when creating local fields
      */
-    public Download(String urlString, File file, IntConsumer onRead) throws IOException {
-        this(new URL(urlString).openConnection(), new FileOutputStream(file), onRead);
+    public Download(URL url, File file, IntConsumer onRead) throws IOException {
+        this(url.openConnection(), new FileOutputStream(file), onRead);
     }
 
     /**
@@ -57,7 +56,7 @@ public class Download implements AutoCloseable {
      * @throws IOException error when creating local fields
      */
     public Download(String urlString, String fileString, IntConsumer onRead) throws IOException {
-        this(urlString, new File(fileString), onRead);
+        this(new URL(urlString), new File(fileString), onRead);
     }
 
     /**
@@ -115,6 +114,7 @@ public class Download implements AutoCloseable {
      */
     public boolean startParallel(Consumer<Boolean> actionAfterFinish) {
         if (parallel == null) {
+            downloaded = 0;
             parallel = new DownloadThread(this, actionAfterFinish);
             parallel.start();
             return true;
@@ -205,7 +205,7 @@ public class Download implements AutoCloseable {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        return src.getTotalByteRead() % size;
+        return (isFinished() ? downloaded : src.getTotalByteRead() % size);
     }
 
     /**
