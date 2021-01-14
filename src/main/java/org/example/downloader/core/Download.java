@@ -28,12 +28,9 @@ public class Download implements AutoCloseable {
      * @throws IOException error when creating InputStream
      */
     public Download(URLConnection urlConnection, FileOutputStream dest, IntConsumer onRead) throws IOException {
-        this.src = new ReadableConsumerByteChannel(Channels.newChannel(
-                urlConnection.getInputStream()),
-                (bytes) -> {
-                    downloaded = bytes;
-                    onRead.accept(bytes);
-                });
+        this.src = new ReadableConsumerByteChannel(
+                Channels.newChannel(urlConnection.getInputStream()),
+                onRead);
         this.dest = dest;
         this.size = urlConnection.getContentLength();
         this.downloaded = 0;
@@ -208,7 +205,7 @@ public class Download implements AutoCloseable {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        return downloaded;
+        return src.getTotalByteRead() % size;
     }
 
     /**

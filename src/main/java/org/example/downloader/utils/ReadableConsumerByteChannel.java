@@ -32,6 +32,10 @@ public class ReadableConsumerByteChannel implements ReadableByteChannel {
         onRead.accept(totalByteRead);
     }
 
+    public int getTotalByteRead() {
+        return totalByteRead;
+    }
+
     @Override
     public boolean isOpen() {
         return byteChannel.isOpen();
