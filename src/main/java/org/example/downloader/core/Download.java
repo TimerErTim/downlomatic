@@ -221,6 +221,8 @@ public class Download implements AutoCloseable {
      * Responsible for the execution of a {@code Download} without blocking.
      */
     private static class DownloadThread extends Thread {
+        private static int ID = 0;
+
         private final Download referenceDownload;
         private final Consumer<Boolean> actionAfterFinish;
         private boolean closeAfterFinish;
@@ -229,6 +231,7 @@ public class Download implements AutoCloseable {
             this.referenceDownload = referenceDownload;
             this.actionAfterFinish = actionAfterFinish;
             this.closeAfterFinish = false;
+            this.setName("Download Thread " + ID++);
         }
 
         public void attemptedClose() {
