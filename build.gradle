@@ -15,7 +15,9 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
-    implementation 'net.sourceforge.htmlunit:htmlunit:2.46.0'
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
+    implementation 'io.github.bonigarcia:webdrivermanager:4.3.0'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'

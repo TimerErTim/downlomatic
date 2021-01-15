@@ -200,6 +200,20 @@ public class Download implements AutoCloseable {
     }
 
     /**
+     * Returns true if the file is already completely downloaded
+     * before even starting the download.
+     *
+     * @return the file already being downloaded
+     */
+    public boolean isAlreadyDownloaded() {
+        try {
+            return dest.getChannel().size() == size;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
      * Returns the amount of downloaded bytes.
      *
      * @return the downloaded size
