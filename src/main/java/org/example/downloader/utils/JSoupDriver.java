@@ -116,7 +116,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
     private static class JSoupWebElement implements WebElement, FindsByCssSelector, FindsByXPath, FindsById, FindsByName, FindsByClassName, FindsByTagName, FindsByLinkText {
         // All Bys for JSoupWebElements
-        private static final By cssSelector = new EditableBy() {
+        private static final EditableBy cssSelector = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
                 return ((JSoupWebElement) context).element.getAllElements().stream().
                         filter(element -> element.cssSelector().equals(selector)).
@@ -124,28 +124,28 @@ public class JSoupDriver implements WebDriver, SearchContext {
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By xPath = new EditableBy() {
+        private static final EditableBy xPath = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
                 return null;
             }
         };
-        private static final By id = new EditableBy() {
+        private static final EditableBy id = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
-                return ((JSoupWebElement) context).element.getAllElements().stream().
-                        filter(element -> element.id().equals(selector)).
+                return ((JSoupWebElement) context).element.
+                        getElementsByAttributeValue("id", selector).stream().
                         map(JSoupWebElement::new).
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By name = new EditableBy() {
+        private static final EditableBy name = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
-                return ((JSoupWebElement) context).element.getAllElements().stream().
-                        filter(element -> element.nodeName().equals(selector)).
+                return ((JSoupWebElement) context).element.
+                        getElementsByAttributeValue("name", selector).stream().
                         map(JSoupWebElement::new).
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By className = new EditableBy() {
+        private static final EditableBy className = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
                 return ((JSoupWebElement) context).element.
                         getElementsByClass(selector).stream().
@@ -153,7 +153,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By tagName = new EditableBy() {
+        private static final EditableBy tagName = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
                 return ((JSoupWebElement) context).element.
                         getElementsByTag(selector).stream().
@@ -161,20 +161,18 @@ public class JSoupDriver implements WebDriver, SearchContext {
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By linkText = new EditableBy() {
+        private static final EditableBy linkText = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
-                //TODO: Implement
                 return ((JSoupWebElement) context).element.
-                        getElementsByTag(selector).stream().
+                        getElementsMatchingText(selector).stream().filter(element -> element.tagName().equals("a")).
                         map(JSoupWebElement::new).
                         collect(Collectors.toCollection(LinkedList::new));
             }
         };
-        private static final By partialLinkText = new EditableBy() {
+        private static final EditableBy partialLinkText = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
-                //TODO: Implement
                 return ((JSoupWebElement) context).element.
-                        getElementsByTag(selector).stream().
+                        getElementsContainingText(selector).stream().filter(element -> element.tagName().equals("a")).
                         map(JSoupWebElement::new).
                         collect(Collectors.toCollection(LinkedList::new));
             }
@@ -219,12 +217,12 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
         @Override
         public boolean isEnabled() {
-            return false;
+            return true;
         }
 
         @Override
         public String getText() {
-            return null;
+            return element.text();
         }
 
         @Override
@@ -259,7 +257,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
         @Override
         public String getCssValue(String propertyName) {
-            return null;
+            return "";
         }
 
         @Override
@@ -269,82 +267,82 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
         @Override
         public WebElement findElementByClassName(String using) {
-            return null;
+            return className.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByClassName(String using) {
-            return null;
+            return className.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementById(String using) {
-            return null;
+            return id.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsById(String using) {
-            return null;
+            return id.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByLinkText(String using) {
-            return null;
+            return linkText.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByLinkText(String using) {
-            return null;
+            return linkText.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByPartialLinkText(String using) {
-            return null;
+            return partialLinkText.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByPartialLinkText(String using) {
-            return null;
+            return partialLinkText.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByName(String using) {
-            return null;
+            return name.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByName(String using) {
-            return null;
+            return name.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByTagName(String using) {
-            return null;
+            return tagName.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByTagName(String using) {
-            return null;
+            return tagName.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByCssSelector(String using) {
-            return null;
+            return cssSelector.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByCssSelector(String using) {
-            return null;
+            return cssSelector.setSelector(using).findElements(this);
         }
 
         @Override
         public WebElement findElementByXPath(String using) {
-            return null;
+            return xPath.setSelector(using).findElement(this);
         }
 
         @Override
         public List<WebElement> findElementsByXPath(String using) {
-            return null;
+            return xPath.setSelector(using).findElements(this);
         }
 
         private Element getElement() {
