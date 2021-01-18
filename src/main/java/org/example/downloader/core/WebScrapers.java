@@ -36,12 +36,10 @@ public class WebScrapers {
      */
     public static void reInitialize() {
         if (firefoxDriver.toString().contains("null")) {
-            FirefoxOptions options = new FirefoxOptions().setHeadless(true).setLogLevel(FirefoxDriverLogLevel.FATAL).addArguments("--log", "fatal");
-            options.setCapability("marionette", true);
-            (firefoxDriver = new FirefoxDriver(options)).setLogLevel(Level.OFF);
+            initializeFirefoxDriver();
         }
         if (jSoupDriver.toString().contains("null")) {
-            jSoupDriver = new JSoupDriver();
+            initializeJSoupDriver();
         }
     }
 
@@ -56,14 +54,22 @@ public class WebScrapers {
     /**
      * Initializes the WebScraper for handling (non-)JavaScript websites.
      */
-    public void initialize() {
-        java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.SEVERE);
+    public static void initialize() {
+        java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
 
         WebDriverManager.firefoxdriver().setup();
 
+        initializeFirefoxDriver();
+        initializeJSoupDriver();
+    }
+
+    private static void initializeFirefoxDriver() {
         FirefoxOptions options = new FirefoxOptions().setHeadless(true).setLogLevel(FirefoxDriverLogLevel.FATAL).addArguments("--log", "fatal");
         options.setCapability("marionette", true);
         (firefoxDriver = new FirefoxDriver(options)).setLogLevel(Level.OFF);
+    }
+
+    private static void initializeJSoupDriver() {
         jSoupDriver = new JSoupDriver();
     }
 }
