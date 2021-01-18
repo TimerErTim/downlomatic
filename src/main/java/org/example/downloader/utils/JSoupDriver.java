@@ -4,32 +4,45 @@ import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.internal.*;
+import org.openqa.selenium.logging.Logs;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class JSoupDriver implements WebDriver, SearchContext {
     private final static String USER_AGENT = "Mozilla/5.0 (Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0";
 
+    private final Map<String, String> cookies;
+    private Options options;
     private Connection con;
     private Document doc;
     private URL url;
 
     public JSoupDriver() {
-        con = new HttpConnection().userAgent(USER_AGENT);
+        cookies = new HashMap<>();
+        generateOptions();
     }
 
     @Override
     public void get(String url) {
+        get(url, (con) -> {
+        });
+    }
+
+    public void get(String url, Consumer<Connection> dataModifier) {
+        generateConnection();
+        dataModifier.accept(con);
         try {
-            doc = con.url(url).get();
+            Connection.Response res = con.url(url).cookies(cookies).execute();
+            cookies.putAll(res.cookies());
+            doc = res.parse();
             this.url = new URL(url);
         } catch (IOException e) {
             java.util.logging.Logger.getLogger("org.openqa.selenium").log(Level.WARNING, getClass().getSimpleName() + " was not able to parse from URL: " + url, e);
@@ -80,12 +93,13 @@ public class JSoupDriver implements WebDriver, SearchContext {
     public void close() {
         url = null;
         doc = null;
+        con = null;
     }
 
     @Override
     public void quit() {
         close();
-        con = null;
+        options = null;
     }
 
     @Override
@@ -110,8 +124,66 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
     @Override
     public Options manage() {
-        //TODO: implement
-        return null;
+        return options;
+    }
+
+    private void generateConnection() {
+        con = new HttpConnection().userAgent(USER_AGENT);
+    }
+
+    private void generateOptions() {
+        options = new Options() {
+            @Override
+            public void addCookie(Cookie cookie) {
+                cookies.put(cookie.getName(), cookie.getValue());
+            }
+
+            @Override
+            public void deleteCookieNamed(String name) {
+                cookies.remove(name);
+            }
+
+            @Override
+            public void deleteCookie(Cookie cookie) {
+                cookies.remove(cookie.getName(), cookie.getValue());
+            }
+
+            @Override
+            public void deleteAllCookies() {
+                cookies.clear();
+            }
+
+            @Override
+            public Set<Cookie> getCookies() {
+                return cookies.entrySet().stream().map((cookieEntry) -> new Cookie(cookieEntry.getKey(), cookieEntry.getValue())).collect(Collectors.toSet());
+            }
+
+            @Override
+            public Cookie getCookieNamed(String name) {
+                String value = cookies.get(name);
+                return (value == null ? null : new Cookie(name, value));
+            }
+
+            @Override
+            public Timeouts timeouts() {
+                return null;
+            }
+
+            @Override
+            public ImeHandler ime() {
+                return null;
+            }
+
+            @Override
+            public Window window() {
+                return null;
+            }
+
+            @Override
+            public Logs logs() {
+                return null;
+            }
+        };
     }
 
     private static class JSoupWebElement implements WebElement, FindsByCssSelector, FindsByXPath, FindsById, FindsByName, FindsByClassName, FindsByTagName, FindsByLinkText {
