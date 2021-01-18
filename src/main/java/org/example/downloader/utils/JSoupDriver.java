@@ -127,6 +127,11 @@ public class JSoupDriver implements WebDriver, SearchContext {
         return options;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": JSoup on " + System.getProperty("os.name") + " (" + options + ")";
+    }
+
     private void generateConnection() {
         con = new HttpConnection().userAgent(USER_AGENT);
     }
