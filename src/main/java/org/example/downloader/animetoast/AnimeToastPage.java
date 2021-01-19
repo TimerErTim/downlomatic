@@ -7,7 +7,7 @@ public class AnimeToastPage implements SeriesProvider {
 
 
     @Override
-    public Series provideSeries() {
+    public Series provideSeries(String episodeFormat) {
         return null;
     }
 }
