@@ -6,10 +6,11 @@ import java.util.Arrays;
 
 public class Launcher {
     //TODO: animetoast.com -> Downloadwebsite
+    //TODO: hentaiplay.net -> Hentais
     public static void main(String[] args) {
         WebScrapers.initialize();
         if (!Arrays.asList(args).contains("nogui")) {
-            GUI.main(args);
+            GUI.start(args);
         } else {
             //TODO: Add args downloading
         }
