@@ -11,11 +11,11 @@ public abstract class Downloader {
     protected Download download;
     protected URL videoURL;
 
-    public Downloader(URL pageURL) throws MalformedURLException {
+    protected Downloader(URL pageURL) throws MalformedURLException {
         this.pageURL = pageURL;
     }
 
-    public Downloader(String pageURLString) throws MalformedURLException {
+    protected Downloader(String pageURLString) throws MalformedURLException {
         this(new URL(pageURLString));
     }
 
