@@ -69,6 +69,9 @@ public abstract class Downloader {
      * Returns whether or not this Downloader
      * requires JavaScript in order to generate a
      * Download.
+     * <p>
+     * Useful for guessing the computation time when generating
+     * a {@link Download}.
      *
      * @return if JavaScript is required for execution
      */

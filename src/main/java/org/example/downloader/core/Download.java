@@ -163,8 +163,8 @@ public class Download implements AutoCloseable {
     /**
      * Stops the download and closes underlying streams.
      * <p>
-     * Same as calling {@link Download#stop()} but this method does
-     * not catch exceptions.
+     * Doesn't immediately stop parallel {@code Download}s.
+     * It only marks them for automatic closure upon completion.
      *
      * @throws IOException thrown exception
      */
@@ -207,7 +207,11 @@ public class Download implements AutoCloseable {
      */
     public boolean isAlreadyDownloaded() {
         try {
-            return dest.getChannel().size() == size;
+            if (dest.getChannel().size() == size) {
+                downloaded = size;
+                return true;
+            } else
+                return false;
         } catch (IOException e) {
             return false;
         }

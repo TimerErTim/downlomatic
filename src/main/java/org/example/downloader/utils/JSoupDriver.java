@@ -209,7 +209,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
         private static final EditableBy id = new EditableBy() {
             public List<WebElement> findElements(SearchContext context) {
                 return ((JSoupWebElement) context).element.
-                        getElementsByAttributeValue("id", selector).stream().
+                        getElementsByAttributeValueContaining("id", selector).stream().
                         map(JSoupWebElement::new).
                         collect(Collectors.toCollection(LinkedList::new));
             }
