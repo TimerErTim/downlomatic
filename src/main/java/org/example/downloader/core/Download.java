@@ -81,7 +81,7 @@ public class Download implements AutoCloseable {
      * has already started
      */
     public boolean startDownload() {
-        if (parallel == null) {
+        if (parallel == null || Thread.currentThread().equals(parallel)) {
             try {
                 downloaded = dest.getChannel().transferFrom(src, 0, Long.MAX_VALUE);
                 return true;
@@ -233,6 +233,23 @@ public class Download implements AutoCloseable {
      */
     public long getSize() {
         return size;
+    }
+
+    /**
+     * Returns a String representation of this Object.
+     * <p>
+     * It does so by displaying the number of downloaded bytes out
+     * of the pending bytes after the name of the parallel executing Thread,
+     * if there even is one.
+     * <p>
+     * Example 1:<b> Download Thread 1: 123000B/312333B</b><br>
+     * Example 2:<b> 200000B/200000B</b>
+     *
+     * @return a String representation of this Object
+     */
+    @Override
+    public String toString() {
+        return (parallel != null ? parallel.getName() + ": " : "") + getDownloaded() + "B/" + size + "B";
     }
 
     /**
