@@ -9,11 +9,11 @@ import java.util.Set;
 
 public class AnimeToastSeries extends Series {
     //TODO: Implement
-    protected AnimeToastSeries(URL seriesURL) throws MalformedURLException {
+    public AnimeToastSeries(URL seriesURL) throws MalformedURLException {
         super(seriesURL);
     }
 
-    protected AnimeToastSeries(String seriesURLString) throws MalformedURLException {
+    public AnimeToastSeries(String seriesURLString) throws MalformedURLException {
         super(seriesURLString);
     }
 

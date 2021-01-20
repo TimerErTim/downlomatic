@@ -20,7 +20,7 @@ public class HentaiPlaySeries extends Series {
      * @param seriesURL the URL
      * @throws MalformedURLException the the exception that is thrown if the URL is no valid HentaiPlay site
      */
-    protected HentaiPlaySeries(URL seriesURL) throws MalformedURLException {
+    public HentaiPlaySeries(URL seriesURL) throws MalformedURLException {
         super(seriesURL);
         if (!(HentaiPlayPage.isHentaiPlayPage(seriesURL) && seriesURL.toString().contains("/episode-list/"))) {
             throw new MalformedURLException("URL " + seriesURL + " is no URL leading to a hentaiplay.net episode list");
@@ -33,7 +33,7 @@ public class HentaiPlaySeries extends Series {
      * @param seriesURLString the String representing URL to HentaiPlay site
      * @throws MalformedURLException the exception that is thrown if the URL is no HentaiPlay site
      */
-    protected HentaiPlaySeries(String seriesURLString) throws MalformedURLException {
+    public HentaiPlaySeries(String seriesURLString) throws MalformedURLException {
         super(seriesURLString);
     }
 
