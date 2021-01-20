@@ -83,5 +83,5 @@ public abstract class Downloader {
      *
      * @return the error message
      */
-    public abstract String getInvalidVideoMessage();
+    protected abstract String getInvalidVideoMessage();
 }

@@ -60,7 +60,7 @@ public class HentaiPlayDownloader extends Downloader {
     }
 
     @Override
-    public String getInvalidVideoMessage() {
+    protected String getInvalidVideoMessage() {
         return "URL \"" + pageURL + "\" is no valid video on hentaiplay.net";
     }
 }
