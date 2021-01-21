@@ -3,15 +3,17 @@ package org.example.downloader.core;
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public abstract class Series implements Iterable<Downloader> {
     protected final URL seriesURL;
-    private final List<Downloader> sources;
+    private final Set<Downloader> sources;
 
     protected Series(URL seriesURL) throws MalformedURLException {
         this.seriesURL = seriesURL;
-        sources = new LinkedList<>();
+        this.sources = new LinkedHashSet<>();
     }
 
     protected Series(String seriesURLString) throws MalformedURLException {
@@ -26,7 +28,7 @@ public abstract class Series implements Iterable<Downloader> {
      */
     public void fillEpisodeDownloaders() throws MalformedURLException {
         sources.clear();
-        Collection<? extends Downloader> collection = generateEpisodeDownloaders();
+        Set<? extends Downloader> collection = generateEpisodeDownloaders();
         if (collection.isEmpty()) {
             throw new MalformedURLException(getInvalidSeriesMessage());
         } else {
