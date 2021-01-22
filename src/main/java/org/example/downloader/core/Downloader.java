@@ -64,7 +64,9 @@ public abstract class Downloader {
             }
             this.format = format;
 
-            download = new Download(videoURL, new File(fileString), onRead);
+            File file = new File(fileString);
+            Files.createParentDirs(file);
+            download = new Download(videoURL, file, onRead);
             return download;
         } catch (MalformedURLException e) {
             throw e;
