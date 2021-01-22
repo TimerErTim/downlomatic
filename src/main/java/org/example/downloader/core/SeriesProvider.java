@@ -16,9 +16,8 @@ public interface SeriesProvider {
      * by the implementing class. The max number of downloads is also
      * handled by the subclass.
      *
-     * @param episodeFormat the formatting of each single episode in the Series
-     * @return a Series providing
+     * @return a Series providing multiple {@code Downloader}s
      * @throws MalformedURLException invalid URLs
      */
-    Series provideSeries(String episodeFormat) throws MalformedURLException;
+    Series provideSeries() throws MalformedURLException;
 }
