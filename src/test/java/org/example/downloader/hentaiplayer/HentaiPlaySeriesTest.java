@@ -17,7 +17,8 @@ public class HentaiPlaySeriesTest {
         series.fillEpisodeDownloaders();
         int i = 1;
         for (Downloader downloader : series) {
-            Download download = downloader.generateVideoDownload("/home/timerertim/Downloads/Test" + i++ + ".mp4");
+            Download download = downloader.generateVideoDownload("/home/timerertim/Downloads/", "/S - /E", (bytes) -> {
+            });
             synchronized (downloadPool) {
                 downloadPool.add(download);
             }

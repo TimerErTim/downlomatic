@@ -1,6 +1,7 @@
 package org.example.downloader.vivo;
 
 import org.example.downloader.core.Downloader;
+import org.example.downloader.core.EpisodeFormat;
 import org.example.downloader.core.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -33,6 +34,11 @@ public class VivoDownloader extends Downloader {
      */
     public VivoDownloader(String vivoURLString) throws MalformedURLException {
         super(vivoURLString);
+    }
+
+    @Override
+    protected EpisodeFormat generateEpisodeFormatNotSetting() {
+        return null;
     }
 
     @Override

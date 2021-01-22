@@ -1,13 +1,17 @@
 package org.example.downloader.core;
 
+import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.IntConsumer;
+import java.util.regex.Pattern;
 
 public abstract class Downloader {
     protected final URL pageURL;
+    protected EpisodeFormat format;
     protected Download download;
     protected URL videoURL;
 
@@ -54,6 +58,12 @@ public abstract class Downloader {
                 throw new MalformedURLException(getInvalidVideoMessage());
             }
 
+            EpisodeFormat format = null;
+            if (this.format == null) {
+                format = generateEpisodeFormat();
+            }
+            this.format = format;
+
             download = new Download(videoURL, new File(fileString), onRead);
             return download;
         } catch (MalformedURLException e) {
@@ -61,6 +71,79 @@ public abstract class Downloader {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * Generates a Download Object, which can be used to download the video.
+     * <p>
+     * Returns null if any complications occur (link without a valid video,
+     * URL not openable, etc.).
+     * <p>
+     * onRead makes it possible to compute and keep track of progress, because
+     * everytime a new buffer of bytes is read, onRead is called with the current
+     * amount of bytes downloaded as parameter.
+     * <p>
+     * The location of the destination file is calculated by the given path
+     * (has to be a directory) and format expression (defined by
+     * {@link EpisodeFormat#format(String)}), which is used to
+     * determine the name and extension of the resulting file.
+     *
+     * @param path             the path leading to the directory which should contain the file - is automatically created
+     * @param formatExpression the
+     * @param onRead           the action on byte reads
+     * @return a Download Object representing the video download.
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid video
+     */
+    public Download generateVideoDownload(String path, String formatExpression, IntConsumer onRead) throws MalformedURLException {
+        if (this.format == null) {
+            this.format = generateEpisodeFormat();
+        }
+
+        String fileName = format.format(formatExpression);
+        if (Files.getFileExtension(fileName).equals("")) {
+            fileName = fileName.replaceAll(Pattern.quote("."), "") + "." + getDefaultFileExtension();
+        }
+        String fullPath = path + File.separator + fileName;
+        fullPath = fullPath.replaceAll(Pattern.quote(File.separator + File.separator), File.separator);
+
+        return generateVideoDownload(fullPath, onRead);
+    }
+
+    /**
+     * Generates an EpisodeFormat Object which can be used to
+     * format the description of an episode to a user friendly
+     * String.
+     * <p>
+     * This method generates the EpisodeFormat object and returns it.
+     * It most likely requires some webscraping to form an {@code EpisodeFormat}.
+     *
+     * @return the EpisodeFormat of this Downloader
+     */
+    public EpisodeFormat generateEpisodeFormat() {
+        this.format = generateEpisodeFormatNotSetting();
+        return format;
+    }
+
+    protected abstract EpisodeFormat generateEpisodeFormatNotSetting();
+
+    /**
+     * Gets an EpisodeFormat Object which can be used to
+     * format the description of an episode to a user friendly
+     * String.
+     * <p>
+     * Note though, that in order to get a non empty EpisodeFormat,
+     * you need to invoke {@link Downloader#generateEpisodeFormat()}
+     * or {@link Downloader#generateVideoDownload(String)} prior to
+     * calling this method.
+     *
+     * @return the EpisodeFormat
+     */
+    public EpisodeFormat getEpisodeFormat() {
+        return (format != null ? format : new EpisodeFormat.EpisodeFormatGenerator().generate());
+    }
+
+    protected String getDefaultFileExtension() {
+        return "mp4";
     }
 
     protected abstract URL generateVideoDownloadURL();
