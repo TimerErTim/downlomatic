@@ -28,7 +28,7 @@ javafx {
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
 
-mainClassName = "org.example.downloader.graphics.Launcher"
+mainClassName = "org.example.downloader.core.Launcher"
 
 runtime{
     targetPlatform("linux-x64"){
