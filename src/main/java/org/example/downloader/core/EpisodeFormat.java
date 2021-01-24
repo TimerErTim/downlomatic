@@ -24,7 +24,7 @@ public class EpisodeFormat {
      * <li>"<b>/s</b>": Means the number of the season
      * <li>"<b>/E</b>": Means the name of the episode
      * <li>"<b>/e</b>": Means the number of the episode
-     * <li>"<b>/[</b>" bzw "<b>/]</b>": Covered in the last paragraph
+     * <li>"<b>/[</b>" or "<b>/]</b>": Covered in the last paragraph
      * </ul><p>
      * If those identifiers are found in the given expression, they are
      * replaced by their respective meaning.<br>
