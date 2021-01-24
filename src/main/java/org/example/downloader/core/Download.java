@@ -85,7 +85,7 @@ public class Download implements AutoCloseable {
             try {
                 dest.getChannel().position(0).truncate(0);
                 downloaded = dest.getChannel().transferFrom(src, 0, Long.MAX_VALUE);
-                return true;
+                return isFinished();
             } catch (IOException e) {
                 return false;
             }
