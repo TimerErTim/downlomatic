@@ -70,11 +70,6 @@ public class VivoDownloader extends Downloader {
     }
 
     @Override
-    public boolean needsJavaScript() {
-        return true;
-    }
-
-    @Override
     protected String getInvalidVideoMessage() {
         return "URL \"" + pageURL + "\" is no valid video on vivo.sx";
     }
