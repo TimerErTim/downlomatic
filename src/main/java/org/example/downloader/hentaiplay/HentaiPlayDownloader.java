@@ -57,9 +57,10 @@ public class HentaiPlayDownloader extends Downloader {
         driver.get(pageURL.toString());
 
         List<WebElement> elements = driver.findElements(By.id("my-video"));
+        elements.addAll(driver.findElements(By.id("my_video_1")));
         for (WebElement element : elements) {
             WebElement source = element.findElement(By.tagName("source"));
-            if (source != null && source.getAttribute("src").startsWith("https://hentaiplanet.info/")) {
+            if (source != null && (source.getAttribute("src").startsWith("https://hentaiplanet.info/") || source.getAttribute("src").startsWith("https://openload.co/embed/"))) {
                 try {
                     return new URL(source.getAttribute("src"));
                 } catch (MalformedURLException e) {
