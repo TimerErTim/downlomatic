@@ -16,8 +16,7 @@ public class HentaiPlaySeriesTest {
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
         series.fillEpisodeDownloaders();
         for (Downloader downloader : series) {
-            Download download = downloader.generateVideoDownload("/home/timerertim/Downloads/Dropout", "/S - /E", (bytes) -> {
-            });
+            Download download = downloader.generateVideoDownload("/home/timerertim/Downloads/Dropout", "/S - /E");
             synchronized (downloadPool) {
                 downloadPool.add(download);
             }
