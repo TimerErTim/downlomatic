@@ -44,7 +44,7 @@ public class Download implements AutoCloseable {
      * @throws IOException error when creating local fields
      */
     public Download(URL url, File file, IntConsumer onRead) throws IOException {
-        this(url.openConnection(), new FileOutputStream(file), onRead);
+        this(url.openConnection(), new FileOutputStream(file, true), onRead);
     }
 
     /**
@@ -78,11 +78,12 @@ public class Download implements AutoCloseable {
      * can be started by invoking {@link Download#startParallel()}.
      *
      * @return false if error occurred during download or a parallel download
-     * has already started
+     * has already started or the download couldn't finish
      */
     public boolean startDownload() {
         if (parallel == null || Thread.currentThread().equals(parallel)) {
             try {
+                dest.getChannel().position(0).truncate(0);
                 downloaded = dest.getChannel().transferFrom(src, 0, Long.MAX_VALUE);
                 return true;
             } catch (IOException e) {
