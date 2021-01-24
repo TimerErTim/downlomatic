@@ -26,7 +26,9 @@ public abstract class Downloader {
     /**
      * Generates a Download Object, which can be used to download the video.
      * <p>
-     * Returns null if any complications occur.
+     * Returns null if any complications occur (link without a valid video,
+     * URL not openable, etc.). Also replaces already established direct download
+     * links by searching for them in the specified {@code pageURL}.
      *
      * @param fileString the path to the storing file - is automatically created
      * @return a Download Object representing the video download.
@@ -41,7 +43,8 @@ public abstract class Downloader {
      * Generates a Download Object, which can be used to download the video.
      * <p>
      * Returns null if any complications occur (link without a valid video,
-     * URL not openable, etc.).
+     * URL not openable, etc.). Also replaces already established direct download
+     * links by searching for them in the specified {@code pageURL}.
      * <p>
      * onRead makes it possible to compute and keep track of progress, because
      * everytime a new buffer of bytes is read, onRead is called with the current
@@ -53,37 +56,21 @@ public abstract class Downloader {
      * @throws MalformedURLException the exception that is thrown if the URL is no valid video
      */
     public Download generateVideoDownload(String fileString, IntConsumer onRead) throws MalformedURLException {
-        try {
-            if ((videoURL = generateVideoDownloadURL()) == null) {
-                throw new MalformedURLException(getInvalidVideoMessage());
-            }
-
-            EpisodeFormat format = null;
-            if (this.format == null) {
-                format = generateEpisodeFormat();
-            }
-            this.format = format;
-
-            File file = new File(fileString);
-            Files.createParentDirs(file);
-            download = new Download(videoURL, file, onRead);
-            return download;
-        } catch (MalformedURLException e) {
-            throw e;
-        } catch (IOException e) {
-            return null;
+        if ((videoURL = generateVideoDownloadURL()) == null) {
+            throw new MalformedURLException(getInvalidVideoMessage());
         }
+
+        getEpisodeFormat();
+
+        return getVideoDownload(fileString, onRead);
     }
 
     /**
      * Generates a Download Object, which can be used to download the video.
      * <p>
      * Returns null if any complications occur (link without a valid video,
-     * URL not openable, etc.).
-     * <p>
-     * onRead makes it possible to compute and keep track of progress, because
-     * everytime a new buffer of bytes is read, onRead is called with the current
-     * amount of bytes downloaded as parameter.
+     * URL not openable, etc.). Also replaces already established direct download
+     * links by searching for them in the specified {@code pageURL}.
      * <p>
      * The location of the destination file is calculated by the given path
      * (has to be a directory) and format expression (defined by
@@ -91,24 +78,109 @@ public abstract class Downloader {
      * determine the name and extension of the resulting file.
      *
      * @param path             the path leading to the directory which should contain the file - is automatically created
-     * @param formatExpression the
-     * @param onRead           the action on byte reads
+     * @param formatExpression the formatting expression
+     * @return a Download Object representing the video download
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid video
+     */
+    public Download generateVideoDownload(String path, String formatExpression) throws MalformedURLException {
+        download = null;
+        return getVideoDownload(path, formatExpression);
+    }
+
+    /**
+     * Returns a Download Object, which can be used to download the video.
+     * <p>
+     * Returns null if any complications occur (link without a valid video,
+     * URL not openable, etc.).
+     * <p>
+     * The difference between this method and {@link Downloader#generateVideoDownload(String)} is
+     * that this doesn't generate a new {@link Download} by searching in the specified URL but rather
+     * by the already established parameters. If this is the first time retrieving a {@code Download} object,
+     * {@code generateVideoDownload(String)} will be called instead.
+     *
+     * @param fileString the path to the storing file - is automatically created
      * @return a Download Object representing the video download.
      * @throws MalformedURLException the exception that is thrown if the URL is no valid video
      */
-    public Download generateVideoDownload(String path, String formatExpression, IntConsumer onRead) throws MalformedURLException {
-        if (this.format == null) {
-            this.format = generateEpisodeFormat();
-        }
+    public Download getVideoDownload(String fileString) throws MalformedURLException {
+        return getVideoDownload(fileString, (bytes) -> {
+        });
+    }
 
-        String fileName = format.format(formatExpression);
+    /**
+     * Returns a Download Object, which can be used to download the video.
+     * <p>
+     * Returns null if any complications occur (link without a valid video,
+     * URL not openable, etc.).
+     * <p>
+     * The difference between this method and {@link Downloader#generateVideoDownload(String, IntConsumer)} is
+     * that this doesn't generate a new {@link Download} by searching in the specified URL but rather
+     * by the already established parameters. If this is the first time retrieving a {@code Download} object,
+     * {@code generateVideoDownload(String, IntConsumer)} will be called instead.
+     * <p>
+     * onRead makes it possible to compute and keep track of progress, because
+     * everytime a new buffer of bytes is read, onRead is called with the current
+     * amount of bytes downloaded as parameter.
+     *
+     * @param fileString the path to the storing file - is automatically created
+     * @param onRead     the action on byte reads
+     * @return a Download Object representing the video download.
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid video
+     */
+    public Download getVideoDownload(String fileString, IntConsumer onRead) throws MalformedURLException {
+        if (videoURL == null) {
+            return generateVideoDownload(fileString, onRead);
+        } else {
+            try {
+                File file = new File(fileString);
+                Files.createParentDirs(file);
+                download = new Download(videoURL, file, onRead);
+            } catch (IOException e) {
+                download = null;
+            }
+            return download;
+        }
+    }
+
+    /**
+     * Returns a Download Object, which can be used to download the video.
+     * <p>
+     * Returns null if any complications occur (link without a valid video,
+     * URL not openable, etc.).
+     * <p>
+     * The difference between this method and {@link Downloader#generateVideoDownload(String, String)} is
+     * that this doesn't generate a new {@link Download} by searching in the specified URL but rather
+     * by the already established parameters. If this is the first time retrieving a {@code Download} object,
+     * {@code generateVideoDownload(String, String)} will be called instead.
+     * <p>
+     * The location of the destination file is calculated by the given path
+     * (has to be a directory) and format expression (defined by
+     * {@link EpisodeFormat#format(String)}), which is used to
+     * determine the name and extension of the resulting file.
+     *
+     * @param pathString       the path leading to the directory which should contain the file - is automatically created
+     * @param formatExpression the formatting expression
+     * @return a Download Object representing the video download
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid video
+     */
+    public Download getVideoDownload(String pathString, String formatExpression) throws MalformedURLException {
+        String fileName = getEpisodeFormat().format(formatExpression);
         if (Files.getFileExtension(fileName).equals("")) {
             fileName = fileName.replaceAll(Pattern.quote("."), "") + "." + getDefaultFileExtension();
         }
-        String fullPath = path + File.separator + fileName;
+        String fullPath = pathString + File.separator + fileName;
         fullPath = fullPath.replaceAll(Pattern.quote(File.separator + File.separator), File.separator);
 
-        return generateVideoDownload(fullPath, onRead);
+        return getVideoDownload(fullPath);
+    }
+
+    /**
+     * Returns the last retrieved Download object.
+     *
+     * @return the latest Download
+     */
+    public Download getLatestDownload() {
+        return download;
     }
 
     /**
@@ -126,22 +198,18 @@ public abstract class Downloader {
         return format;
     }
 
-    protected abstract EpisodeFormat generateEpisodeFormatNotSetting();
-
     /**
      * Gets an EpisodeFormat Object which can be used to
      * format the description of an episode to a user friendly
      * String.
      * <p>
-     * Note though, that in order to get a non empty EpisodeFormat,
-     * you need to invoke {@link Downloader#generateEpisodeFormat()}
-     * or {@link Downloader#generateVideoDownload(String)} prior to
-     * calling this method.
+     * The format is only generated by calling {@link Downloader#generateEpisodeFormat()}
+     * if the format hasn't yet been generated once.
      *
      * @return the EpisodeFormat
      */
     public EpisodeFormat getEpisodeFormat() {
-        return (format != null ? format : new EpisodeFormat.EpisodeFormatGenerator().generate());
+        return (format != null ? format : generateEpisodeFormat());
     }
 
     protected String getDefaultFileExtension() {
@@ -150,17 +218,7 @@ public abstract class Downloader {
 
     protected abstract URL generateVideoDownloadURL();
 
-    /**
-     * Returns whether or not this Downloader
-     * requires JavaScript in order to generate a
-     * Download.
-     * <p>
-     * Useful for guessing the computation time when generating
-     * a {@link Download}.
-     *
-     * @return if JavaScript is required for execution
-     */
-    public abstract boolean needsJavaScript();
+    protected abstract EpisodeFormat generateEpisodeFormatNotSetting();
 
     /**
      * Gets the error message when the Downloader can't find a
