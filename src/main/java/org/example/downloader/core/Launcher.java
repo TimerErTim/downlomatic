@@ -11,6 +11,7 @@ import java.util.Set;
 public class Launcher {
     //TODO: animetoast.com -> Downloadwebsite
     //TODO: hentaiplay.net -> Hentais
+    //TODO: hentaigasm.com -> HD Hentais
     //TODO: Adjust and implement (right now just a prototype)
     public static void main(String[] args) throws MalformedURLException {
         WebScrapers.initialize();
@@ -28,12 +29,15 @@ public class Launcher {
                 }
                 Set<Downloader> downloaders = new LinkedHashSet<>();
                 Set<Series> series = HentaiPlayPage.generateAllSeries();
+                int i = 1;
                 for (Series seriesSingle : series) {
                     seriesSingle.fillEpisodeDownloaders();
+                    System.out.print("\r" + i++ + "/" + series.size() + " Series");
                     for (Downloader downloader : seriesSingle) {
                         downloaders.add(downloader);
                     }
                 }
+                System.out.println();
 
                 CollectiveDownload downloadManager = new CollectiveDownload(downloaders);
                 downloadManager.execute(path, format, maxDownloads);
