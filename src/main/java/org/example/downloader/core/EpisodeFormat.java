@@ -57,8 +57,9 @@ public class EpisodeFormat {
             matcher = pattern.matcher(expression);
         }
 
-        String temp;
-        temp = expression.replaceAll("/S", (seriesName != null ? seriesName : ""));
+
+        String temp = expression.replaceAll("(\\/\\[|\\/\\])", "");
+        temp = temp.replaceAll("/S", (seriesName != null ? seriesName : ""));
         temp = temp.replaceAll("/s", (seasonNumber != null ? seasonNumber : ""));
         temp = temp.replaceAll("/E", (episodeName != null ? episodeName : ""));
         temp = temp.replaceAll("/e", (episodeNumber != null ? episodeNumber : ""));
