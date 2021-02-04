@@ -1,18 +1,19 @@
 package org.example.downloader.core;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EpisodeFormat {
-    private final String episodeName, seriesName;
-    private final String episodeNumber;
-    private final String seasonNumber;
+    private final List<Identifier> identifiers;
 
     private EpisodeFormat(String seriesName, String seasonNumber, String episodeNumber, String episodeName) {
-        this.episodeName = episodeName;
-        this.seriesName = seriesName;
-        this.episodeNumber = episodeNumber;
-        this.seasonNumber = seasonNumber;
+        this.identifiers = new LinkedList<>();
+        identifiers.add(new Identifier("S", seriesName));
+        identifiers.add(new Identifier("s", seasonNumber));
+        identifiers.add(new Identifier("E", episodeName));
+        identifiers.add(new Identifier("e", episodeNumber));
     }
 
     /**
@@ -43,10 +44,17 @@ public class EpisodeFormat {
      * text if the other identifiers inside that segment can successfully be filled in. If there
      * is no other identifier inside or a missing closing/opening identifier, the segment will be
      * returned as is, which basically means, that the identifiers causing the problem are ignored.
+     * <p>
+     * In each of these segments you can make use of "inverted identifiers". Inverted identifiers make
+     * the segment they are in only successful (and thus visible) if there exists no value for them.
+     * They can be created by putting a "!" directly after "/" of each identifier. For example
+     * {@code "/[S/sE/e/]/[/!sEpisode /E]} would create "Episode 1" for the first Episode which doesn't have a
+     * season number. If it has one, it creates "S1E1" (assuming it's the first season).
      *
      * @param expression a String expression used as template for formatting
      * @return a formatted String representation of an episode
      */
+    //TODO: Add more identifiers
     public String format(String expression) {
         final String regex = "\\/\\[(?<content>[^\\/]+[^\\[\\]]*?)\\/\\]";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
@@ -59,40 +67,22 @@ public class EpisodeFormat {
 
 
         String temp = expression.replaceAll("(\\/\\[|\\/\\])", "");
-        temp = temp.replaceAll("/S", (seriesName != null ? seriesName : ""));
-        temp = temp.replaceAll("/s", (seasonNumber != null ? seasonNumber : ""));
-        temp = temp.replaceAll("/E", (episodeName != null ? episodeName : ""));
-        temp = temp.replaceAll("/e", (episodeNumber != null ? episodeNumber : ""));
+        for (Identifier identifier : identifiers) {
+            temp = expression.replaceAll(Pattern.quote(identifier.getIdentifier()), identifier.getValue());
+        }
         return temp.replaceAll("[\\\\\\/:*?\"<>|]", "");
     }
 
     private String formatSegment(String segment) {
-        if (segment.contains("/S")) {
-            if (seriesName == null) {
+        for (Identifier identifier : identifiers) {
+            boolean hasValue = identifier.hasValue();
+            if (segment.contains(identifier.getIdentifier()) && !hasValue || segment.contains(identifier.getNegativeIdentifier()) && hasValue) {
                 return "";
             } else {
-                segment = segment.replaceAll(Pattern.quote("/S"), seriesName);
-            }
-        }
-        if (segment.contains("/s")) {
-            if (seasonNumber == null) {
-                return "";
-            } else {
-                segment = segment.replaceAll(Pattern.quote("/s"), seasonNumber);
-            }
-        }
-        if (segment.contains("/E")) {
-            if (episodeName == null) {
-                return "";
-            } else {
-                segment = segment.replaceAll(Pattern.quote("/E"), episodeName);
-            }
-        }
-        if (segment.contains("/e")) {
-            if (episodeNumber == null) {
-                return "";
-            } else {
-                segment = segment.replaceAll(Pattern.quote("/e"), episodeNumber);
+                segment = segment.replaceAll("(" +
+                                Pattern.quote(identifier.getIdentifier()) + "|" +
+                                Pattern.quote(identifier.getNegativeIdentifier()) + ")",
+                        identifier.getValue());
             }
         }
 
@@ -183,6 +173,32 @@ public class EpisodeFormat {
          */
         public EpisodeFormat generate() {
             return new EpisodeFormat(seriesName, seasonNumber, episodeNumber, episodeName);
+        }
+    }
+
+    private static class Identifier {
+        private final String identifier, negativeIdentifier, value;
+
+        private Identifier(String key, String value) {
+            this.identifier = "/" + key;
+            this.negativeIdentifier = "/!" + key;
+            this.value = value;
+        }
+
+        private boolean hasValue() {
+            return value != null;
+        }
+
+        private String getIdentifier() {
+            return identifier;
+        }
+
+        private String getNegativeIdentifier() {
+            return negativeIdentifier;
+        }
+
+        private String getValue() {
+            return (value != null ? value : "");
         }
     }
 }
