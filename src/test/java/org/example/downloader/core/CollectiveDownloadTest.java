@@ -10,7 +10,7 @@ public class CollectiveDownloadTest {
     public static void main(String[] args) throws MalformedURLException {
         WebScrapers.initialize();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
-        series.fillEpisodeDownloaders();
+        series.fillDownloaders();
         Set<Downloader> downloaderSet = new LinkedHashSet<>();
         for (Downloader downloader : series) {
             downloaderSet.add(downloader);

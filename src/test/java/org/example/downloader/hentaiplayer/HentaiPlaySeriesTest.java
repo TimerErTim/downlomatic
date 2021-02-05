@@ -14,7 +14,7 @@ public class HentaiPlaySeriesTest {
         WebScrapers.initialize();
         Set<Download> downloadPool = new LinkedHashSet<>();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
-        series.fillEpisodeDownloaders();
+        series.fillDownloaders();
         for (Downloader downloader : series) {
             Download download = downloader.generateVideoDownload("/home/timerertim/Downloads/Dropout", "/S - /E");
             synchronized (downloadPool) {
