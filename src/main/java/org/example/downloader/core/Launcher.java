@@ -31,7 +31,7 @@ public class Launcher {
                 Set<Series> series = HentaiPlayPage.generateAllSeries();
                 int i = 1;
                 for (Series seriesSingle : series) {
-                    seriesSingle.fillEpisodeDownloaders();
+                    seriesSingle.fillDownloaders();
                     System.out.print("\r" + i++ + "/" + series.size() + " Series");
                     for (Downloader downloader : seriesSingle) {
                         downloaders.add(downloader);
