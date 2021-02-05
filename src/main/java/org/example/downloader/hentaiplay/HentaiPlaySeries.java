@@ -57,11 +57,6 @@ public class HentaiPlaySeries extends Series {
     }
 
     @Override
-    public boolean needsJavaScript() {
-        return false;
-    }
-
-    @Override
     public String getInvalidSeriesMessage() {
         return "URL \"" + seriesURL + "\" is no valid series on hentaiplay.net";
     }

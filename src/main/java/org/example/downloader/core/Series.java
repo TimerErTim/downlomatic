@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * A collection of individual {@link Downloader}s. Provides some neat
+ * and useful methods.
+ */
 public abstract class Series implements Iterable<Downloader> {
     protected final URL seriesURL;
     private final Set<Downloader> sources;
@@ -22,11 +26,30 @@ public abstract class Series implements Iterable<Downloader> {
 
     /**
      * Generates a List of Downloaders, each one leading to one episode
-     * of this Series. The List is accessible through {@link Series#iterator()}.
+     * of this Series, if that List has never been generated before.
+     * The List is accessible through {@link Series#iterator()}.
+     * <p>
+     * Subsequent calls of this method are ignored, as the {@link Downloader}s
+     * have already been generated. To generate them once again, you can
+     * invoke {@link Series#generateDownloaders()}.
      *
      * @throws MalformedURLException error when referring to a page without a valid series.
      */
-    public void fillEpisodeDownloaders() throws MalformedURLException {
+    public void fillDownloaders() throws MalformedURLException {
+        if (sources.isEmpty()) {
+            generateDownloaders();
+        }
+    }
+
+    /**
+     * Generates a List of Downloaders, each one leading to one episode
+     * of this Series. The List is accessible through {@link Series#iterator()}.
+     * <p>
+     * Each call of this method freshly generates Downloader objects.
+     *
+     * @throws MalformedURLException error when referring to a page without a valid series.
+     */
+    public void generateDownloaders() throws MalformedURLException {
         sources.clear();
         Set<? extends Downloader> collection = generateEpisodeDownloaders();
         if (collection.isEmpty()) {
@@ -37,18 +60,6 @@ public abstract class Series implements Iterable<Downloader> {
     }
 
     protected abstract Set<? extends Downloader> generateEpisodeDownloaders();
-
-    /**
-     * Returns whether or not this Series
-     * requires JavaScript in order to generate a
-     * list of Downloaders.
-     * <p>
-     * Useful for guessing the computation time when generating
-     * a list of {@link Downloader}s.
-     *
-     * @return if JavaScript is required for execution of {@link Series#fillEpisodeDownloaders()}
-     */
-    public abstract boolean needsJavaScript();
 
     /**
      * Gets the error message when the Series can't find a
