@@ -8,12 +8,15 @@ import java.util.regex.Pattern;
 public class EpisodeFormat {
     private final List<Identifier> identifiers;
 
-    private EpisodeFormat(String seriesName, String seasonNumber, String episodeNumber, String episodeName) {
+    private EpisodeFormat(String seriesName, String seasonNumber, String episodeNumber, String episodeName,
+                          String language, String translationType) {
         this.identifiers = new LinkedList<>();
         identifiers.add(new Identifier("S", seriesName));
         identifiers.add(new Identifier("s", seasonNumber));
         identifiers.add(new Identifier("E", episodeName));
         identifiers.add(new Identifier("e", episodeNumber));
+        identifiers.add(new Identifier("L", language));
+        identifiers.add(new Identifier("T", translationType));
     }
 
     /**
@@ -25,6 +28,8 @@ public class EpisodeFormat {
      * <li>"<b>/s</b>": Means the number of the season
      * <li>"<b>/E</b>": Means the name of the episode
      * <li>"<b>/e</b>": Means the number of the episode
+     * <li>"<b>/L</b>": Means the main target language audience of the episode
+     * <li>"<b>/T</b>": Means the type of translation
      * <li>"<b>/[</b>" or "<b>/]</b>": Covered in the last paragraph
      * </ul><p>
      * If those identifiers are found in the given expression, they are
@@ -54,7 +59,6 @@ public class EpisodeFormat {
      * @param expression a String expression used as template for formatting
      * @return a formatted String representation of an episode
      */
-    //TODO: Add more identifiers
     public String format(String expression) {
         final String regex = "\\/\\[(?<content>[^\\/]+[^\\[\\]]*?)\\/\\]";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
@@ -79,10 +83,7 @@ public class EpisodeFormat {
             if (segment.contains(identifier.getIdentifier()) && !hasValue || segment.contains(identifier.getNegativeIdentifier()) && hasValue) {
                 return "";
             } else {
-                segment = segment.replaceAll("(" +
-                                Pattern.quote(identifier.getIdentifier()) + "|" +
-                                Pattern.quote(identifier.getNegativeIdentifier()) + ")",
-                        identifier.getValue());
+                segment = segment.replaceAll(identifier.getReplaceRegex(), identifier.getValue());
             }
         }
 
@@ -94,8 +95,8 @@ public class EpisodeFormat {
      */
     public static class EpisodeFormatGenerator {
         private String episodeName, seriesName;
-        private String episodeNumber;
-        private String seasonNumber;
+        private String episodeNumber, seasonNumber;
+        private String language, translationType;
 
         /**
          * Generates a EpisodeFormatGenerator. It's only
@@ -106,11 +107,14 @@ public class EpisodeFormat {
          * @param episodeNumber the number of the episode
          * @param episodeName   the name of the episode
          */
-        public EpisodeFormatGenerator(String seriesName, String seasonNumber, String episodeNumber, String episodeName) {
+        public EpisodeFormatGenerator(String seriesName, String seasonNumber, String episodeNumber, String episodeName,
+                                      String language, String translationType) {
             this.episodeName = episodeName;
             this.seriesName = seriesName;
             this.episodeNumber = episodeNumber;
             this.seasonNumber = seasonNumber;
+            this.language = language;
+            this.translationType = translationType;
         }
 
         /**
@@ -118,7 +122,7 @@ public class EpisodeFormat {
          * purpose is to generate a non mutable EpisodeFormat.
          */
         public EpisodeFormatGenerator() {
-            this(null, null, null, null);
+            this(null, null, null, null, null, null);
         }
 
         /**
@@ -166,13 +170,35 @@ public class EpisodeFormat {
         }
 
         /**
+         * Sets the translation type of the EpisodeFormat.
+         *
+         * @param translationType the method of displaying the audience language (sub, dub, raw/none/OV, etc.)
+         * @return this Object for easy chaining of expressions.
+         */
+        public EpisodeFormatGenerator setTranslationType(String translationType) {
+            this.translationType = translationType;
+            return this;
+        }
+
+        /**
+         * Sets the language of the EpisodeFormat.
+         *
+         * @param language the audience language of the episode
+         * @return this Object for easy chaining of expressions.
+         */
+        public EpisodeFormatGenerator setLanguage(String language) {
+            this.language = language;
+            return this;
+        }
+
+        /**
          * Generates a non mutable EpisodeFormat with
          * the configured entries.
          *
          * @return a final EpisodeFormat
          */
         public EpisodeFormat generate() {
-            return new EpisodeFormat(seriesName, seasonNumber, episodeNumber, episodeName);
+            return new EpisodeFormat(seriesName, seasonNumber, episodeNumber, episodeName, language, translationType);
         }
     }
 
