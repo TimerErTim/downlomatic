@@ -14,7 +14,6 @@ public class CollectiveDownload {
     }
 
     public void execute(String path, String format, int maxDownloads) {
-        WebScrapers.javaScript().quit();
         LinkedHashSet<Download> current = new LinkedHashSet<>();
         Queue<Downloader> queued = new LinkedList<>();
         final Map<Download, String> formatMap = new HashMap<>();
