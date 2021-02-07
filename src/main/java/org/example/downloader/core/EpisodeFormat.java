@@ -68,7 +68,7 @@ public class EpisodeFormat {
 
         String temp = expression.replaceAll("(\\/\\[|\\/\\])", "");
         for (Identifier identifier : identifiers) {
-            temp = expression.replaceAll(Pattern.quote(identifier.getIdentifier()), identifier.getValue());
+            temp = temp.replaceAll(identifier.getReplaceRegex(), identifier.getValue());
         }
         return temp.replaceAll("[\\\\\\/:*?\"<>|]", "");
     }
@@ -195,6 +195,11 @@ public class EpisodeFormat {
 
         private String getNegativeIdentifier() {
             return negativeIdentifier;
+        }
+
+        private String getReplaceRegex() {
+            return "(" + Pattern.quote(getIdentifier()) + "|" +
+                    Pattern.quote(getNegativeIdentifier()) + ")";
         }
 
         private String getValue() {
