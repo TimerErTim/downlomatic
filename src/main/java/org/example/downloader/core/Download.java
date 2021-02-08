@@ -2,6 +2,7 @@ package org.example.downloader.core;
 
 import org.example.downloader.utils.ReadableConsumerByteChannel;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,7 +12,7 @@ import java.nio.channels.Channels;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-public class Download implements AutoCloseable {
+public class Download implements Closeable {
     private final long size;
     private final ReadableConsumerByteChannel src;
     private final FileOutputStream dest;
