@@ -15,7 +15,7 @@ public abstract class Series implements Iterable<Downloader> {
     protected final URL seriesURL;
     private final Set<Downloader> sources;
 
-    protected Series(URL seriesURL) throws MalformedURLException {
+    protected Series(URL seriesURL) {
         this.seriesURL = seriesURL;
         this.sources = new LinkedHashSet<>();
     }
