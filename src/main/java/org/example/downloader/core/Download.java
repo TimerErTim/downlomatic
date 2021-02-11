@@ -1,24 +1,31 @@
 package org.example.downloader.core;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.example.downloader.utils.ReadableConsumerByteChannel;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.FileChannel;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
-public class Download implements Closeable {
+public class Download {
     private final long size;
-    private final File destFile;
+    private final IntConsumer onRead;
     private final URL srcURL;
-    private FileOutputStream dest;
-    private final ReadableConsumerByteChannel src;
+    private final File destFile;
+
+    private ReadableConsumerByteChannel src;
+    private FileChannel dest;
     private long downloaded;
+    private boolean paused;
 
     private DownloadThread parallel;
 
@@ -33,11 +40,8 @@ public class Download implements Closeable {
     public Download(URL url, File file, IntConsumer onRead) throws IOException {
         this.srcURL = url;
         this.destFile = file;
-        URLConnection urlConnection = url.openConnection();
-        this.size = urlConnection.getContentLength();
-        this.src = new ReadableConsumerByteChannel(
-                Channels.newChannel(urlConnection.getInputStream()),
-                onRead);
+        this.size = url.openConnection().getContentLength();
+        this.onRead = onRead;
     }
 
     /**
@@ -76,13 +80,25 @@ public class Download implements Closeable {
     public boolean startDownload() {
         if (parallel == null || Thread.currentThread().equals(parallel)) {
             try {
-                dest.getChannel().position(0).truncate(0);
-                downloaded = dest.getChannel().transferFrom(src, 0, Long.MAX_VALUE);
+                if (!(paused && downloadedFileSynchronous())) {
+                    downloaded = 0;
+                }
+
+                generateNewSourceChannel();
+                generateNewDestinationChannel();
+
+                dest.transferFrom(src, 0, Long.MAX_VALUE);
+
+                src.close();
+                dest.close();
+                paused = false;
                 return isFinished();
             } catch (IOException e) {
+                if (!(e instanceof ClosedByInterruptException))
+                    paused = true;
                 return false;
             } finally {
-                downloaded = getDownloaded();
+                updateDownloaded();
             }
         }
         return false;
@@ -90,7 +106,7 @@ public class Download implements Closeable {
 
     /**
      * Starts the download. Note that this method is
-     * not blocking and creates a dedicated DownloadThread
+     * not blocking and creates a dedicated DownloadThread.
      * <p>
      * Note also that only one parallel download can run at a time.
      * Therefore calling this method a second time before the first
@@ -121,7 +137,7 @@ public class Download implements Closeable {
 
     /**
      * Starts the download. Note that this method is
-     * not blocking and creates a dedicated DownloadThread
+     * not blocking and creates a dedicated DownloadThread.
      * <p>
      * Note also that only one parallel download can run at a time.
      * Therefore calling this method a second time before the first
@@ -141,46 +157,51 @@ public class Download implements Closeable {
     /**
      * Stops the download by interrupting the responsible thread.
      * <p>
-     * Note that this inevitably closes every stream, so it's effectively the same
-     * as calling {@link Download#close()} with the only difference is being able to
-     * call this method only during a parallel download. Otherwise this method will
-     * have no effect.
+     * Invoking this method (regardless of a parallel download running) will
+     * tell this Download object to completely restart the download upon the
+     * next invocation of {@link Download#startDownload()} or {@link Download#startParallel()}.
+     * This behavior overwrites and can be overwritten by {@link Download#pause()};
      *
      * @return true if the download has been stopped, false if there was no download
      */
     public boolean stop() {
-        if (parallel != null) {
+        boolean returnValue = parallel != null;
+        if (returnValue) {
             parallel.interrupt();
-            return true;
         }
-        return false;
+        paused = false;
+        return returnValue;
     }
 
     /**
-     * Stops the download and closes underlying streams.
+     * Pauses the download by interrupting the responsible thread.
      * <p>
-     * Doesn't immediately stop parallel {@code Download}s.
-     * It only marks them for automatic closure upon completion.
+     * Invoking this method (regardless of a parallel download running) will
+     * tell this Download object to try to continue the download upon the
+     * next invocation of {@link Download#startDownload()} or {@link Download#startParallel()}.
+     * This behavior overwrites and can be overwritten by {@link Download#stop()};
      *
-     * @throws IOException thrown exception
+     * @return true if the download has been paused, false if there was no download
      */
-    @Override
-    public void close() throws IOException {
-        if (src.isOpen() && parallel == null) {
-            dest.close();
-            src.close();
-        } else if (src.isOpen() && parallel != null) {
-            parallel.attemptedClose();
+    public boolean pause() {
+        boolean returnValue = parallel != null;
+        if (returnValue) {
+            parallel.interrupt();
         }
+        paused = true;
+        return returnValue;
     }
 
     /**
-     * Returns whether or not this Download is open.
+     * Returns true if the download is running.
+     * <p>
+     * The download is running if a parallel download
+     * is working in the background.
      *
-     * @return the open status
+     * @return true if download is running
      */
-    public boolean isOpen() {
-        return src.isOpen();
+    public boolean isRunning() {
+        return parallel != null;
     }
 
     /**
@@ -215,7 +236,7 @@ public class Download implements Closeable {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        return (isFinished() ? downloaded : (src.getTotalByteRead() + downloaded) % size);
+        return (isFinished() ? downloaded : ((src != null ? src.getTotalByteRead() : 0) + downloaded) % size);
     }
 
     /**
@@ -228,20 +249,72 @@ public class Download implements Closeable {
     }
 
     /**
-     * Returns a String representation of this Object.
+     * Returns false if the destination file's length
+     * has been changed externally.
      * <p>
-     * It does so by displaying the number of downloaded bytes out
-     * of the pending bytes after the name of the parallel executing Thread,
-     * if there even is one.
-     * <p>
-     * Example 1:<b> Download Thread 1: 123000B/312333B</b><br>
-     * Example 2:<b> 200000B/200000B</b>
+     * This should only be called without a parallel download
+     * running as this method would 99% of the time return false
+     * due to synchronization problems. To prevent these false negatives
+     * this method always returns true if a parallel download is
+     * running in the background. This behavior isn't useful, therefore
+     * it is advised to wait for the parallel download to finish.
      *
-     * @return a String representation of this Object
+     * @return true if file has not been changed externally
+     */
+    public boolean downloadedFileSynchronous() {
+        if (parallel == null) {
+            return destFile.length() == downloaded;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns a String representation of this object.
+     *
+     * @return a String representation of this object
      */
     @Override
     public String toString() {
-        return (parallel != null ? parallel.getName() + ": " : "") + getDownloaded() + "B/" + size + "B";
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("srcURL", srcURL)
+                .append("destFile", destFile)
+                .append("downloaded", downloaded)
+                .append("size", size)
+                .append("paused", paused)
+                .append("parallel", parallel)
+                .build();
+    }
+
+    private void generateNewSourceChannel() throws IOException {
+        URLConnection urlConnection = srcURL.openConnection();
+        if (downloaded > 0) {
+            urlConnection.setRequestProperty("Range", "bytes=" + downloaded + "-");
+            if (!(urlConnection instanceof HttpURLConnection && ((HttpURLConnection) urlConnection).getResponseCode() == 206)) {
+                downloaded = 0;
+            }
+        }
+        src = new ReadableConsumerByteChannel(
+                Channels.newChannel(urlConnection.getInputStream()),
+                onRead);
+
+    }
+
+    private void generateNewDestinationChannel() throws IOException {
+        if (!dest.isOpen()) {
+            dest = new FileOutputStream(destFile, true).getChannel();
+        }
+        dest.truncate(downloaded);
+    }
+
+    private void updateDownloaded() {
+        downloaded = getDownloaded();
+        try {
+            src.close();
+        } catch (IOException ignored) {
+        } finally {
+            src = null;
+        }
     }
 
     /**
@@ -252,17 +325,11 @@ public class Download implements Closeable {
 
         private final Download referenceDownload;
         private final Consumer<Boolean> actionAfterFinish;
-        private boolean closeAfterFinish;
 
         public DownloadThread(Download referenceDownload, Consumer<Boolean> actionAfterFinish) {
             this.referenceDownload = referenceDownload;
             this.actionAfterFinish = actionAfterFinish;
-            this.closeAfterFinish = false;
             this.setName("Download Thread " + ID++);
-        }
-
-        public void attemptedClose() {
-            closeAfterFinish = true;
         }
 
         @Override
@@ -272,12 +339,6 @@ public class Download implements Closeable {
             actionAfterFinish.accept(downloadSuccess);
 
             referenceDownload.parallel = null;
-            if (!downloadSuccess || closeAfterFinish) {
-                try {
-                    referenceDownload.close();
-                } catch (IOException ignored) {
-                }
-            }
         }
     }
 }
