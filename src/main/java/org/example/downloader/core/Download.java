@@ -14,27 +14,13 @@ import java.util.function.IntConsumer;
 
 public class Download implements Closeable {
     private final long size;
+    private final File destFile;
+    private final URL srcURL;
+    private FileOutputStream dest;
     private final ReadableConsumerByteChannel src;
-    private final FileOutputStream dest;
     private long downloaded;
 
     private DownloadThread parallel;
-
-    /**
-     * Creates a download based on parameters.
-     *
-     * @param dest          the destination file
-     * @param urlConnection the downloaded file
-     * @param onRead        the action on byte reads
-     * @throws IOException error when creating InputStream
-     */
-    public Download(URLConnection urlConnection, FileOutputStream dest, IntConsumer onRead) throws IOException {
-        this.src = new ReadableConsumerByteChannel(
-                Channels.newChannel(urlConnection.getInputStream()),
-                onRead);
-        this.dest = dest;
-        this.size = urlConnection.getContentLength();
-    }
 
     /**
      * Creates a download based on parameters.
@@ -45,7 +31,13 @@ public class Download implements Closeable {
      * @throws IOException error when creating local fields
      */
     public Download(URL url, File file, IntConsumer onRead) throws IOException {
-        this(url.openConnection(), new FileOutputStream(file, true), onRead);
+        this.srcURL = url;
+        this.destFile = file;
+        URLConnection urlConnection = url.openConnection();
+        this.size = urlConnection.getContentLength();
+        this.src = new ReadableConsumerByteChannel(
+                Channels.newChannel(urlConnection.getInputStream()),
+                onRead);
     }
 
     /**
@@ -89,6 +81,8 @@ public class Download implements Closeable {
                 return isFinished();
             } catch (IOException e) {
                 return false;
+            } finally {
+                downloaded = getDownloaded();
             }
         }
         return false;
@@ -208,15 +202,11 @@ public class Download implements Closeable {
      * @return the file already being downloaded
      */
     public boolean isAlreadyDownloaded() {
-        try {
-            if (dest.getChannel().size() == size) {
-                downloaded = size;
-                return true;
-            } else
-                return false;
-        } catch (IOException e) {
+        if (destFile.length() == size) {
+            downloaded = size;
+            return true;
+        } else
             return false;
-        }
     }
 
     /**
@@ -225,7 +215,7 @@ public class Download implements Closeable {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        return (isFinished() ? downloaded : src.getTotalByteRead() % size);
+        return (isFinished() ? downloaded : (src.getTotalByteRead() + downloaded) % size);
     }
 
     /**
