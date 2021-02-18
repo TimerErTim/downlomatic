@@ -36,7 +36,7 @@ public abstract class Series implements Iterable<Downloader> {
      * @throws MalformedURLException error when referring to a page without a valid series.
      */
     public void fillDownloaders() throws MalformedURLException {
-        if (sources.isEmpty()) {
+        if (isEmpty()) {
             generateDownloaders();
         }
     }
@@ -57,6 +57,22 @@ public abstract class Series implements Iterable<Downloader> {
         } else {
             downloaders.addAll(collection);
         }
+    }
+
+    /**
+     * Returns true if the {@code Series} object
+     * is empty.
+     * <p>
+     * Because it is only empty if the generation of
+     * {@link Downloader}s failed or they were never
+     * generated in the first place, this method
+     * can also be used to test the behavior of
+     * {@link Series#fillDownloaders()}.
+     *
+     * @return true if this object is empty
+     */
+    public boolean isEmpty() {
+        return downloaders.isEmpty();
     }
 
     protected abstract Set<? extends Downloader> generateEpisodeDownloaders();
