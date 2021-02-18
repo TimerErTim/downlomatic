@@ -6,12 +6,14 @@ import org.example.downloader.utils.WebScrapers;
 
 import java.net.MalformedURLException;
 
+
 public class CollectiveDownloadTest {
+    //TODO: Not working due to changes in collectiveDownload
     public static void main(String[] args) throws MalformedURLException {
         WebScrapers.initialize();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
 
         CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder(series);
-        downloadManager.execute("/home/timerertim/Downloads/", "/S - /E", 2);
+        //downloadManager.execute("/home/timerertim/Downloads/", "/S - /E", 2);
     }
 }

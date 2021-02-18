@@ -11,6 +11,5 @@ public class VivoTest {
         VivoDownloader vivo = new VivoDownloader("https://vivo.sx/a4208d24f7");
         Download download = vivo.generateVideoDownload("/home/timerertim/Downloads/Test.mp4");
         download.startDownload();
-        download.close();
     }
 }

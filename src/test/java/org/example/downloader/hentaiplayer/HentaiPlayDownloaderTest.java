@@ -12,7 +12,6 @@ public class HentaiPlayDownloaderTest {
         HentaiPlayDownloader vivo = new HentaiPlayDownloader("https://hentaiplay.net/ane-yome-quartet-episode-1/");
         Download download = vivo.generateVideoDownload("/home/timerertim/Downloads/Test.mp4");
         download.startDownload();
-        download.close();
         WebScrapers.close();
     }
 }
