@@ -40,7 +40,7 @@ public class CollectiveDownload {
     /**
      * Disables slow mode for this {@code CollectiveDownloadBuilder}.
      * <p>
-     * For more information consult {@link CollectiveDownloadBuilder#enableSlowMode()}.
+     * For more information consult {@link CollectiveDownload#enableSlowMode()}.
      */
     public void disableSlowMode() {
         this.slowModeDelay = 0;
