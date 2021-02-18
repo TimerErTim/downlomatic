@@ -34,8 +34,8 @@ public class Launcher {
                 Set<Downloader> downloaders = new LinkedHashSet<>();
                 Set<Series> series = HentaiPlayPage.generateAllSeries();
 
-                CollectiveDownload downloadManager = new CollectiveDownload(downloaders);
-                downloadManager.execute(path, format, maxDownloads);
+                CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder(series);
+                //downloadManager.execute(path, format, maxDownloads);
             }
 
             WebScrapers.close();
