@@ -3,6 +3,10 @@ package org.example.downloader.core.download;
 public class CollectiveDownload {
     private long slowModeDelay;
 
+    public CollectiveDownload() {
+        slowModeDelay = 0;
+    }
+
     /**
      * Enables slow mode for this {@code CollectiveDownloadBuilder}.
      * <p>
