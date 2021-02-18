@@ -1,10 +1,9 @@
 package org.example.downloader.hentaiplay;
 
-import org.example.downloader.core.PageManager;
-import org.example.downloader.core.Series;
-import org.example.downloader.core.SeriesProvider;
-import org.example.downloader.core.WebScrapers;
+import org.example.downloader.core.framework.PageManager;
+import org.example.downloader.core.framework.Series;
 import org.example.downloader.utils.JSoupDriver;
+import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -14,7 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class HentaiPlayPage extends PageManager implements SeriesProvider {
+public class HentaiPlayPage extends PageManager {
     private static Set<Series> allSeries;
 
     public static boolean isHentaiPlayPage(URL url) {
@@ -55,7 +54,6 @@ public class HentaiPlayPage extends PageManager implements SeriesProvider {
         return allSeries;
     }
 
-    @Override
     public Series provideSeries() throws MalformedURLException {
         return null;
     }

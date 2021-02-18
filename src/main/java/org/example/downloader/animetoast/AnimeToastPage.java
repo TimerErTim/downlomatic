@@ -1,12 +1,9 @@
 package org.example.downloader.animetoast;
 
-import org.example.downloader.core.Series;
-import org.example.downloader.core.SeriesProvider;
+import org.example.downloader.core.framework.Series;
 
-public class AnimeToastPage implements SeriesProvider {
+public class AnimeToastPage {
 
-
-    @Override
     public Series provideSeries() {
         return null;
     }
