@@ -13,11 +13,11 @@ import java.util.Set;
  */
 public abstract class Series implements Iterable<Downloader> {
     protected final URL seriesURL;
-    private final Set<Downloader> sources;
+    private final Set<Downloader> downloaders;
 
     protected Series(URL seriesURL) {
         this.seriesURL = seriesURL;
-        this.sources = new LinkedHashSet<>();
+        this.downloaders = new LinkedHashSet<>();
     }
 
     protected Series(String seriesURLString) throws MalformedURLException {
@@ -50,12 +50,12 @@ public abstract class Series implements Iterable<Downloader> {
      * @throws MalformedURLException error when referring to a page without a valid series.
      */
     public void generateDownloaders() throws MalformedURLException {
-        sources.clear();
+        downloaders.clear();
         Set<? extends Downloader> collection = generateEpisodeDownloaders();
         if (collection.isEmpty()) {
             throw new MalformedURLException(getInvalidSeriesMessage());
         } else {
-            sources.addAll(collection);
+            downloaders.addAll(collection);
         }
     }
 
@@ -67,11 +67,11 @@ public abstract class Series implements Iterable<Downloader> {
      *
      * @return the error message
      */
-    public abstract String getInvalidSeriesMessage();
+    protected abstract String getInvalidSeriesMessage();
 
     @Override
     @Nonnull
     public Iterator<Downloader> iterator() {
-        return sources.iterator();
+        return downloaders.iterator();
     }
 }
