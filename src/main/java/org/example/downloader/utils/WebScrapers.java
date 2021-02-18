@@ -1,7 +1,6 @@
-package org.example.downloader.core;
+package org.example.downloader.utils;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.example.downloader.utils.JSoupDriver;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel;

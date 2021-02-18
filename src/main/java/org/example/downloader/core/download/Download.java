@@ -1,4 +1,4 @@
-package org.example.downloader.core;
+package org.example.downloader.core.download;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

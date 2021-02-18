@@ -1,4 +1,4 @@
-package org.example.downloader.core;
+package org.example.downloader.core.framework;
 
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;

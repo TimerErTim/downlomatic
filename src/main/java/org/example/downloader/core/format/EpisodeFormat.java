@@ -1,4 +1,4 @@
-package org.example.downloader.core;
+package org.example.downloader.core.format;
 
 import java.util.LinkedList;
 import java.util.List;
