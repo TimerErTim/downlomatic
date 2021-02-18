@@ -39,7 +39,6 @@ public class CollectiveDownloadBuilder {
         this.maxDownloads = maxDownloads;
         setFormatSubDir(null); //Generate Default for Subdirectory creation
         formatDownload = DEFAULT_FORMAT_DOWNLOAD;
-        slowModeDelay = 0;
     }
 
     /**
