@@ -27,7 +27,7 @@ public class Download {
     private long downloaded;
     private boolean paused;
 
-    private DownloadThread parallel;
+    private Thread parallel;
 
     /**
      * Creates a download based on parameters.
@@ -72,13 +72,15 @@ public class Download {
      * Starts the download. Note that this method is blocking until the download is completed.
      * <p>
      * Most download management methods in this class only work with a parallel download, which
-     * can be started by invoking {@link Download#startParallel()}.
+     * can be started by invoking {@link Download#startParallel()} or invoking this method
+     * in another Thread.
      *
      * @return false if error occurred during download or a parallel download
      * has already started or the download couldn't finish
      */
     public boolean startDownload() {
         if (parallel == null || Thread.currentThread().equals(parallel)) {
+            parallel = Thread.currentThread();
             try {
                 if (!(paused && downloadedFileSynchronous())) {
                     downloaded = 0;
@@ -99,6 +101,7 @@ public class Download {
                 return false;
             } finally {
                 updateDownloaded();
+                parallel = null;
             }
         }
         return false;
@@ -337,8 +340,6 @@ public class Download {
             boolean downloadSuccess = referenceDownload.startDownload();
 
             actionAfterFinish.accept(downloadSuccess);
-
-            referenceDownload.parallel = null;
         }
     }
 }
