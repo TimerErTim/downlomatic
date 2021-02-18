@@ -17,6 +17,7 @@ public class EpisodeFormat {
         identifiers.add(new Identifier("e", episodeNumber));
         identifiers.add(new Identifier("L", language));
         identifiers.add(new Identifier("T", translationType));
+        identifiers.add(new Identifier("//", "/"));
     }
 
     /**
@@ -31,6 +32,7 @@ public class EpisodeFormat {
      * <li>"<b>/L</b>": Means the main target language audience of the episode
      * <li>"<b>/T</b>": Means the type of translation
      * <li>"<b>/[</b>" or "<b>/]</b>": Covered in the last paragraph
+     * <li>"<b>//</b>": Means literally "/"
      * </ul><p>
      * If those identifiers are found in the given expression, they are
      * replaced by their respective meaning.<br>
