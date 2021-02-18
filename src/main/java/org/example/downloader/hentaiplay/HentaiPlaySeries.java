@@ -1,8 +1,8 @@
 package org.example.downloader.hentaiplay;
 
-import org.example.downloader.core.Series;
-import org.example.downloader.core.WebScrapers;
+import org.example.downloader.core.framework.Series;
 import org.example.downloader.utils.JSoupDriver;
+import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 

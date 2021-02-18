@@ -1,7 +1,7 @@
 package org.example.downloader.animetoast;
 
-import org.example.downloader.core.Downloader;
-import org.example.downloader.core.Series;
+import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.core.framework.Series;
 
 import java.net.MalformedURLException;
 import java.net.URL;

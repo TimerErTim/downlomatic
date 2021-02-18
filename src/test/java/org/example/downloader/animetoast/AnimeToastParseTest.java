@@ -1,7 +1,7 @@
 package org.example.downloader.animetoast;
 
-import org.example.downloader.core.WebScrapers;
 import org.example.downloader.utils.JSoupDriver;
+import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 

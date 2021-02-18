@@ -1,7 +1,7 @@
 package org.example.downloader.vivo;
 
-import org.example.downloader.core.Download;
-import org.example.downloader.core.WebScrapers;
+import org.example.downloader.core.download.Download;
+import org.example.downloader.utils.WebScrapers;
 
 import java.io.IOException;
 

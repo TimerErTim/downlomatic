@@ -1,9 +1,10 @@
 package org.example.downloader.hentaiplay;
 
-import org.example.downloader.core.Downloader;
-import org.example.downloader.core.EpisodeFormat;
-import org.example.downloader.core.WebScrapers;
+import org.example.downloader.core.format.EpisodeFormat;
+import org.example.downloader.core.format.EpisodeFormatBuilder;
+import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.utils.JSoupDriver;
+import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -40,7 +41,7 @@ public class HentaiPlayDownloader extends Downloader {
         JSoupDriver driver = WebScrapers.noJavaScript();
         driver.get(pageURL.toString());
         WebElement title = driver.findElement(By.className("entry-title"));
-        EpisodeFormat.EpisodeFormatGenerator formatGenerator = new EpisodeFormat.EpisodeFormatGenerator();
+        EpisodeFormatBuilder formatGenerator = new EpisodeFormatBuilder();
         String[] temp = title.getText().split(" Episode ");
         String seriesName = temp[0];
         temp = temp[1].split(" ");
@@ -48,7 +49,7 @@ public class HentaiPlayDownloader extends Downloader {
         String seasonNumber = temp[1];
         String episodeName = "Episode " + episodeNumber;
 
-        return new EpisodeFormat.EpisodeFormatGenerator().setEpisodeName(episodeName).setEpisodeNumber(episodeNumber).setSeriesName(seriesName).generate();
+        return new EpisodeFormatBuilder().setEpisodeName(episodeName).setEpisodeNumber(episodeNumber).setSeriesName(seriesName).generate();
     }
 
     @Override

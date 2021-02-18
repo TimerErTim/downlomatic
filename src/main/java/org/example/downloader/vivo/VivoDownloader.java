@@ -1,8 +1,8 @@
 package org.example.downloader.vivo;
 
-import org.example.downloader.core.Downloader;
-import org.example.downloader.core.EpisodeFormat;
-import org.example.downloader.core.WebScrapers;
+import org.example.downloader.core.format.EpisodeFormat;
+import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
