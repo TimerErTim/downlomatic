@@ -143,9 +143,14 @@ public abstract class Downloader {
      * It most likely requires some webscraping to form an {@code EpisodeFormat}.
      *
      * @return the EpisodeFormat of this Downloader
+     * @throws MalformedURLException if the EpisodeFormat could not be retrieved from
+     *                               given URL
      */
-    public EpisodeFormat generateEpisodeFormat() {
+    public EpisodeFormat generateEpisodeFormat() throws MalformedURLException {
         this.format = generateEpisodeFormatNotSetting();
+        if (format == null) {
+            throw new MalformedURLException(getInvalidVideoMessage());
+        }
         return format;
     }
 
@@ -158,8 +163,10 @@ public abstract class Downloader {
      * if the format hasn't yet been generated once.
      *
      * @return the EpisodeFormat
+     * @throws MalformedURLException if the EpisodeFormat could not be retrieved from
+     *                               given URL
      */
-    public EpisodeFormat getEpisodeFormat() {
+    public EpisodeFormat getEpisodeFormat() throws MalformedURLException {
         return (format != null ? format : generateEpisodeFormat());
     }
 
