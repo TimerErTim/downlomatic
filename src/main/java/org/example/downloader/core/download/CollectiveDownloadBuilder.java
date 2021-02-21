@@ -118,7 +118,7 @@ public class CollectiveDownloadBuilder {
      *                   everything else -> subdirectory with the given formatting
      */
     public void setFormatSubDir(String formatting) {
-        formatSubDir = Objects.requireNonNullElseGet(formatting, () -> (seriesSet.size() == 1 ? DEFAULT_FORMAT_SUBDIR.replaceAll(Pattern.quote("/S"), "") : DEFAULT_FORMAT_SUBDIR));
+        formatSubDir = Objects.requireNonNullElseGet(formatting, () -> (seriesSet.size() == 1 ? DEFAULT_FORMAT_SUBDIR.replaceFirst(Pattern.quote("/S"), "") : DEFAULT_FORMAT_SUBDIR));
     }
 
     /**
