@@ -17,7 +17,6 @@ public class CollectiveDownloadBuilder {
     private final static String DEFAULT_FORMAT_SUBDIR = "/S/[" + (File.separator.equals("/") ? "//" : File.separator) + "Season /s/]";
 
     private final Set<? extends Series> seriesSet;
-    private final Set<? extends Download> currentDownloads;
     private Set<? extends Downloader> downloaderSet; //TODO: Remove
 
     private int maxDownloads;
@@ -35,7 +34,6 @@ public class CollectiveDownloadBuilder {
      */
     public CollectiveDownloadBuilder(Set<? extends Series> seriesSet) {
         this.seriesSet = seriesSet;
-        this.currentDownloads = new HashSet<>();
         this.maxDownloads = maxDownloads;
         setFormatSubDir(null); //Generate Default for Subdirectory creation
         formatDownload = DEFAULT_FORMAT_DOWNLOAD;
