@@ -94,8 +94,11 @@ public class Download {
 
                 src.close();
                 dest.close();
-                paused = false;
-                return isFinished();
+                boolean finished = isFinished();
+                if (finished) {
+                    paused = false;
+                }
+                return finished;
             } catch (IOException e) {
                 if (!(e instanceof ClosedByInterruptException))
                     paused = true;
@@ -130,7 +133,6 @@ public class Download {
      */
     public boolean startParallel(Consumer<Boolean> actionAfterFinish) {
         if (parallel == null) {
-            downloaded = 0;
             parallel = new DownloadThread(this, (this.actionAfterFinish = actionAfterFinish));
             parallel.start();
             return true;
@@ -170,10 +172,10 @@ public class Download {
      */
     public boolean stop() {
         boolean returnValue = parallel != null;
-        paused = false;
         if (returnValue) {
             parallel.interrupt();
         }
+        paused = false;
         return returnValue;
     }
 
@@ -189,10 +191,10 @@ public class Download {
      */
     public boolean pause() {
         boolean returnValue = parallel != null;
-        paused = true;
         if (returnValue) {
             parallel.interrupt();
         }
+        paused = true;
         return returnValue;
     }
 
@@ -305,7 +307,7 @@ public class Download {
     }
 
     private void generateNewDestinationChannel() throws IOException {
-        if (!dest.isOpen()) {
+        if (dest == null || !dest.isOpen()) {
             dest = new FileOutputStream(destFile, true).getChannel();
         }
         dest.truncate(downloaded);
