@@ -169,10 +169,10 @@ public class Download {
      */
     public boolean stop() {
         boolean returnValue = parallel != null;
+        paused = false;
         if (returnValue) {
             parallel.interrupt();
         }
-        paused = false;
         return returnValue;
     }
 
@@ -188,10 +188,10 @@ public class Download {
      */
     public boolean pause() {
         boolean returnValue = parallel != null;
+        paused = true;
         if (returnValue) {
             parallel.interrupt();
         }
-        paused = true;
         return returnValue;
     }
 
@@ -339,7 +339,9 @@ public class Download {
         public void run() {
             boolean downloadSuccess = referenceDownload.startDownload();
 
-            actionAfterFinish.accept(downloadSuccess);
+            if (!referenceDownload.paused) {
+                actionAfterFinish.accept(downloadSuccess);
+            }
         }
     }
 }
