@@ -112,7 +112,7 @@ public abstract class Downloader {
             fileName = fileName.replaceAll(Pattern.quote("."), "") + "." + getDefaultFileExtension();
         }
         String fullPath = pathString + File.separator + fileName;
-        fullPath = fullPath.replaceAll(Pattern.quote(File.separator + File.separator), File.separator);
+        fullPath = fullPath.replaceAll(Pattern.quote(File.separator) + "+", File.separator);
 
         return generateVideoDownload(fullPath);
     }
