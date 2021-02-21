@@ -34,7 +34,7 @@ public class Launcher {
                 Set<Downloader> downloaders = new LinkedHashSet<>();
                 Set<Series> series = HentaiPlayPage.generateAllSeries();
 
-                CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder(series);
+                CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder("/home/timerertim/Downloads/", series);
                 //downloadManager.execute(path, format, maxDownloads);
             }
 

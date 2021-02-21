@@ -5,8 +5,8 @@ import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Series;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,26 +14,34 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollectiveDownload {
+    private final static long CHECK_INTERVAL = 500;
+
     private final Set<? extends Series> seriesSet;
+    private final String path, formatSubDir, formatDownload;
     private final int maxDownloads;
 
-    private final Set<Download> currentDownloads;
     private final Queue<Series> seriesQueue;
-    private final Queue<Downloader> downloadGenerateQueue;
-    private final Queue<Downloader> downloadAccessQueue;
+    private final Queue<Downloader> downloaderQueue;
+    private final Queue<Download> downloadQueue;
+    private final Map<Download, String> downloadNameMap;
+    private final Set<Download> currentDownloads;
 
     private final AtomicInteger finishedDownloads;
     private State state;
 
     private long slowModeDelay;
 
-    CollectiveDownload(Set<? extends Series> seriesSet, int maxDownloads) {
+    CollectiveDownload(Set<? extends Series> seriesSet, String path, String formatSubDir, String formatDownload, int maxDownloads) {
+        this.path = path;
+        this.formatSubDir = formatSubDir;
+        this.formatDownload = formatDownload;
         this.maxDownloads = maxDownloads;
         this.seriesSet = seriesSet;
-        this.currentDownloads = ConcurrentHashMap.newKeySet(maxDownloads);
         seriesQueue = new LinkedBlockingQueue<>();
-        downloadGenerateQueue = new LinkedBlockingQueue<>();
-        downloadAccessQueue = new LinkedBlockingQueue<>();
+        downloaderQueue = new LinkedBlockingQueue<>();
+        downloadQueue = new LinkedBlockingQueue<>();
+        downloadNameMap = new ConcurrentHashMap<>();
+        currentDownloads = ConcurrentHashMap.newKeySet(maxDownloads);
         finishedDownloads = new AtomicInteger();
         slowModeDelay = 0;
         state = State.IDLE;
@@ -42,135 +50,138 @@ public class CollectiveDownload {
     }
 
     //TODO: Implement download() with JavaDoc
+    @SuppressWarnings("BusyWait")
     public void download() {
         if (state == State.IDLE || state == State.PAUSED) {
             state = State.RUNNING;
 
-            Thread downloadGenerateThread = new Thread(() -> {
+            Thread downloaderParseThread = new Thread(() -> {
                 while (!seriesQueue.isEmpty() && !Thread.interrupted()) {
-                    Series series = seriesQueue.poll();
+                    Series series = seriesQueue.peek();
 
-                    if (series.isEmpty()) {
-                        try {
+                    try {
+                        if (series.isEmpty()) {
                             series.fillDownloaders();
-                            //noinspection BusyWait
                             Thread.sleep(slowModeDelay);
-                        } catch (MalformedURLException e) {
-                            System.out.println(e.getMessage());
+                        }
+                    } catch (MalformedURLException e) {
+                        System.out.println(e.getMessage());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } finally {
+                        for (Downloader downloader : series) {
+                            downloaderQueue.add(downloader);
+                        }
+                        seriesQueue.remove();
+                    }
+                }
+            });
+
+            Thread downloadParseThread = new Thread(() -> {
+                while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty())
+                        && !Thread.interrupted()) {
+                    if (downloaderQueue.isEmpty()) {
+                        try {
+                            Thread.sleep(CHECK_INTERVAL);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         }
-                    }
+                    } else {
+                        Downloader downloader = downloaderQueue.peek();
 
-                    for (Downloader downloader : series) {
-                        downloadGenerateQueue.add(downloader);
-                    }
-                }
-            });
-
-            Thread downloadAccessThread = new Thread(() -> {
-
-            });
-
-            long time = System.currentTimeMillis();
-            while (!(queued.isEmpty() && current.isEmpty())) {
-                synchronized (current) {
-                    if (current.size() < maxDownloads) {
-                        boolean validDownload = false;
-                        while (!validDownload) {
-                            Downloader downloader;
-                            synchronized (queued) {
-                                downloader = queued.poll();
-                            }
-
-                            EpisodeFormat episodeFormat;
-
-                            try (Download download = downloader.generateVideoDownload(path + File.separator + (episodeFormat = downloader.generateEpisodeFormat()).format("/S"), format)) {
-
-
-                                if (download != null) {
-                                    String formatted = episodeFormat.format(format);
-                                    synchronized (queued) {
-                                        queued.remove(downloader);
-                                        formatMap.put(download, formatted);
-
-                                        if (!download.isAlreadyDownloaded()) {
-                                            current.add(download);
-                                            validDownload = true;
-                                            Download finalDownload = download;
-                                            synchronized (System.out) {
-                                                System.out.println();
-                                            }
-                                            download.startParallel((success) -> {
-                                                synchronized (current) {
-                                                    synchronized (System.out) {
-                                                        System.out.print("\033[" + (current.size() - 1) + "A\033[2K\rDownload: " + formatMap.get(finalDownload) + (success ? " is finished!" : " failed"));
-                                                        System.out.print("\033[" + (current.size() - 1) + "B");
-                                                    }
-                                                    current.remove(finalDownload);
-                                                }
-                                                if (success) {
-                                                    synchronized (finished) {
-                                                        finished.getAndIncrement();
-                                                    }
-                                                    try {
-                                                        finalDownload.close();
-                                                    } catch (IOException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                } else {
-                                                    synchronized (queued) {
-                                                        queued.add(downloader);
-                                                    }
-                                                }
-                                            });
-                                        } else if (download.isAlreadyDownloaded()) {
-                                            synchronized (finished) {
-                                                finished.getAndIncrement();
-                                            }
-                                        }
-                                    }
-                                    download.close();
+                        if (downloader != null) {
+                            try {
+                                if (downloader.getVideoDownload() == null) {
+                                    Thread.sleep(slowModeDelay);
                                 }
-                            } catch (NullPointerException | IndexOutOfBoundsException | IOException e) {
-                                //System.out.print(downloader.pageURL + ": ");
-                                //e.printStackTrace();
+
+                                EpisodeFormat format = downloader.getEpisodeFormat();
+                                Download download = downloader.generateVideoDownload(path + File.separator + format.format(formatSubDir), formatDownload);
+                                downloadNameMap.put(download, format.format(formatDownload));
+                                downloadQueue.add(download);
+                            } catch (MalformedURLException e) {
+                                System.out.println(e.getMessage());
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            } finally {
+                                downloaderQueue.remove();
                             }
                         }
                     }
                 }
+            });
 
-                synchronized (current) {
-                    Download[] downloads = current.toArray(Download[]::new);
+            Thread downloadManageThread = new Thread(() -> {
+                currentDownloads.forEach((Download::startParallel));
+
+                while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty())
+                        && !Thread.interrupted()) {
+                    if (downloadQueue.isEmpty() || currentDownloads.size() >= maxDownloads) {
+                        try {
+                            Thread.sleep(CHECK_INTERVAL);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    } else {
+                        Download download = downloadQueue.peek();
+
+                        if (download != null) {
+                            if (download.isAlreadyDownloaded()) {
+                                finishedDownloads.getAndIncrement();
+                            } else {
+                                currentDownloads.add(download);
+                                System.out.println();
+                                download.startParallel((success) -> {
+                                    synchronized (currentDownloads) {
+                                        synchronized (System.out) {
+                                            System.out.print("\033[" + (currentDownloads.size() - 1) + "A\033[2K\rDownload: " + downloadNameMap.get(download) + (success ? " is finished!" : " failed"));
+                                            System.out.print("\033[" + (currentDownloads.size() - 1) + "B");
+                                        }
+                                    }
+
+                                    if (success) {
+                                        finishedDownloads.getAndIncrement();
+                                    } else {
+                                        downloadQueue.add(download);
+                                    }
+                                    currentDownloads.remove(download);
+                                });
+                            }
+                        }
+
+                        downloadQueue.remove();
+                    }
+                }
+            });
+
+            Thread downloadDisplayThread = new Thread(() -> {
+                while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty() && currentDownloads.isEmpty())
+                        && !Thread.interrupted()) {
+                    Download[] downloads = currentDownloads.toArray(Download[]::new);
 
                     synchronized (System.out) {
-
                         for (int i = 0; i < downloads.length; i++) {
                             if (i < 1) {
-                                System.out.print("\033[" + (current.size() - 1) + "A\033[2K\r");
+                                System.out.print("\033[" + (downloads.length - 1) + "A\033[2K\r");
                             } else {
                                 System.out.print("\033[" + 1 + "B\033[2K\r");
                             }
-                            System.out.print("Download: " + formatMap.get(downloads[i]) + " " + Math.round(((double) downloads[i].getDownloaded() / downloads[i].getSize()) * 1000D) / 10D + "%");
+                            System.out.print(downloadNameMap.get(downloads[i]) + ": " + Math.round(((double) downloads[i].getDownloaded() / downloads[i].getSize()) * 1000D) / 10D + "%");
                         }
-                        synchronized (finished) {
-                            System.out.print(" | " + finished + "/" + downloaderSet.size() + " Downloads Completed");
-                        }
+                        System.out.print(" | " + finishedDownloads + " Downloads Completed");
                     }
                 }
 
-                long diff = (System.currentTimeMillis() - time);
-                if (diff < 1000) {
-                    try {
-                        Thread.sleep(1000 - diff);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                if (seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty() && currentDownloads.isEmpty()) {
+                    System.out.println("Finished!");
+                    state = State.FINISHED;
                 }
-                time = System.currentTimeMillis();
-            }
+            });
 
-            System.out.println("Finished!");
+            downloaderParseThread.start();
+            downloadParseThread.start();
+            downloadManageThread.start();
+            downloadDisplayThread.start();
         }
     }
 
