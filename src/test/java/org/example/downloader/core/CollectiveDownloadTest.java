@@ -1,5 +1,6 @@
 package org.example.downloader.core;
 
+import org.example.downloader.core.download.CollectiveDownloadBuilder;
 import org.example.downloader.hentaiplay.HentaiPlaySeries;
 import org.example.downloader.utils.WebScrapers;
 
@@ -12,6 +13,7 @@ public class CollectiveDownloadTest {
         WebScrapers.initialize();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
 
-        //CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder(series);
+        CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder("/home/timerertim/Downloads/", series);
+        downloadManager.execute();
     }
 }
