@@ -28,6 +28,7 @@ public class Download {
     private boolean paused;
 
     private Thread parallel;
+    private Consumer<Boolean> actionAfterFinish;
 
     /**
      * Creates a download based on parameters.
@@ -130,7 +131,7 @@ public class Download {
     public boolean startParallel(Consumer<Boolean> actionAfterFinish) {
         if (parallel == null) {
             downloaded = 0;
-            parallel = new DownloadThread(this, actionAfterFinish);
+            parallel = new DownloadThread(this, (this.actionAfterFinish = actionAfterFinish));
             parallel.start();
             return true;
         } else {
@@ -153,8 +154,9 @@ public class Download {
      * @return a boolean representing the successfulness of starting a parallel download.
      */
     public boolean startParallel() {
-        return startParallel((b) -> {
-        });
+        return startParallel((paused ? actionAfterFinish
+                : b -> {
+        }));
     }
 
     /**
