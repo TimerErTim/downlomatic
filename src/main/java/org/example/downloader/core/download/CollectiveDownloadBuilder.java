@@ -9,7 +9,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
-//TODO: Implement with good quality (right now only to get alpha release)
 public class CollectiveDownloadBuilder {
     private final static String DEFAULT_FORMAT_DOWNLOAD = "/S - /[S/sE/e /[/E/]/]/[/!sEpisode /e/]";
     private final static String DEFAULT_FORMAT_SUBDIR = "/S/[" + (File.separator.equals("/") ? "//" : File.separator) + "Season /s/]";
@@ -76,7 +75,7 @@ public class CollectiveDownloadBuilder {
     }
 
     /**
-     * Builds a immutable {@code CollectiveDownload} object which can be used to download
+     * Builds a immutable {@code CollectiveDownload} object, which can be used to download
      * multiple files in a simple manner.
      *
      * @return a new {@code CollectiveDownload}
@@ -86,7 +85,10 @@ public class CollectiveDownloadBuilder {
     }
 
     /**
-     * @return
+     * Builds a immutable {@code CollectiveDownload} object, which can be used to download
+     * multiple files in a simple manner, and starts it.
+     *
+     * @return a new started {@code CollectiveDownload}
      */
     public CollectiveDownload execute() {
         CollectiveDownload download = build();
