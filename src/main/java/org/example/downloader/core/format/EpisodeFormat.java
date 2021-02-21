@@ -62,7 +62,7 @@ public class EpisodeFormat {
      * @return a formatted String representation of an episode
      */
     public String format(String expression) {
-        final String regex = "\\/\\[(?<content>[^\\/]+[^\\[\\]]*?)\\/\\]";
+        final String regex = "\\/\\[(?<content>[^\\[\\]]*?)\\/\\]";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
 
         Matcher matcher = pattern.matcher(expression);
