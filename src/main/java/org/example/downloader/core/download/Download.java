@@ -219,7 +219,7 @@ public class Download {
      * @return true if download is finished
      */
     public boolean isFinished() {
-        return downloaded == size;
+        return getDownloaded() == size;
     }
 
     /**
@@ -242,7 +242,8 @@ public class Download {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        return (isFinished() ? downloaded : ((src != null ? src.getTotalByteRead() : 0) + downloaded) % size);
+        long currentDownloaded = ((src != null ? src.getTotalByteRead() : 0) + downloaded);
+        return (currentDownloaded == size ? currentDownloaded : downloaded % size);
     }
 
     /**
