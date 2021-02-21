@@ -154,8 +154,7 @@ public class Download {
      * @return a boolean representing the successfulness of starting a parallel download.
      */
     public boolean startParallel() {
-        return startParallel((paused ? actionAfterFinish
-                : b -> {
+        return startParallel((paused ? actionAfterFinish : b -> {
         }));
     }
 
