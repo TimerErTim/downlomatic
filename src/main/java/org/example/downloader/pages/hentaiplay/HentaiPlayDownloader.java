@@ -46,10 +46,21 @@ public class HentaiPlayDownloader extends Downloader {
         String seriesName = temp[0];
         temp = temp[1].split(" ");
         String episodeNumber = temp[0];
-        String seasonNumber = temp[1];
-        String episodeName = "Episode " + episodeNumber;
+        String language;
+        String translationType = null;
+        if (temp.length > 1 && temp[1].equals("English")) {
+            language = temp[1];
+            translationType = "Sub";
+        } else {
+            language = "Japanese";
+        }
 
-        return new EpisodeFormatBuilder().setEpisodeName(episodeName).setEpisodeNumber(episodeNumber).setSeriesName(seriesName).generate();
+        return new EpisodeFormatBuilder().
+                setEpisodeNumber(episodeNumber).
+                setSeriesName(seriesName).
+                setLanguage(language).
+                setTranslationType(translationType).
+                build();
     }
 
     @Override
