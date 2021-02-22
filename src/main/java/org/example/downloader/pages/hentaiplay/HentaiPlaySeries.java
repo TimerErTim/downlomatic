@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 public class HentaiPlaySeries extends Series {
-
     /**
      * Creates a HentaiPlaySeries Object from the URL.
      *
