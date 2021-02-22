@@ -6,12 +6,12 @@ import org.example.downloader.core.framework.Series;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CollectiveDownload {
     private final static long CHECK_INTERVAL = 500;
@@ -23,13 +23,15 @@ public class CollectiveDownload {
     private final Queue<Series> seriesQueue;
     private final Queue<Downloader> downloaderQueue;
     private final Queue<Download> downloadQueue;
-    private final Map<Download, String> downloadNameMap;
     private final Set<Download> currentDownloads;
-
     private final AtomicInteger finishedDownloads;
-    private State state;
+    private final AtomicLong slowModeDelay;
+    private Thread downloaderParseThread;
+    private Thread downloadParseThread;
+    private Thread downloadManageThread;
 
-    private long slowModeDelay;
+    private State state;
+    private Thread downloadDisplayThread;
 
     CollectiveDownload(Set<? extends Series> seriesSet, String path, String formatSubDir, String formatDownload, int maxDownloads) {
         this.path = path;
@@ -40,32 +42,36 @@ public class CollectiveDownload {
         seriesQueue = new LinkedBlockingQueue<>();
         downloaderQueue = new LinkedBlockingQueue<>();
         downloadQueue = new LinkedBlockingQueue<>();
-        downloadNameMap = new ConcurrentHashMap<>();
         currentDownloads = ConcurrentHashMap.newKeySet(maxDownloads);
         finishedDownloads = new AtomicInteger();
-        slowModeDelay = 0;
+        slowModeDelay = new AtomicLong();
         state = State.IDLE;
 
         seriesQueue.addAll(seriesSet);
     }
 
-    //TODO: Implement download() with JavaDoc
+    /**
+     * Downloads every single possible file in this {@code CollectiveDownload}.
+     * <p>
+     * This method is not blocking and can only be started if the {@code CollectiveDownload}
+     * is {@link State#IDLE} or {@link State#PAUSED}.
+     */
     @SuppressWarnings("BusyWait")
     public void download() {
         if (state == State.IDLE || state == State.PAUSED) {
             state = State.RUNNING;
 
-            Thread downloaderParseThread = new Thread(() -> {
+            downloaderParseThread = new Thread(() -> {
                 while (!seriesQueue.isEmpty() && !Thread.interrupted()) {
                     Series series = seriesQueue.peek();
 
                     try {
                         if (series.isEmpty()) {
                             series.fillDownloaders();
-                            Thread.sleep(slowModeDelay);
+                            Thread.sleep(slowModeDelay.get());
                         }
                     } catch (MalformedURLException e) {
-                        System.out.println(e.getMessage());
+                        System.out.println("\n" + e.getMessage());
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     } finally {
@@ -77,7 +83,7 @@ public class CollectiveDownload {
                 }
             });
 
-            Thread downloadParseThread = new Thread(() -> {
+            downloadParseThread = new Thread(() -> {
                 while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty())
                         && !Thread.interrupted()) {
                     if (downloaderQueue.isEmpty()) {
@@ -92,15 +98,14 @@ public class CollectiveDownload {
                         if (downloader != null) {
                             try {
                                 if (downloader.getVideoDownload() == null) {
-                                    Thread.sleep(slowModeDelay);
+                                    Thread.sleep(slowModeDelay.get());
                                 }
 
                                 EpisodeFormat format = downloader.getEpisodeFormat();
                                 Download download = downloader.generateVideoDownload(path + File.separator + format.format(formatSubDir), formatDownload);
-                                downloadNameMap.put(download, format.format(formatDownload));
                                 downloadQueue.add(download);
                             } catch (MalformedURLException e) {
-                                System.out.println(e.getMessage());
+                                System.out.println("\n" + e.getMessage());
                             } catch (InterruptedException e) {
                                 Thread.currentThread().interrupt();
                             } finally {
@@ -111,7 +116,7 @@ public class CollectiveDownload {
                 }
             });
 
-            Thread downloadManageThread = new Thread(() -> {
+            downloadManageThread = new Thread(() -> {
                 currentDownloads.forEach((Download::startParallel));
 
                 while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty())
@@ -134,17 +139,15 @@ public class CollectiveDownload {
                                 download.startParallel((success) -> {
                                     synchronized (currentDownloads) {
                                         synchronized (System.out) {
-                                            System.out.print("\033[" + (currentDownloads.size() - 1) + "A\033[2K\rDownload: " + downloadNameMap.get(download) + (success ? " is finished!" : " failed"));
+                                            System.out.print("\033[" + (currentDownloads.size() - 1) + "A\033[2K\rDownload: " + download.getFileName() + (success ? " is finished!" : " failed"));
                                             System.out.print("\033[" + (currentDownloads.size() - 1) + "B");
+                                            currentDownloads.remove(download);
                                         }
                                     }
 
                                     if (success) {
                                         finishedDownloads.getAndIncrement();
-                                    } else {
-                                        downloadQueue.add(download);
                                     }
-                                    currentDownloads.remove(download);
                                 });
                             }
                         }
@@ -154,26 +157,34 @@ public class CollectiveDownload {
                 }
             });
 
-            Thread downloadDisplayThread = new Thread(() -> {
+            downloadDisplayThread = new Thread(() -> {
                 while (!(seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty() && currentDownloads.isEmpty())
                         && !Thread.interrupted()) {
-                    Download[] downloads = currentDownloads.toArray(Download[]::new);
 
                     synchronized (System.out) {
+                        Download[] downloads = currentDownloads.toArray(Download[]::new);
                         for (int i = 0; i < downloads.length; i++) {
                             if (i < 1) {
                                 System.out.print("\033[" + (downloads.length - 1) + "A\033[2K\r");
                             } else {
                                 System.out.print("\033[" + 1 + "B\033[2K\r");
                             }
-                            System.out.print(downloadNameMap.get(downloads[i]) + ": " + Math.round(((double) downloads[i].getDownloaded() / downloads[i].getSize()) * 1000D) / 10D + "%");
+                            System.out.print(downloads[i].getFileName() + ": " + Math.round(((double) downloads[i].getDownloaded() / downloads[i].getSize()) * 1000D) / 10D + "%");
+                            if (i == downloads.length - 1) {
+                                System.out.print(" | " + finishedDownloads + " Downloads Completed");
+                            }
                         }
-                        System.out.print(" | " + finishedDownloads + " Downloads Completed");
+                    }
+
+                    try {
+                        Thread.sleep(CHECK_INTERVAL);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
 
                 if (seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty() && currentDownloads.isEmpty()) {
-                    System.out.println("Finished!");
+                    System.out.println("\nFinished!");
                     state = State.FINISHED;
                 }
             });
@@ -185,14 +196,63 @@ public class CollectiveDownload {
         }
     }
 
-    //TODO: Implement stop() with JavaDoc
+    /**
+     * Stops the currently running {@code CollectiveDownload}.
+     * <p>
+     * This method is blocking until all background {@code Thread}s were
+     * terminated. Has no effect if this {@code CollectiveDownload} is
+     * not running. The {@link State} of this {@code CollectiveDownload}
+     * can not be changed after invoking this method by invoking {@link CollectiveDownload#pause()}.
+     */
     public void stop() {
+        if (state == State.RUNNING) {
+            pause();
 
+            for (Download download : currentDownloads) {
+                download.stop();
+            }
+
+            currentDownloads.clear();
+            downloadQueue.clear();
+            downloaderQueue.clear();
+            seriesQueue.clear();
+            seriesQueue.addAll(seriesSet);
+            finishedDownloads.set(0);
+
+            state = State.IDLE;
+        }
     }
 
-    //TODO: Implement pause() with JavaDoc
+    /**
+     * Pauses the currently running {@code CollectiveDownload}.
+     * <p>
+     * This method is blocking until all background {@code Thread}s were
+     * terminated. Has no effect if this {@code CollectiveDownload} is
+     * not running. The {@link State} of this {@code CollectiveDownload}
+     * can not be changed after invoking this method by invoking {@link CollectiveDownload#stop()}.
+     */
     public void pause() {
+        if (state == State.RUNNING) {
+            downloadDisplayThread.interrupt();
+            downloadManageThread.interrupt();
+            downloadParseThread.interrupt();
+            downloaderParseThread.interrupt();
 
+            try {
+                downloadDisplayThread.join();
+                downloadManageThread.join();
+                downloadParseThread.join();
+                downloaderParseThread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            for (Download download : currentDownloads) {
+                download.pause();
+            }
+
+            state = State.PAUSED;
+        }
     }
 
     /**
@@ -208,9 +268,9 @@ public class CollectiveDownload {
      */
     public void setSlowModeDelay(long slowModeDelay) {
         if (slowModeDelay >= 0)
-            this.slowModeDelay = slowModeDelay;
+            this.slowModeDelay.set(slowModeDelay);
         else {
-            this.slowModeDelay = 0;
+            this.slowModeDelay.set(0);
         }
     }
 
@@ -224,8 +284,8 @@ public class CollectiveDownload {
      * The default interval is once every 500ms.
      */
     public void enableSlowMode() {
-        if (this.slowModeDelay <= 0) {
-            this.slowModeDelay = 500;
+        if (this.slowModeDelay.get() <= 0) {
+            this.slowModeDelay.set(500);
         }
     }
 
@@ -235,7 +295,7 @@ public class CollectiveDownload {
      * For more information consult {@link CollectiveDownload#enableSlowMode()}.
      */
     public void disableSlowMode() {
-        this.slowModeDelay = 0;
+        this.slowModeDelay.set(0);
     }
 
     /**
