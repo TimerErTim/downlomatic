@@ -243,7 +243,7 @@ public class Download {
      */
     public long getDownloaded() {
         long currentDownloaded = ((src != null ? src.getTotalByteRead() : 0) + downloaded);
-        return (currentDownloaded == size ? currentDownloaded : downloaded % size);
+        return (currentDownloaded == size ? currentDownloaded : currentDownloaded % size);
     }
 
     /**
