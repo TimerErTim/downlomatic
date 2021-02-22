@@ -10,7 +10,7 @@ public class EpisodeFormatBuilder {
 
     /**
      * Generates a EpisodeFormatBuilder. It's only
-     * purpose is to generate a non mutable EpisodeFormat.
+     * purpose is to build a non mutable EpisodeFormat.
      *
      * @param seriesName    the series' name
      * @param seasonNumber  the number of the season
@@ -29,7 +29,7 @@ public class EpisodeFormatBuilder {
 
     /**
      * Generates a EpisodeFormatBuilder. It's only
-     * purpose is to generate a non mutable EpisodeFormat.
+     * purpose is to build a non mutable EpisodeFormat.
      */
     public EpisodeFormatBuilder() {
         this(null, null, null, null, null, null);
@@ -107,7 +107,7 @@ public class EpisodeFormatBuilder {
      *
      * @return a final EpisodeFormat
      */
-    public EpisodeFormat generate() {
+    public EpisodeFormat build() {
         return new EpisodeFormat(seriesName, seasonNumber, episodeNumber, episodeName, language, translationType);
     }
 }
