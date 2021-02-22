@@ -1,8 +1,10 @@
 package org.example.downloader.pages.hentaiplay;
 
+import javafx.util.Pair;
 import org.example.downloader.core.format.EpisodeFormat;
 import org.example.downloader.core.format.EpisodeFormatBuilder;
 import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.core.framework.Page;
 import org.example.downloader.utils.JSoupDriver;
 import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
@@ -14,20 +16,17 @@ import java.util.List;
 
 public class HentaiPlayDownloader extends Downloader {
     /**
-     * Creates a HentaiPlayDownloader Object from the URL.
+     * Creates a {@code HentaiPlayDownloader} object from the URL.
      *
      * @param hpURL the URL
-     * @throws MalformedURLException the the exception that is thrown if the URL is no HentaiPlay site
+     * @throws MalformedURLException the exception that is thrown if the URL is no HentaiPlay site
      */
     public HentaiPlayDownloader(URL hpURL) throws MalformedURLException {
         super(hpURL);
-        if (!HentaiPlayPage.isHentaiPlayPage(hpURL)) {
-            throw new MalformedURLException("URL " + pageURL + " is no URL leading to a hentaiplay.net video");
-        }
     }
 
     /**
-     * Creates a HentaiPlayerDownloader Object from the String.
+     * Creates a {@code HentaiPlayDownloader} object from the String.
      *
      * @param hpURLString the String representing URL to HentaiPlay site
      * @throws MalformedURLException the exception that is thrown if the URL is no HentaiPlay site
@@ -37,55 +36,52 @@ public class HentaiPlayDownloader extends Downloader {
     }
 
     @Override
-    protected EpisodeFormat generateEpisodeFormatNotSetting() {
+    protected Pair<URL, EpisodeFormat> parseDownloader(URL pageURL) {
+        EpisodeFormat format;
+        URL url = null;
+
         JSoupDriver driver = WebScrapers.noJavaScript();
         driver.get(pageURL.toString());
+
+        // Parse EpisodeFormat
+        EpisodeFormatBuilder builder = new EpisodeFormatBuilder();
         WebElement title = driver.findElement(By.className("entry-title"));
-        EpisodeFormatBuilder formatGenerator = new EpisodeFormatBuilder();
         String[] temp = title.getText().split(" Episode ");
-        String seriesName = temp[0];
+        builder.setSeriesName(temp[0]);
         temp = temp[1].split(" ");
-        String episodeNumber = temp[0];
-        String language;
-        String translationType = null;
+        builder.setEpisodeNumber(temp[0]);
         if (temp.length > 1 && temp[1].equals("English")) {
-            language = temp[1];
-            translationType = "Sub";
+            builder.setLanguage(temp[1]);
+            builder.setTranslationType("Sub");
         } else {
-            language = "Japanese";
+            builder.setLanguage("Japanese");
         }
+        format = builder.build();
 
-        return new EpisodeFormatBuilder().
-                setEpisodeNumber(episodeNumber).
-                setSeriesName(seriesName).
-                setLanguage(language).
-                setTranslationType(translationType).
-                build();
-    }
-
-    @Override
-    protected URL generateVideoDownloadURL() {
-        JSoupDriver driver = WebScrapers.noJavaScript();
-        driver.get(pageURL.toString());
-
+        // Parse Video URL
         List<WebElement> elements = driver.findElements(By.id("my-video"));
         elements.addAll(driver.findElements(By.id("my_video_1")));
         for (WebElement element : elements) {
             WebElement source = element.findElement(By.tagName("source"));
             if (source != null && (source.getAttribute("src").startsWith("https://hentaiplanet.info/") || source.getAttribute("src").startsWith("https://openload.co/embed/"))) {
                 try {
-                    return new URL(source.getAttribute("src"));
-                } catch (MalformedURLException e) {
-                    return null;
+                    url = new URL(source.getAttribute("src"));
+                    break;
+                } catch (MalformedURLException ignored) {
                 }
             }
         }
 
-        return null;
+        return new Pair<>(url, format);
     }
 
     @Override
-    protected String getInvalidVideoMessage() {
-        return "URL \"" + pageURL + "\" is no valid video on hentaiplay.net";
+    protected boolean isValidVideoURL(URL url) {
+        return page.isValidPageURL(url);
+    }
+
+    @Override
+    protected Page getPage() {
+        return HentaiPlayPage.PAGE;
     }
 }

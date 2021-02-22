@@ -1,6 +1,8 @@
 package org.example.downloader.pages.animetoast;
 
+import javafx.util.Pair;
 import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.core.framework.Page;
 import org.example.downloader.core.framework.Series;
 
 import java.net.MalformedURLException;
@@ -9,21 +11,27 @@ import java.util.Set;
 
 public class AnimeToastSeries extends Series {
     //TODO: Implement
-    public AnimeToastSeries(URL seriesURL) throws MalformedURLException {
+
+    protected AnimeToastSeries(URL seriesURL) throws MalformedURLException {
         super(seriesURL);
     }
 
-    public AnimeToastSeries(String seriesURLString) throws MalformedURLException {
+    protected AnimeToastSeries(String seriesURLString) throws MalformedURLException {
         super(seriesURLString);
     }
 
     @Override
-    protected Set<? extends Downloader> generateEpisodeDownloaders() {
+    protected Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL) {
         return null;
     }
 
     @Override
-    public String getInvalidSeriesMessage() {
+    protected boolean isValidSeriesURL(URL seriesURL) {
+        return false;
+    }
+
+    @Override
+    protected Page getPage() {
         return null;
     }
 }

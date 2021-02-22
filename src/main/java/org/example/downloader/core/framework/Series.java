@@ -1,5 +1,7 @@
 package org.example.downloader.core.framework;
 
+import javafx.util.Pair;
+
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -12,16 +14,60 @@ import java.util.Set;
  * and useful methods.
  */
 public abstract class Series implements Iterable<Downloader> {
-    protected final URL seriesURL;
+    protected final Page page;
+    private final URL seriesURL;
     private final Set<Downloader> downloaders;
+    private String name;
 
-    protected Series(URL seriesURL) {
+    protected Series(URL seriesURL) throws MalformedURLException {
         this.seriesURL = seriesURL;
         this.downloaders = new LinkedHashSet<>();
+        this.name = "";
+        this.page = getPage();
+        if (!isValidSeriesURL(seriesURL)) {
+            throw new MalformedURLException("URL " + seriesURL + " is no URL leading to a " + page.getPageDomain() + " episode list");
+        }
     }
 
     protected Series(String seriesURLString) throws MalformedURLException {
         this(new URL(seriesURLString));
+    }
+
+    /**
+     * Returns a {@code Series} object containing the given downloaders
+     * and name.
+     * <p>
+     * Not that the resulting instance will neither have a source URL
+     * nor a {@link Page} to reference to.
+     * <p>
+     * If any complications occur, which really shouldn't happen, null is
+     * returned instead.
+     *
+     * @param downloaders the {@code Set} of {@code Downloader}s
+     * @param name        the name (refer to {@link Series#getName()})
+     * @return an anonymous {@code Series} instance or null if that is not possible
+     */
+    public static Series custom(Set<? extends Downloader> downloaders, String name) {
+        try {
+            return new Series((URL) null) {
+                @Override
+                protected Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL) {
+                    return new Pair<>(downloaders, name);
+                }
+
+                @Override
+                protected boolean isValidSeriesURL(URL seriesURL) {
+                    return true;
+                }
+
+                @Override
+                protected Page getPage() {
+                    return null;
+                }
+            };
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 
     /**
@@ -45,18 +91,21 @@ public abstract class Series implements Iterable<Downloader> {
      * Generates a List of Downloaders, each one leading to one episode
      * of this Series. The List is accessible through {@link Series#iterator()}.
      * <p>
-     * Each call of this method freshly generates Downloader objects.
+     * Each call of this method freshly generates Downloader objects. It also parses
+     * this Series name from the WebSite.
      *
      * @throws MalformedURLException error when referring to a page without a valid series.
      */
     public void generateDownloaders() throws MalformedURLException {
         downloaders.clear();
-        Set<? extends Downloader> collection = generateEpisodeDownloaders();
-        if (collection.isEmpty()) {
+        Pair<Set<? extends Downloader>, String> params = parseSeries(seriesURL);
+        Set<? extends Downloader> collection;
+        if (params == null || (collection = params.getKey()) == null) {
             throw new MalformedURLException(getInvalidSeriesMessage());
         } else {
             downloaders.addAll(collection);
         }
+        name = (params.getValue() != null ? params.getValue() : "");
     }
 
     /**
@@ -75,7 +124,18 @@ public abstract class Series implements Iterable<Downloader> {
         return downloaders.isEmpty();
     }
 
-    protected abstract Set<? extends Downloader> generateEpisodeDownloaders();
+    /**
+     * Returns the name of this {@code Series} object.
+     * <p>
+     * The name is only indented for use in graphics application and
+     * doesn't change the framework behavior. May be used to your likings
+     * however.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * Gets the error message when the Series can't find a
@@ -83,7 +143,15 @@ public abstract class Series implements Iterable<Downloader> {
      *
      * @return the error message
      */
-    protected abstract String getInvalidSeriesMessage();
+    protected String getInvalidSeriesMessage() {
+        return "URL \"" + seriesURL + "\" is no valid series on " + page.getPageDomain();
+    }
+
+    protected abstract Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL);
+
+    protected abstract boolean isValidSeriesURL(URL seriesURL);
+
+    protected abstract Page getPage();
 
     @Override
     @Nonnull

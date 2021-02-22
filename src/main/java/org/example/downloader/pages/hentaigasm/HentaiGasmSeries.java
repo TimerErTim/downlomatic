@@ -1,9 +1,10 @@
-package org.example.downloader.pages.hentaiplay;
+package org.example.downloader.pages.hentaigasm;
 
 import javafx.util.Pair;
 import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Page;
 import org.example.downloader.core.framework.Series;
+import org.example.downloader.pages.hentaiplay.HentaiPlayDownloader;
 import org.example.downloader.utils.JSoupDriver;
 import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
@@ -14,25 +15,26 @@ import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-public class HentaiPlaySeries extends Series {
+public class HentaiGasmSeries extends Series {
     /**
-     * Creates a {@code HentaiPlaySeries} object from the URL.
+     * Creates a {@code HentaiGasmSeries} object from the URL.
      *
      * @param seriesURL the URL
-     * @throws MalformedURLException the the exception that is thrown if the URL is no valid HentaiPlay site
+     * @throws MalformedURLException the the exception that is thrown if the URL is no valid HentaiGasm site
      */
-    public HentaiPlaySeries(URL seriesURL) throws MalformedURLException {
+    protected HentaiGasmSeries(URL seriesURL) throws MalformedURLException {
         super(seriesURL);
     }
 
     /**
-     * Creates a {@code HentaiPlaySeries} object from the String.
+     * Creates a {@code HentaiGasmSeries} object from the URL.
      *
-     * @param seriesURLString the String representing URL to HentaiPlay site
-     * @throws MalformedURLException the exception that is thrown if the URL is no HentaiPlay site
+     * @param seriesURLString the String representing URL to HentaiGasm site
+     * @throws MalformedURLException the the exception that is thrown if the URL is no valid HentaiGasm site
      */
-    public HentaiPlaySeries(String seriesURLString) throws MalformedURLException {
+    protected HentaiGasmSeries(String seriesURLString) throws MalformedURLException {
         super(seriesURLString);
     }
 
@@ -46,7 +48,7 @@ public class HentaiPlaySeries extends Series {
 
         // Find name
         try {
-            name = driver.findElement(By.className("loop-title")).getText();
+            name = driver.findElement(By.className("loop-title")).getText().replaceFirst(Pattern.quote("Hentai: "), "");
         } catch (NullPointerException ex) {
             name = null;
         }
@@ -68,11 +70,12 @@ public class HentaiPlaySeries extends Series {
 
     @Override
     protected boolean isValidSeriesURL(URL seriesURL) {
-        return page.isValidPageURL(seriesURL) && seriesURL.toString().contains("/episode-list/");
+        return page.isValidPageURL(seriesURL) && seriesURL.toString().contains(page.getPageDomain() + "/hentai/");
     }
 
     @Override
     protected Page getPage() {
-        return HentaiPlayPage.PAGE;
+        return HentaiGasmPage.PAGE;
     }
+
 }

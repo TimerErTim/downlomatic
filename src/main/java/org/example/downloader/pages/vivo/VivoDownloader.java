@@ -1,8 +1,10 @@
 package org.example.downloader.pages.vivo;
 
+import javafx.util.Pair;
 import org.example.downloader.core.format.EpisodeFormat;
 import org.example.downloader.core.format.EpisodeFormatBuilder;
 import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.core.framework.Page;
 import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -22,9 +24,6 @@ public class VivoDownloader extends Downloader {
      */
     public VivoDownloader(URL pageURL) throws MalformedURLException {
         super(pageURL);
-        if (!(pageURL.toString().startsWith("https://vivo.sx/") && pageURL.toString().length() == "https://vivo.sx/".length() + 10)) {
-            throw new MalformedURLException("URL \"" + pageURL + "\" is no URL leading to a vivo.sx video");
-        }
     }
 
     /**
@@ -38,12 +37,10 @@ public class VivoDownloader extends Downloader {
     }
 
     @Override
-    protected EpisodeFormat generateEpisodeFormatNotSetting() {
-        return new EpisodeFormatBuilder().build();
-    }
+    protected Pair<URL, EpisodeFormat> parseDownloader(URL pageURL) {
+        EpisodeFormat format = new EpisodeFormatBuilder().build();
+        URL url = null;
 
-    @Override
-    protected URL generateVideoDownloadURL() {
         WebDriver driver = WebScrapers.javaScript();
         driver.get(pageURL.toString());
 
@@ -58,20 +55,25 @@ public class VivoDownloader extends Downloader {
 
             try {
                 if (source != null && source.startsWith("https://node--") && source.contains("vivo.sx")) {
-                    return new URL(source);
+                    url = new URL(source);
                 } else if ((source = video.getAttribute("src")) != null && source.startsWith("https://node--") && source.contains("vivo.sx")) {
-                    return new URL(source);
+                    url = new URL(source);
                 }
             } catch (MalformedURLException e) {
-                return null;
+                url = null;
             }
         }
 
-        return null;
+        return new Pair<>(url, format);
     }
 
     @Override
-    protected String getInvalidVideoMessage() {
-        return "URL \"" + pageURL + "\" is no valid video on vivo.sx";
+    protected boolean isValidVideoURL(URL url) {
+        return page.isValidPageURL(url) && url.toString().length() == "https://vivo.sx/".length() + 10;
+    }
+
+    @Override
+    protected Page getPage() {
+        return VivoPage.PAGE;
     }
 }

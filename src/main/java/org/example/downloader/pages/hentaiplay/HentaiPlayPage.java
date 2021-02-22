@@ -1,6 +1,6 @@
 package org.example.downloader.pages.hentaiplay;
 
-import org.example.downloader.core.framework.PageManager;
+import org.example.downloader.core.framework.Host;
 import org.example.downloader.core.framework.Series;
 import org.example.downloader.utils.JSoupDriver;
 import org.example.downloader.utils.WebScrapers;
@@ -13,11 +13,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class HentaiPlayPage extends PageManager {
+public class HentaiPlayPage extends Host {
+    public static final HentaiPlayPage PAGE = new HentaiPlayPage();
+
     private static Set<Series> allSeries;
 
-    public static boolean isHentaiPlayPage(URL url) {
+    @Override
+    public boolean isValidPageURL(URL url) {
         return url.toString().startsWith("https://hentaiplay.net/");
+    }
+
+    @Override
+    public String getPageDomain() {
+        return "hentaiplay.net";
     }
 
     /**
@@ -52,9 +60,5 @@ public class HentaiPlayPage extends PageManager {
         }
 
         return allSeries;
-    }
-
-    public Series provideSeries() throws MalformedURLException {
-        return null;
     }
 }

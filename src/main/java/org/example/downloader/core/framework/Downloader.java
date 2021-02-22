@@ -1,6 +1,7 @@
 package org.example.downloader.core.framework;
 
 import com.google.common.io.Files;
+import javafx.util.Pair;
 import org.example.downloader.core.download.Download;
 import org.example.downloader.core.format.EpisodeFormat;
 
@@ -12,14 +13,20 @@ import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 
 public abstract class Downloader {
-    protected final URL pageURL;
+    protected final Page page;
+    private final URL pageURL;
     private EpisodeFormat format;
     private Download download;
     private URL videoURL;
 
-    protected Downloader(URL pageURL) {
+    protected Downloader(URL pageURL) throws MalformedURLException {
         this.pageURL = pageURL;
+        page = getPage();
+        if (!isValidVideoURL(pageURL)) {
+            throw new MalformedURLException("URL \"" + pageURL + "\" is no URL leading to a " + page.getPageDomain() + " video");
+        }
     }
+
 
     protected Downloader(String pageURLString) throws MalformedURLException {
         this(new URL(pageURLString));
@@ -32,8 +39,9 @@ public abstract class Downloader {
      *
      * @return the newly generated {@code URL}
      */
-    public URL generateVideoURL() {
-        return (videoURL = generateVideoDownloadURL());
+    public URL generateVideoURL() throws MalformedURLException {
+        setDownloader();
+        return videoURL;
     }
 
     /**
@@ -147,10 +155,7 @@ public abstract class Downloader {
      *                               given URL
      */
     public EpisodeFormat generateEpisodeFormat() throws MalformedURLException {
-        this.format = generateEpisodeFormatNotSetting();
-        if (format == null) {
-            throw new MalformedURLException(getInvalidVideoMessage());
-        }
+        setDownloader();
         return format;
     }
 
@@ -170,19 +175,30 @@ public abstract class Downloader {
         return (format != null ? format : generateEpisodeFormat());
     }
 
-    protected String getDefaultFileExtension() {
-        return "mp4";
-    }
-
-    protected abstract URL generateVideoDownloadURL();
-
-    protected abstract EpisodeFormat generateEpisodeFormatNotSetting();
-
     /**
      * Gets the error message when the Downloader can't find a
      * downloadable video on tbe specified page.
      *
      * @return the error message
      */
-    protected abstract String getInvalidVideoMessage();
+    protected String getInvalidVideoMessage() {
+        return "URL \"" + pageURL + "\" is no valid video on " + page.getPageDomain();
+    }
+
+    protected String getDefaultFileExtension() {
+        return "mp4";
+    }
+
+    protected abstract Pair<URL, EpisodeFormat> parseDownloader(URL pageURL);
+
+    protected abstract boolean isValidVideoURL(URL url);
+
+    protected abstract Page getPage();
+
+    private void setDownloader() throws MalformedURLException {
+        Pair<URL, EpisodeFormat> params = parseDownloader(pageURL);
+        if (params == null || (videoURL = params.getKey()) == null || (format = params.getValue()) == null) {
+            throw new MalformedURLException(getInvalidVideoMessage());
+        }
+    }
 }

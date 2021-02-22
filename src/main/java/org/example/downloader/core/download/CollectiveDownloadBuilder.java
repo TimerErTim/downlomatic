@@ -5,7 +5,6 @@ import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Series;
 
 import java.io.File;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -61,17 +60,7 @@ public class CollectiveDownloadBuilder {
      * @param downloaders {@link Downloader}(s) which should be downloaded
      */
     public CollectiveDownloadBuilder(String path, Downloader... downloaders) {
-        this(path, new Series((URL) null) {
-            @Override
-            protected Set<? extends Downloader> generateEpisodeDownloaders() {
-                return new HashSet<>(Arrays.asList(downloaders));
-            }
-
-            @Override
-            public String getInvalidSeriesMessage() {
-                return "No Series could be constructed from Downloaders given to CollectiveDownload";
-            }
-        });
+        this(path, Series.custom(new LinkedHashSet<>(Arrays.asList(downloaders)), null));
     }
 
     /**
