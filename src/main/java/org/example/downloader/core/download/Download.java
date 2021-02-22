@@ -256,6 +256,24 @@ public class Download {
     }
 
     /**
+     * Returns the name of the destination file.
+     *
+     * @return the name of the destination file
+     */
+    public String getFileName() {
+        return destFile.getName();
+    }
+
+    /**
+     * Returns the URL of the source as String.
+     *
+     * @return the URL being downloaded from as String
+     */
+    public String getSourceURL() {
+        return srcURL.toString();
+    }
+
+    /**
      * Returns false if the destination file's length
      * has been changed externally.
      * <p>
