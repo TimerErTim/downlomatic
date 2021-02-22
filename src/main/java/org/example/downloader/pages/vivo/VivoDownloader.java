@@ -1,6 +1,7 @@
 package org.example.downloader.pages.vivo;
 
 import org.example.downloader.core.format.EpisodeFormat;
+import org.example.downloader.core.format.EpisodeFormatBuilder;
 import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.utils.WebScrapers;
 import org.openqa.selenium.By;
@@ -38,7 +39,7 @@ public class VivoDownloader extends Downloader {
 
     @Override
     protected EpisodeFormat generateEpisodeFormatNotSetting() {
-        return null;
+        return new EpisodeFormatBuilder().build();
     }
 
     @Override
