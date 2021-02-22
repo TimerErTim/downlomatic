@@ -14,9 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Launcher {
-    //TODO: animetoast.com -> Downloadwebsite
-    //TODO: hentaiplay.net -> Hentais
-    //TODO: hentaigasm.com -> HD Hentais
+    //TODO: Add complete Documentation (JavaDoc) to framework package before release of 0.2.0
     //TODO: Adjust and implement (right now just a prototype)
     public static void main(String[] args) throws MalformedURLException {
         Utils.initializeSetup();
