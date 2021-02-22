@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 
 
 public class CollectiveDownloadTest {
-    //TODO: Not working due to changes in collectiveDownload
     public static void main(String[] args) throws MalformedURLException, InterruptedException {
         WebScrapers.initialize();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
