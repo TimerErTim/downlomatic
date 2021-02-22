@@ -2,7 +2,7 @@ package org.example.downloader.core;
 
 import org.example.downloader.core.download.CollectiveDownload;
 import org.example.downloader.core.download.CollectiveDownloadBuilder;
-import org.example.downloader.hentaiplay.HentaiPlaySeries;
+import org.example.downloader.pages.hentaiplay.HentaiPlaySeries;
 import org.example.downloader.utils.WebScrapers;
 
 import java.net.MalformedURLException;

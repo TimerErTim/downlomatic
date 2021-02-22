@@ -1,4 +1,4 @@
-package org.example.downloader.hentaiplay;
+package org.example.downloader.pages.hentaiplay;
 
 import org.example.downloader.core.format.EpisodeFormat;
 import org.example.downloader.core.format.EpisodeFormatBuilder;

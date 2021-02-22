@@ -1,8 +1,8 @@
-package org.example.downloader.hentaiplayer;
+package org.example.downloader.pages.hentaiplayer;
 
 import org.example.downloader.core.download.Download;
 import org.example.downloader.core.framework.Downloader;
-import org.example.downloader.hentaiplay.HentaiPlaySeries;
+import org.example.downloader.pages.hentaiplay.HentaiPlaySeries;
 import org.example.downloader.utils.WebScrapers;
 
 import java.net.MalformedURLException;

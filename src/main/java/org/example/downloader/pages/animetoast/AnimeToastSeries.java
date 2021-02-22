@@ -1,4 +1,4 @@
-package org.example.downloader.animetoast;
+package org.example.downloader.pages.animetoast;
 
 import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Series;

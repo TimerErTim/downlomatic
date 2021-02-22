@@ -1,4 +1,4 @@
-package org.example.downloader.animetoast;
+package org.example.downloader.pages.animetoast;
 
 import org.example.downloader.utils.JSoupDriver;
 import org.example.downloader.utils.WebScrapers;

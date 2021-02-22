@@ -1,4 +1,4 @@
-package org.example.downloader.hentaiplay;
+package org.example.downloader.pages.hentaiplay;
 
 import org.example.downloader.core.framework.Series;
 import org.example.downloader.utils.JSoupDriver;

@@ -1,7 +1,7 @@
-package org.example.downloader.hentaiplayer;
+package org.example.downloader.pages.hentaiplayer;
 
 import org.example.downloader.core.download.Download;
-import org.example.downloader.hentaiplay.HentaiPlayDownloader;
+import org.example.downloader.pages.hentaiplay.HentaiPlayDownloader;
 import org.example.downloader.utils.WebScrapers;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.example.downloader.vivo;
+package org.example.downloader.pages.vivo;
 
 import org.example.downloader.core.format.EpisodeFormat;
 import org.example.downloader.core.framework.Downloader;

@@ -1,4 +1,4 @@
-package org.example.downloader.vivo;
+package org.example.downloader.pages.vivo;
 
 import org.example.downloader.core.download.Download;
 import org.example.downloader.utils.WebScrapers;
