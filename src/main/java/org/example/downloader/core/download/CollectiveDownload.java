@@ -19,6 +19,7 @@ public class CollectiveDownload {
     private final Set<? extends Series> seriesSet;
     private final String path, formatSubDir, formatDownload;
     private final int maxDownloads;
+    private final Runnable onFinish;
 
     private final Queue<Series> seriesQueue;
     private final Queue<Downloader> downloaderQueue;
@@ -33,12 +34,13 @@ public class CollectiveDownload {
     private State state;
     private Thread downloadDisplayThread;
 
-    CollectiveDownload(Set<? extends Series> seriesSet, String path, String formatSubDir, String formatDownload, int maxDownloads) {
+    CollectiveDownload(Set<? extends Series> seriesSet, String path, String formatSubDir, String formatDownload, int maxDownloads, Runnable onFinish) {
+        this.seriesSet = seriesSet;
         this.path = path;
         this.formatSubDir = formatSubDir;
         this.formatDownload = formatDownload;
         this.maxDownloads = maxDownloads;
-        this.seriesSet = seriesSet;
+        this.onFinish = onFinish;
         seriesQueue = new LinkedBlockingQueue<>();
         downloaderQueue = new LinkedBlockingQueue<>();
         downloadQueue = new LinkedBlockingQueue<>();
@@ -186,6 +188,7 @@ public class CollectiveDownload {
                 if (seriesQueue.isEmpty() && downloaderQueue.isEmpty() && downloadQueue.isEmpty() && currentDownloads.isEmpty()) {
                     System.out.println("\nFinished!");
                     state = State.FINISHED;
+                    onFinish.run();
                 }
             });
 

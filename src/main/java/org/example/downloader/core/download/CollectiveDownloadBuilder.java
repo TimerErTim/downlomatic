@@ -19,6 +19,7 @@ public class CollectiveDownloadBuilder {
     private final String path;
     private String formatSubDir;
     private String formatDownload;
+    private Runnable onFinish;
 
     /**
      * Creates a {@code CollectiveDownloadBuilder} object, which can be used to
@@ -33,6 +34,8 @@ public class CollectiveDownloadBuilder {
     public CollectiveDownloadBuilder(String path, Set<? extends Series> seriesSet) {
         this.seriesSet = seriesSet;
         this.path = path;
+        this.onFinish = () -> {
+        };
         maxDownloads = 4;
         setFormatSubDir(null); //Generate Default for Subdirectory creation
         formatDownload = DEFAULT_FORMAT_DOWNLOAD;
@@ -70,7 +73,7 @@ public class CollectiveDownloadBuilder {
      * @return a new {@code CollectiveDownload}
      */
     public CollectiveDownload build() {
-        return new CollectiveDownload(new LinkedHashSet<>(seriesSet), path, formatSubDir, formatDownload, maxDownloads);
+        return new CollectiveDownload(new LinkedHashSet<>(seriesSet), path, formatSubDir, formatDownload, maxDownloads, onFinish);
     }
 
     /**
@@ -126,5 +129,26 @@ public class CollectiveDownloadBuilder {
             formatDownload = DEFAULT_FORMAT_DOWNLOAD;
         } else
             formatDownload = formatting;
+    }
+
+    /**
+     * Sets the {@code Runnable} to run after the process is completed.
+     * <p>
+     * The {@link Runnable} is only called if the {@link CollectiveDownload}
+     * finished every download. Invoking {@link CollectiveDownload#stop()} will
+     * not trigger the invocation of the given {@code Runnable}. This is quite useful
+     * as {@code CollectiveDownload}s only offer non blocking methods to execute it
+     * and you therefore can't be notified about it's completion. With this method however,
+     * that becomes possible.
+     *
+     * @param onFinish the {@code Runnable} to run after finish
+     */
+    public void onFinish(Runnable onFinish) {
+        if (onFinish == null) {
+            this.onFinish = () -> {
+            };
+        } else {
+            this.onFinish = onFinish;
+        }
     }
 }
