@@ -1,15 +1,17 @@
 package org.example.downloader.graphics;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class GUI extends Application {
-    public static void start(String[] args) {
+    public static void start(String... args) throws RuntimeException {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public void start(Stage primaryStage) {
+        primaryStage.close();
+        Platform.exit();
     }
 }
