@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class CollectiveDownloadBuilder {
-    private final static String DEFAULT_FORMAT_DOWNLOAD = "/S - /[S/sE/e /[/E/]/]/[/!sEpisode /e/]";
+    private final static String DEFAULT_FORMAT_DOWNLOAD = "/[/S - /[S/sE/e /[/E/]/]/[/!sEpisode /e/]/]/[/!S/E/] (/L)";
     private final static String DEFAULT_FORMAT_SUBDIR = "/S/[" + (File.separator.equals("/") ? "//" : File.separator) + "Season /s/]";
 
     private final Set<? extends Series> seriesSet;
