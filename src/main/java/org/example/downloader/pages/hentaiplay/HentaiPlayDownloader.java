@@ -36,6 +36,11 @@ public class HentaiPlayDownloader extends Downloader {
     }
 
     @Override
+    public Page getPage() {
+        return HentaiPlayPage.PAGE;
+    }
+
+    @Override
     protected Pair<URL, EpisodeFormat> parseDownloader(URL pageURL) {
         EpisodeFormat format;
         URL url = null;
@@ -78,10 +83,5 @@ public class HentaiPlayDownloader extends Downloader {
     @Override
     protected boolean isValidVideoURL(URL url) {
         return page.isValidPageURL(url);
-    }
-
-    @Override
-    protected Page getPage() {
-        return HentaiPlayPage.PAGE;
     }
 }

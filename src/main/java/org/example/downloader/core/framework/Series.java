@@ -63,7 +63,7 @@ public abstract class Series implements Iterable<Downloader> {
                 }
 
                 @Override
-                protected Page getPage() {
+                public Page getPage() {
                     return null;
                 }
             };
@@ -147,11 +147,16 @@ public abstract class Series implements Iterable<Downloader> {
         return "URL \"" + seriesURL + "\" is no valid series on " + page.getPageDomain();
     }
 
-    protected abstract Set<? extends Downloader> parseSeries(URL seriesURL);
+    /**
+     * Returns the {@code Page} that is associated with this {@code Series}.
+     *
+     * @return the associated {@code Page}.
+     */
+    public abstract Page getPage();
 
     protected abstract boolean isValidSeriesURL(URL seriesURL);
 
-    protected abstract Page getPage();
+    protected abstract Set<? extends Downloader> parseSeries(URL seriesURL);
 
     @Override
     @Nonnull

@@ -47,6 +47,11 @@ public class HentaiGasmSeries extends Series {
     }
 
     @Override
+    public Page getPage() {
+        return HentaiGasmPage.PAGE;
+    }
+
+    @Override
     protected Set<? extends Downloader> parseSeries(URL seriesURL) {
         Set<HentaiGasmDownloader> downloaders = new LinkedHashSet<>();
 
@@ -72,10 +77,4 @@ public class HentaiGasmSeries extends Series {
     protected boolean isValidSeriesURL(URL seriesURL) {
         return page.isValidPageURL(seriesURL) && seriesURL.toString().contains(page.getPageDomain() + "/hentai/");
     }
-
-    @Override
-    protected Page getPage() {
-        return HentaiGasmPage.PAGE;
-    }
-
 }

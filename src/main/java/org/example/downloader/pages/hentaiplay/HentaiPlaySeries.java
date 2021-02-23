@@ -47,6 +47,11 @@ public class HentaiPlaySeries extends Series {
     }
 
     @Override
+    public Page getPage() {
+        return HentaiPlayPage.PAGE;
+    }
+
+    @Override
     protected Set<? extends Downloader> parseSeries(URL seriesURL) {
         Set<HentaiPlayDownloader> downloaders = new LinkedHashSet<>();
 
@@ -71,10 +76,5 @@ public class HentaiPlaySeries extends Series {
     @Override
     protected boolean isValidSeriesURL(URL seriesURL) {
         return page.isValidPageURL(seriesURL) && seriesURL.toString().contains("/episode-list/");
-    }
-
-    @Override
-    protected Page getPage() {
-        return HentaiPlayPage.PAGE;
     }
 }

@@ -16,4 +16,9 @@ public class VivoPage implements Page {
     public String getPageDomain() {
         return "vivo.sx";
     }
+
+    @Override
+    public long getPageDelay() {
+        return 0;
+    }
 }

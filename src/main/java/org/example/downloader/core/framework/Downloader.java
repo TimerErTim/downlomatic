@@ -189,11 +189,16 @@ public abstract class Downloader {
         return "mp4";
     }
 
+    /**
+     * Returns the {@code Page} that is associated with this {@code Downloader}.
+     *
+     * @return the associated {@code Page}.
+     */
+    public abstract Page getPage();
+
     protected abstract Pair<URL, EpisodeFormat> parseDownloader(URL pageURL);
 
     protected abstract boolean isValidVideoURL(URL url);
-
-    protected abstract Page getPage();
 
     private void setDownloader() throws MalformedURLException {
         Pair<URL, EpisodeFormat> params = parseDownloader(pageURL);

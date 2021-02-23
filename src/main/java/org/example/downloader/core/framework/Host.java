@@ -29,7 +29,7 @@ public abstract class Host implements Page {
      *
      * @return the generated {@code Set}
      * @throws MalformedURLException is thrown if the {@code Page} can not be reached
-     *                               (not no {@code Series} found)
+     * (not no {@code Series} found)
      */
     public Set<Series> generateSeries() throws MalformedURLException {
         Set<Series> series;
@@ -49,7 +49,7 @@ public abstract class Host implements Page {
      *
      * @return the newest {@code Set}
      * @throws MalformedURLException is thrown if the {@code Page} can not be reached
-     *                               (not no {@code Series} found)
+     * (not no {@code Series} found)
      */
     public Set<Series> getSeries() throws MalformedURLException {
         if (series == null) {

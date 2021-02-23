@@ -27,6 +27,11 @@ public class HentaiGasmPage extends Host {
     }
 
     @Override
+    public long getPageDelay() {
+        return 0;
+    }
+
+    @Override
     public boolean isValidPageURL(URL url) {
         return url.toString().startsWith("http://hentaigasm.com/");
     }

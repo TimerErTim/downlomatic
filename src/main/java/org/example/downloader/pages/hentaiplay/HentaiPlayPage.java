@@ -28,6 +28,11 @@ public class HentaiPlayPage extends Host {
     }
 
     @Override
+    public long getPageDelay() {
+        return 2000;
+    }
+
+    @Override
     public boolean isValidPageURL(URL url) {
         return url.toString().startsWith("https://hentaiplay.net/");
     }

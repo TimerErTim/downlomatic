@@ -37,6 +37,11 @@ public class VivoDownloader extends Downloader {
     }
 
     @Override
+    public Page getPage() {
+        return VivoPage.PAGE;
+    }
+
+    @Override
     protected Pair<URL, EpisodeFormat> parseDownloader(URL pageURL) {
         EpisodeFormat format = new EpisodeFormatBuilder().build();
         URL url = null;
@@ -70,10 +75,5 @@ public class VivoDownloader extends Downloader {
     @Override
     protected boolean isValidVideoURL(URL url) {
         return page.isValidPageURL(url) && url.toString().length() == "https://vivo.sx/".length() + 10;
-    }
-
-    @Override
-    protected Page getPage() {
-        return VivoPage.PAGE;
     }
 }
