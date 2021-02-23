@@ -64,7 +64,22 @@ public abstract class Series implements Iterable<Downloader> {
 
                 @Override
                 public Page getPage() {
-                    return null;
+                    return new Page() {
+                        @Override
+                        public long getPageDelay() {
+                            return 0;
+                        }
+
+                        @Override
+                        public boolean isValidPageURL(URL url) {
+                            return true;
+                        }
+
+                        @Override
+                        public String getPageDomain() {
+                            return "";
+                        }
+                    };
                 }
             };
         } catch (MalformedURLException e) {
