@@ -2,6 +2,7 @@ package org.example.downloader.core.download;
 
 import org.example.downloader.core.format.EpisodeFormat;
 import org.example.downloader.core.framework.Downloader;
+import org.example.downloader.core.framework.Page;
 import org.example.downloader.core.framework.Series;
 
 import java.io.File;
@@ -26,13 +27,13 @@ public class CollectiveDownload {
     private final Queue<Download> downloadQueue;
     private final Set<Download> currentDownloads;
     private final AtomicInteger finishedDownloads;
-    private final AtomicLong slowModeDelay;
     private Thread downloaderParseThread;
     private Thread downloadParseThread;
     private Thread downloadManageThread;
+    private Thread downloadDisplayThread;
 
     private State state;
-    private Thread downloadDisplayThread;
+    private AtomicLong slowModeDelay;
 
     CollectiveDownload(Set<? extends Series> seriesSet, String path, String formatSubDir, String formatDownload, int maxDownloads, Runnable onFinish) {
         this.seriesSet = seriesSet;
@@ -46,7 +47,7 @@ public class CollectiveDownload {
         downloadQueue = new LinkedBlockingQueue<>();
         currentDownloads = ConcurrentHashMap.newKeySet(maxDownloads);
         finishedDownloads = new AtomicInteger();
-        slowModeDelay = new AtomicLong();
+        slowModeDelay = null;
         state = State.IDLE;
 
         seriesQueue.addAll(seriesSet);
@@ -70,7 +71,7 @@ public class CollectiveDownload {
                     try {
                         if (series.isEmpty()) {
                             series.fillDownloaders();
-                            Thread.sleep(slowModeDelay.get());
+                            Thread.sleep((slowModeDelay == null ? series.getPage().getPageDelay() : slowModeDelay.get()));
                         }
                     } catch (MalformedURLException e) {
                         System.out.println("\n" + e.getMessage());
@@ -100,7 +101,7 @@ public class CollectiveDownload {
                         if (downloader != null) {
                             try {
                                 if (downloader.getVideoDownload() == null) {
-                                    Thread.sleep(slowModeDelay.get());
+                                    Thread.sleep((slowModeDelay == null ? downloader.getPage().getPageDelay() : slowModeDelay.get()));
                                 }
 
                                 EpisodeFormat format = downloader.getEpisodeFormat();
@@ -262,7 +263,7 @@ public class CollectiveDownload {
      * Enables slow mode for this {@code CollectiveDownloadBuilder}.
      * <p>
      * The slow mode determines the minimum delay between fetching downloads
-     * from the web rather than the download speed. This is useful
+     * from the web and does <b>not</b> set the download speed. This is useful
      * for websites with bot/DDoS protection.
      * <p>
      * The interval is one fetch every given amount of milliseconds.
@@ -270,10 +271,11 @@ public class CollectiveDownload {
      * @param slowModeDelay the delay between each web request
      */
     public void setSlowModeDelay(long slowModeDelay) {
-        if (slowModeDelay >= 0)
+        if (slowModeDelay >= 0) {
+            if (this.slowModeDelay == null) this.slowModeDelay = new AtomicLong();
             this.slowModeDelay.set(slowModeDelay);
-        else {
-            this.slowModeDelay.set(0);
+        } else {
+            disableSlowMode();
         }
     }
 
@@ -281,14 +283,15 @@ public class CollectiveDownload {
      * Enables slow mode for this {@code CollectiveDownloadBuilder}.
      * <p>
      * The slow mode determines the minimum delay between fetching downloads
-     * from the web rather than the download speed. This is useful
+     * from the web and does <b>not</b> set the download speed. This is useful
      * for websites with bot/DDoS protection.
      * <p>
-     * The default interval is once every 500ms.
+     * The default interval is defined by the associated {@link Page}. Can be overwritten
+     * with {@link CollectiveDownload#setSlowModeDelay(long)}.
      */
     public void enableSlowMode() {
-        if (this.slowModeDelay.get() <= 0) {
-            this.slowModeDelay.set(500);
+        if (slowModeDelay != null && slowModeDelay.get() <= 0) {
+            slowModeDelay = null;
         }
     }
 
@@ -298,6 +301,7 @@ public class CollectiveDownload {
      * For more information consult {@link CollectiveDownload#enableSlowMode()}.
      */
     public void disableSlowMode() {
+        if (slowModeDelay == null) slowModeDelay = new AtomicLong();
         this.slowModeDelay.set(0);
     }
 
