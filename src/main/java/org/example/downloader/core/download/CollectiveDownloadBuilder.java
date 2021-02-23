@@ -144,11 +144,7 @@ public class CollectiveDownloadBuilder {
      * @param onFinish the {@code Runnable} to run after finish
      */
     public void onFinish(Runnable onFinish) {
-        if (onFinish == null) {
-            this.onFinish = () -> {
-            };
-        } else {
-            this.onFinish = onFinish;
-        }
+        this.onFinish = onFinish == null ? () -> {
+        } : onFinish;
     }
 }
