@@ -4,6 +4,13 @@ import org.example.downloader.core.framework.Host;
 import org.example.downloader.pages.hentaigasm.HentaiGasmPage;
 import org.example.downloader.pages.hentaiplay.HentaiPlayPage;
 
+/**
+ * This enum works as "registry" for {@code Host}s.
+ * <p>
+ * Every {@link Host} has to be registered here by
+ * creating an enum constant in order to be presented
+ * to the user as available {@code Host} to choose from.
+ */
 public enum Hosts {
     HENTAIPLAY(HentaiPlayPage.PAGE, true),
     HENTAIGASM(HentaiGasmPage.PAGE, true);
