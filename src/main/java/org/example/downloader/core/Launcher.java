@@ -4,7 +4,7 @@ import org.example.downloader.core.download.CollectiveDownloadBuilder;
 import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Series;
 import org.example.downloader.graphics.GUI;
-import org.example.downloader.pages.hentaiplay.HentaiPlayPage;
+import org.example.downloader.pages.Hosts;
 import org.example.downloader.utils.Utils;
 import org.example.downloader.utils.WebScrapers;
 
@@ -31,7 +31,7 @@ public class Launcher {
 
                 }
                 Set<Downloader> downloaders = new LinkedHashSet<>();
-                Set<Series> series = HentaiPlayPage.generateAllSeries();
+                Set<Series> series = Hosts.HENTAIPLAY.getHost().getSeries();
 
                 CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder("/home/timerertim/Downloads/", series);
                 //downloadManager.execute(path, format, maxDownloads);

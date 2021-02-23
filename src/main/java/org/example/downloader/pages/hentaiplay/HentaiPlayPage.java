@@ -1,5 +1,6 @@
 package org.example.downloader.pages.hentaiplay;
 
+import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Host;
 import org.example.downloader.core.framework.Series;
 import org.example.downloader.utils.JSoupDriver;
@@ -16,7 +17,15 @@ import java.util.Set;
 public class HentaiPlayPage extends Host {
     public static final HentaiPlayPage PAGE = new HentaiPlayPage();
 
-    private static Set<Series> allSeries;
+    @Override
+    public Series getSeries(URL seriesURL) throws MalformedURLException {
+        return new HentaiPlaySeries(seriesURL);
+    }
+
+    @Override
+    public Downloader getDownloader(URL videoURL) throws MalformedURLException {
+        return new HentaiPlayDownloader(videoURL);
+    }
 
     @Override
     public boolean isValidPageURL(URL url) {
@@ -28,37 +37,31 @@ public class HentaiPlayPage extends Host {
         return "hentaiplay.net";
     }
 
-    /**
-     * Returns every Series available on that website.
-     * <p>
-     * The {@code Set} of {@link Series} only contains "uninitialized"
-     * {@code Series} objects.
-     *
-     * @return all Series objects fetchable from the webpage
-     */
-    public static Set<Series> generateAllSeries() {
-        if (allSeries == null) {
-            allSeries = new LinkedHashSet<>();
+    @Override
+    protected URL getListURL() throws MalformedURLException {
+        return new URL("https://hentaiplay.net/hentai-index/");
+    }
 
-            JSoupDriver driver = WebScrapers.noJavaScript();
-            driver.get("https://hentaiplay.net/hentai-index/");
-            List<WebElement> seriesWrappers = driver.findElements(By.className("serieslist-content"));
-            for (WebElement wrapper : seriesWrappers) {
-                WebElement link = wrapper.findElement(By.tagName("a"));
-                if (link != null) {
-                    Series series;
-                    try {
-                        series = new HentaiPlaySeries(link.getAttribute("href"));
-                    } catch (MalformedURLException e) {
-                        series = null;
-                    }
-                    if (series != null) {
-                        allSeries.add(series);
-                    }
+    @Override
+    protected Set<Series> parsePage(URL listURL) {
+        Set<Series> parsedSeries = new LinkedHashSet<>();
+
+        JSoupDriver driver = WebScrapers.noJavaScript();
+        driver.get(listURL.toString());
+
+        // Parse Series
+        List<WebElement> seriesWrappers = driver.findElements(By.className("serieslist-content"));
+        for (WebElement wrapper : seriesWrappers) {
+            WebElement link = wrapper.findElement(By.tagName("a"));
+            if (link != null) {
+                try {
+                    Series series = new HentaiPlaySeries(link.getAttribute("href"), link.getAttribute("title"));
+                    parsedSeries.add(series);
+                } catch (MalformedURLException ignored) {
                 }
             }
         }
 
-        return allSeries;
+        return parsedSeries;
     }
 }

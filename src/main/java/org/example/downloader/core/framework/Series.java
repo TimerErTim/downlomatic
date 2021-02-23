@@ -1,7 +1,5 @@
 package org.example.downloader.core.framework;
 
-import javafx.util.Pair;
-
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,8 +31,13 @@ public abstract class Series implements Iterable<Downloader> {
         this(new URL(seriesURLString));
     }
 
+    protected Series(String seriesURLString, String name) throws MalformedURLException {
+        this(seriesURLString);
+        this.name = name;
+    }
+
     /**
-     * Returns a {@code Series} object containing the given downloaders
+     * Returns a {@code Series} object containing the given {@code Downloader}s
      * and name.
      * <p>
      * Not that the resulting instance will neither have a source URL
@@ -44,15 +47,14 @@ public abstract class Series implements Iterable<Downloader> {
      * returned instead.
      *
      * @param downloaders the {@code Set} of {@code Downloader}s
-     * @param name        the name (refer to {@link Series#getName()})
      * @return an anonymous {@code Series} instance or null if that is not possible
      */
-    public static Series custom(Set<? extends Downloader> downloaders, String name) {
+    public static Series custom(Set<? extends Downloader> downloaders) {
         try {
             return new Series((URL) null) {
                 @Override
-                protected Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL) {
-                    return new Pair<>(downloaders, name);
+                protected Set<? extends Downloader> parseSeries(URL seriesURL) {
+                    return downloaders;
                 }
 
                 @Override
@@ -98,14 +100,12 @@ public abstract class Series implements Iterable<Downloader> {
      */
     public void generateDownloaders() throws MalformedURLException {
         downloaders.clear();
-        Pair<Set<? extends Downloader>, String> params = parseSeries(seriesURL);
-        Set<? extends Downloader> collection;
-        if (params == null || (collection = params.getKey()) == null) {
+        Set<? extends Downloader> collection = parseSeries(seriesURL);
+        if (collection == null) {
             throw new MalformedURLException(getInvalidSeriesMessage());
         } else {
             downloaders.addAll(collection);
         }
-        name = (params.getValue() != null ? params.getValue() : "");
     }
 
     /**
@@ -134,7 +134,7 @@ public abstract class Series implements Iterable<Downloader> {
      * @return the name
      */
     public String getName() {
-        return name;
+        return name != null ? name : "";
     }
 
     /**
@@ -147,7 +147,7 @@ public abstract class Series implements Iterable<Downloader> {
         return "URL \"" + seriesURL + "\" is no valid series on " + page.getPageDomain();
     }
 
-    protected abstract Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL);
+    protected abstract Set<? extends Downloader> parseSeries(URL seriesURL);
 
     protected abstract boolean isValidSeriesURL(URL seriesURL);
 

@@ -60,7 +60,7 @@ public class CollectiveDownloadBuilder {
      * @param downloaders {@link Downloader}(s) which should be downloaded
      */
     public CollectiveDownloadBuilder(String path, Downloader... downloaders) {
-        this(path, Series.custom(new LinkedHashSet<>(Arrays.asList(downloaders)), null));
+        this(path, Series.custom(new LinkedHashSet<>(Arrays.asList(downloaders))));
     }
 
     /**

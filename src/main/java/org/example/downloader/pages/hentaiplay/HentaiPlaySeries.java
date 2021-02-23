@@ -1,6 +1,5 @@
 package org.example.downloader.pages.hentaiplay;
 
-import javafx.util.Pair;
 import org.example.downloader.core.framework.Downloader;
 import org.example.downloader.core.framework.Page;
 import org.example.downloader.core.framework.Series;
@@ -20,7 +19,7 @@ public class HentaiPlaySeries extends Series {
      * Creates a {@code HentaiPlaySeries} object from the URL.
      *
      * @param seriesURL the URL
-     * @throws MalformedURLException the the exception that is thrown if the URL is no valid HentaiPlay site
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid HentaiPlay site
      */
     public HentaiPlaySeries(URL seriesURL) throws MalformedURLException {
         super(seriesURL);
@@ -36,20 +35,23 @@ public class HentaiPlaySeries extends Series {
         super(seriesURLString);
     }
 
+    /**
+     * Creates a {@code HentaiPlaySeries} object from the URL and name.
+     *
+     * @param seriesURLString the String representing URL to HentaiPlay site
+     * @param name            the name for graphical presentation of this {@code Series}
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid HentaiPlay site
+     */
+    public HentaiPlaySeries(String seriesURLString, String name) throws MalformedURLException {
+        super(seriesURLString, name);
+    }
+
     @Override
-    protected Pair<Set<? extends Downloader>, String> parseSeries(URL seriesURL) {
+    protected Set<? extends Downloader> parseSeries(URL seriesURL) {
         Set<HentaiPlayDownloader> downloaders = new LinkedHashSet<>();
-        String name;
 
         JSoupDriver driver = WebScrapers.noJavaScript();
         driver.get(seriesURL.toString());
-
-        // Find name
-        try {
-            name = driver.findElement(By.className("loop-title")).getText();
-        } catch (NullPointerException ex) {
-            name = null;
-        }
 
         // Parse Downloaders
         List<WebElement> elements = driver.findElements(By.tagName("a"));
@@ -63,7 +65,7 @@ public class HentaiPlaySeries extends Series {
             }
         }
 
-        return new Pair<>(downloaders, name);
+        return downloaders;
     }
 
     @Override
