@@ -5,7 +5,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 import org.example.downloader.graphics.GUI;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class Launcher {
             "of this output");
 
     //TODO: Add complete Documentation (JavaDoc) to framework package before release of 0.2.0
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) {
         CommandLine cmd = null;
         ParseException ex = null;
         try {
