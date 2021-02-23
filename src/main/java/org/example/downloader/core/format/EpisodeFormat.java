@@ -8,6 +8,20 @@ import java.util.regex.Pattern;
 public class EpisodeFormat {
     private final List<Identifier> identifiers;
 
+    public final static String DESCRIPTION = "These are the types of identifiers:\n" +
+            "\"/S\": Means the name of the series\n" +
+            "\"/s\": Means the number of the season\n" +
+            "\"/E\": Means the name of the episode\n" +
+            "\"/e\": Means the number of the episode\n" +
+            "\"/L\": Means the main target language audience of the episode\n" +
+            "\"/T\": Means the type of translation\n" +
+            "\"/[\" or \"/]\": Covered in the last paragraph\n" +
+            "\"//\": Means literally \"/\"\n" +
+            "If those identifiers are found in the given expression, they are replaced by their respective meaning. Every other part of the expression (exception explained in the following paragraph) is seen as literal and returned as is.\n" +
+            "Illegal characters in the expression will be removed. Illegal characters are characters, which can not be used in the name of a file. This includes Windows specific illegals.\n" +
+            "If there is an identifier in the expression, which can't be filled because the according field in this Object is null, the identifier by default is left out and simply removed. You can adjust this behavior by using the last (two) identifiers of the above list, which are /[ and /]. You can put these identifiers around a segment of the expression. The segment will only be displayed in the formatted text if the other identifiers inside that segment can successfully be filled in. If there is no other identifier inside or a missing closing/opening identifier, the segment will be returned as is, which basically means, that the identifiers causing the problem are ignored.\n" +
+            "In each of these segments you can make use of \"inverted identifiers\". Inverted identifiers make the segment they are in only successful (and thus visible) if there exists no value for them. They can be created by putting a \"!\" directly after \"/\" of each identifier. For example \"/[S/sE/e/]/[/!sEpisode /E] would create \"Episode 1\" for the first Episode which doesn't have a season number. If it has one, it creates \"S1E1\" (assuming it's the first season).";
+
     EpisodeFormat(String seriesName, String seasonNumber, String episodeNumber, String episodeName,
                   String language, String translationType) {
         this.identifiers = new LinkedList<>();
@@ -21,10 +35,10 @@ public class EpisodeFormat {
     }
 
     /**
-     * Formats the episodes description to a readable String using the given expression.
+     * Formats the episodes description to a readable {@code String} using the given expression.
      * <b> Important to read this documentation </b>
      * <p>
-     * There are four types of identifiers (without quotation marks):<ul>
+     * These are the types of identifiers:<ul>
      * <li>"<b>/S</b>": Means the name of the series
      * <li>"<b>/s</b>": Means the number of the season
      * <li>"<b>/E</b>": Means the name of the episode
