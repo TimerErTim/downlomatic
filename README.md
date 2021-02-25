@@ -20,9 +20,8 @@ Downloads many animes, series, movies - you name it - of your choice automatical
 
 Go to the [release section](https://github.com/TimerErTim/downlomatic/releases) and download the latest version for your
 operating system. Extract the .zip file to your desired destination. Inside the extracted archive you will find a folder
-called "bin"
-containing a "downlomatic" file. You can create a shortcut to this file (create one of the equally named .bat file if
-you happen to use Windows).
+called "bin" containing a "downlomatic" file. You can create a shortcut to this file (or to the equally named .bat file
+if you happen to use Windows).
 
 ## Usage
 
@@ -31,15 +30,15 @@ per command line, you can get more information by executing "downlomatic --help"
 
 ## Support
 
-If you need help you, you can always open a new [issue](https://github.com/TimerErTim/downlomatic/issues)
+If you need help, you can always open a new [issue](https://github.com/TimerErTim/downlomatic/issues)
 explaining the problem you are encountering.
 
 ## Contributing
 
 Contributions are always welcome. This can be done by creating issues, promoting the project, implement more media
 providers/hosts or working on the source code. Everything that helps the project growing is deeply appreciated.  
-In case your contribution interacts with this project's code, please consult the
-[contribution guideline](CONTRIBUTING.md).
+Please read through the [contribution guideline](CONTRIBUTING.md) before contribution as it contains information which
+may be helpful for you.
 
 ## Roadmap
 
@@ -60,7 +59,7 @@ Downlomatic is licensed under the [GNU Affero General Public License v3.0](LICEN
 ## Project State
 
 I, the project owner, am currently attending
-the [higher technical college of Grieskirchen](https://github.com/HTBLA-Grieskirchen). That education takes about as
+the [higher technical college of Grieskirchen](https://github.com/HTBLA-Grieskirchen). My education takes me about as
 much time as a full time job, not counting homework and similar tasks. Because of this, the development pace is not as
 fast as it could be. Nonetheless, I am committed to this project and will continue to work on it. Just be aware that
 development might be or become a little slow.
