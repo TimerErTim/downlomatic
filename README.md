@@ -26,18 +26,19 @@ if you happen to use Windows).
 ## Usage
 
 Now you can start the GUI by double-clicking either said shortcut, or the target file directly. If you want to start it
-per command line, you can get more information by executing "downlomatic --help".
+per command line, you can get more information by executing `downlomatic --help`.
 
 ## Support
 
 If you need help, you can always open a new [issue](https://github.com/TimerErTim/downlomatic/issues)
-explaining the problem you are encountering.
+explaining the problem you are encountering. You can reach me at <timerertim@gmail.com> for personal and administrative
+business.
 
 ## Contributing
 
 Contributions are always welcome. This can be done by creating issues, promoting the project, implement more media
 providers/hosts or working on the source code. Everything that helps the project growing is deeply appreciated.  
-Please read through the [contribution guideline](CONTRIBUTING.md) before contribution as it contains information which
+Please read through the [contribution guideline](CONTRIBUTING.md) before contributing as it contains information which
 may be helpful for you.
 
 ## Roadmap
