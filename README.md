@@ -1,8 +1,8 @@
 # Downlomatic
 
-![license](https://img.shields.io/github/license/TimerErTim/downlomatic?style=flat-square)
-![latest release](https://img.shields.io/github/v/release/TimerErTim/downlomatic?include_prereleases&label=latest%20release&style=flat-square)
-![latest stable release](https://img.shields.io/github/v/release/TimerErTim/downlomatic?label=stable%20release&style=flat-square)  
+[![license: AGPL v3](https://img.shields.io/github/license/TimerErTim/downlomatic?color=blue&style=flat-square)](https://www.gnu.org/licenses/agpl-3.0)
+[![latest stable release](https://img.shields.io/github/v/release/TimerErTim/downlomatic?label=stable%20release&style=flat-square)](https://github.com/TimerErTim/downlomatic/releases/latest/)
+![latest release](https://img.shields.io/github/v/release/TimerErTim/downlomatic?include_prereleases&label=latest%20release&style=flat-square)  
 Downloads many animes, series, movies - you name it - of your choice automatically. Works in CLI and GUI mode.
 
 ## Table of Contents
