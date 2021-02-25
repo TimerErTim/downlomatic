@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.example.downloader.utils.Utils.*;
+
 public class Launcher {
     public final static Option HELP = new Option(null, "help", false, "shows this");
     public final static Option NSFW = new Option("x", "nsfw", false, "display NSFW hosts in GUI\nif you want to show GUI you need pass only this or no argument");
@@ -33,37 +35,31 @@ public class Launcher {
         CommandLine cmd = null;
         ParseException ex = null;
         try {
-            cmd = Utils.parseOptions(args);
+            cmd = parseOptions(args);
         } catch (ParseException e) {
             ex = e;
         }
 
         if (cmd == null) {
             List<String> arguments = Arrays.asList(args);
-            boolean printHelp = false;
-            boolean successGUI = true;
 
             if (arguments.contains("--" + HELP.getLongOpt())) {
-                printHelp = true;
-                successGUI = false;
+                printHelp();
+                System.exit(0);
             } else if (arguments.isEmpty() || arguments.get(0).equals("-" + NSFW.getOpt()) || arguments.get(0).equals("--" + NSFW.getLongOpt())) {
                 try {
                     if (arguments.isEmpty()) GUI.start();
-                    else GUI.start(HELP.getLongOpt());
-                } catch (RuntimeException ignored) {
-                    successGUI = false;
+                    else GUI.start(NSFW.getLongOpt());
+                    System.exit(0);
+                } catch (RuntimeException e) {
+                    System.out.println("GUI experienced problems. Please refer to following help page as alternative:\n");
                 }
+            } else {
+                System.out.println(ex.getMessage() + "\n");
             }
 
-            if (!printHelp) {
-                if (!successGUI) {
-                    System.out.println("GUI could not be started correctly. Please refer to following help page as alternative:\n");
-                } else {
-                    System.out.println(ex.getMessage() + "\n");
-                }
-            }
-            if (!successGUI && printHelp) Utils.printHelp();
-            System.exit((printHelp || successGUI ? 0 : 1));
+            printHelp();
+            System.exit(1);
         } else {
             launchCLI(cmd);
         }
@@ -79,7 +75,7 @@ public class Launcher {
             host = Hosts.valueOf(cmd.getOptionValue(HOST.getOpt()).toUpperCase()).getHost();
         } catch (IllegalArgumentException e) {
             System.out.println("Illegal argument: host has to be a valid type\n");
-            Utils.printHelp();
+            printHelp();
             System.exit(1);
         }
         if (cmd.hasOption(MAX_DOWNLOADS.getOpt())) {
@@ -87,18 +83,18 @@ public class Launcher {
                 max = Integer.parseInt(cmd.getOptionValue(MAX_DOWNLOADS.getOpt()));
             } catch (IllegalArgumentException e) {
                 System.out.println("Illegal argument: max downloads has to be a number");
-                Utils.printHelp();
+                printHelp();
                 System.exit(1);
             }
         }
         if (cmd.hasOption(DOWNLOAD_FORMAT.getOpt())) {
             downloadFormat = cmd.getOptionValue(DOWNLOAD_FORMAT.getOpt());
         }
-        if (cmd.hasOption(SUBDIR_FORMAT.getOpt())) {
-            subdirFormat = cmd.getOptionValue(SUBDIR_FORMAT.getOpt());
+        if (cmd.hasOption(SUBDIR_FORMAT.getLongOpt())) {
+            subdirFormat = cmd.getOptionValue(SUBDIR_FORMAT.getLongOpt());
         }
 
-        Utils.initializeSetup();
+        initializeSetup();
 
         try {
             String destinationPath = cmd.getOptionValue(DESTINATION_DIRECTORY.getOpt());
@@ -110,15 +106,15 @@ public class Launcher {
             } else if ((url = cmd.getOptionValue(DOWNLOADER.getOpt())) != null) {
                 builder = new CollectiveDownloadBuilder(destinationPath, host.getDownloader(new URL(url)));
             } else {
-                Utils.onExit();
+                onExit();
                 System.out.println("Missing argument: -a | -s | -d\n");
-                Utils.printHelp();
+                printHelp();
                 System.exit(1);
             }
         } catch (MalformedURLException e) {
-            Utils.onExit();
+            onExit();
             System.out.println("Illegal argument: " + e.getMessage() + "\n");
-            Utils.printHelp();
+            printHelp();
             System.exit(1);
         }
 
@@ -133,7 +129,7 @@ public class Launcher {
         }
 
         builder.onFinish(() -> {
-            Utils.onExit();
+            onExit();
             System.exit(0);
         });
     }
