@@ -4,7 +4,6 @@ import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.graphics.GUI;
 import eu.timerertim.downlomatic.pages.Hosts;
-import eu.timerertim.downlomatic.utils.Utils;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
@@ -14,7 +13,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.example.downloader.utils.Utils.*;
+import static eu.timerertim.downlomatic.utils.Utils.*;
 
 public class Launcher {
     public final static Option HELP = new Option(null, "help", false, "shows this");
