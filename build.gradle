@@ -5,10 +5,10 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-group 'org.example'
+group 'eu.timerertim'
 version '0.2.0-rc.1'
 
-mainClassName = "org.example.downloader.core.Launcher"
+mainClassName = "${group}.downlomatic.core.Launcher"
 
 repositories {
     mavenCentral()
