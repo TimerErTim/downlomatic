@@ -16,48 +16,48 @@ Downloads many animes, series, movies - you name it - of your choice automatical
 7. [License](#license)
 8. [Project State](#project-state)
 
-### Installation
+## Installation
 
 Go to the [release section](https://github.com/TimerErTim/downlomatic/releases) and download the latest version for your
 operating system. Extract the .zip file to your desired destination. Inside the extracted archive you will find a folder
 called "bin" containing a "downlomatic" file. You can create a shortcut to this file (or to the equally named .bat file
 if you happen to use Windows).
 
-### Usage
+## Usage
 
 Now you can start the GUI by double-clicking either said shortcut, or the target file directly. If you want to start it
 per command line, you can get more information by executing `downlomatic --help`.
 
-### Support
+## Support
 
 If you need help, you can always open a new [issue](https://github.com/TimerErTim/downlomatic/issues)
 explaining the problem you are encountering. You can reach me at <timerertim@gmail.com> for personal and administrative
 business.
 
-### Contributing
+## Contributing
 
 Contributions are always welcome. This can be done by creating issues, promoting the project, implement more media
 providers/hosts or working on the source code. Everything that helps the project growing is deeply appreciated.  
 Please read through the [contribution guideline](CONTRIBUTING.md) before contributing as it contains information which
 may be helpful for you.
 
-### Roadmap
+## Roadmap
 
 - [x] Create easily extendable framework
 - [ ] Release stable version supporting CLI
 - [ ] Release GUI on top of already working CLI version
 - [ ] Add more supported media providers
 
-### Credits
+## Credits
 
 I want to thank my mother.  
 No really, thanks to her the idea behind this project was brought up.
 
-### License
+## License
 
 Downlomatic is licensed under the [GNU Affero General Public License v3.0](LICENSE).
 
-### Project State
+## Project State
 
 I, the project owner, am currently attending
 the [higher technical college of Grieskirchen](https://github.com/HTBLA-Grieskirchen). My education takes me about as
