@@ -37,11 +37,11 @@ appropriately, per our code.
 
 ## License
 
-Downlomatic is licensed under the [AGPL-3.0](LICENSE). Your contribution will get the same license and by contributing
-you agree to that.
+Downlomatic is licensed under the [AGPL-3.0](LICENSE). By contributing you agree to your contribution being granted the
+same license.
 
 ## Help
 
 If you ever need help, you can ask me directly at <timerertim@gmail.com>. Depending on the growth of the project a
-Discord server may be created in the future. It will be linked it here once that's done. You will be able to also ask
-your questions there.
+Discord server may be created in the future. It will be linked here once that's done. You will be able to also ask your
+questions there.
