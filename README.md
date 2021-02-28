@@ -38,6 +38,7 @@ business.
 
 Contributions are always welcome. This can be done by creating issues, promoting the project, implement more media
 providers/hosts or working on the source code. Everything that helps the project growing is deeply appreciated.  
+
 Please read through the [contribution guideline](CONTRIBUTING.md) before contributing as it contains information which
 may be helpful for you.
 
