@@ -32,7 +32,7 @@ great place to start with.
 series [How to Contribute to an Open Source Project on GitHub](https://kcd.im/pull-request)
 
 Now you are ready to directly make changes and improvements to this repository! Feel free to ask for help - every expert
-was once a beginner :blush:
+was once a beginner :wink:
 
 ## Getting Started
 
