@@ -3,6 +3,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.runtime' version '1.12.1'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.0-M1'
 }
 
 group 'eu.timerertim'
@@ -15,8 +16,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
@@ -29,6 +29,13 @@ dependencies {
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile) {
+    kotlinOptions.jvmTarget = "11"
 }
 
 javafx {
