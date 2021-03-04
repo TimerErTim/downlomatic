@@ -11,6 +11,24 @@ during addressing feature ideas, helping you finalize Pull Requests (PRs), and l
 
 ## Table of Contents
 
+1. [Introduction](#introduction)
+2. [Your First Contribution](#your-first-contribution)
+3. [Getting Started](#getting-started)
+    1. [Issues](#issues)
+    2. [Pull Requests](#pull-requests)
+        1. [Setup](#setup)
+    3. [Adding Hosts](#adding-hosts)
+4. [Conventions](#conventions)
+    1. [Code Style](#code-style)
+    2. [Documentation](#documentation)
+    3. [Git and Commit Message](#git-and-commit-messages)
+    4. [Versioning Scheme](#versioning-scheme)
+5. [Testing](#testing)
+6. [Code of Conduct](#code-of-conduct)
+7. [License](#license)
+8. [Your Recognition](#your-recognition)
+9. [Help](#help)
+
 ## Introduction
 
 There are many ways to contribute. From submitting bug reports or feature requests to improving the documentation or
