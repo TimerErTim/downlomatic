@@ -1,7 +1,7 @@
 ---
 name: Host suggestion
 about: Suggest a host worth implementing
-title: "[HOST]"
+title: 'HOST: '
 labels: enhancement, host
 assignees: ''
 

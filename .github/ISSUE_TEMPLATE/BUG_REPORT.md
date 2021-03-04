@@ -1,16 +1,16 @@
 ---
 name: Bug report
-about: Submit a bug to help fixing it
-title: '[BUG]'
-labels: 'bug'
+about: Submit a bug to help to fix it
+title: 'BUG: '
+labels: bug
 assignees: ''
 
 ---
 
-**Describe the bug**
+**Description**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+**Reproduction**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
