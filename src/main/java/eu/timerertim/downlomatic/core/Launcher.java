@@ -30,7 +30,7 @@ public class Launcher {
             "of this output");
 
     //TODO: Add complete Documentation (JavaDoc) to framework package before release of 0.2.0
-    public static void main(String[] args) {
+    public static void main(String... args) {
         CommandLine cmd = null;
         ParseException ex = null;
         try {
