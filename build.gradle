@@ -3,7 +3,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.runtime' version '1.12.1'
     id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.0-M1'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
 }
 
 group 'eu.timerertim'
