@@ -6,10 +6,19 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A {@code Host} defines the interaction with a website
+ */
 public abstract class Host implements Page {
     private final URL listURL;
     private Set<Series> series;
 
+    /**
+     * Creates a standard {@code Host}.
+     * <p>
+     * If {@link Host#getListURL()} throws {@link MalformedURLException}, {@link Host#parsePage(URL)} will
+     * be given null.
+     */
     protected Host() {
         URL listURL;
         try {
@@ -29,7 +38,7 @@ public abstract class Host implements Page {
      *
      * @return the generated {@code Set}
      * @throws MalformedURLException is thrown if the {@code Page} can not be reached
-     * (not no {@code Series} found)
+     *                               (not no {@code Series} found)
      */
     public Set<Series> generateSeries() throws MalformedURLException {
         Set<Series> series;
@@ -49,7 +58,7 @@ public abstract class Host implements Page {
      *
      * @return the newest {@code Set}
      * @throws MalformedURLException is thrown if the {@code Page} can not be reached
-     * (not no {@code Series} found)
+     *                               (not no {@code Series} found)
      */
     public Set<Series> getSeries() throws MalformedURLException {
         if (series == null) {
@@ -104,7 +113,24 @@ public abstract class Host implements Page {
      */
     public abstract Downloader getDownloader(URL videoURL) throws MalformedURLException;
 
+    /**
+     * Returns the URL under which this {@code Host} is able to parse all available {@code Series}.
+     *
+     * @return the URL with all available {@code Series}
+     * @throws MalformedURLException should never happen and indicates a typo in the implementation
+     */
     protected abstract URL getListURL() throws MalformedURLException;
 
+    /**
+     * Parses a Set of {@code Series} from the given URL.
+     * <p>
+     * The resulting {@link Series} can be used to search for {@link Downloader}s and download every video from the
+     * represented website.
+     * <p>
+     * If any problems occur, null is returned.
+     *
+     * @param listURL typically {@link Host#getListURL()}
+     * @return a Set of {@code Series} or null on error
+     */
     protected abstract Set<Series> parsePage(URL listURL);
 }

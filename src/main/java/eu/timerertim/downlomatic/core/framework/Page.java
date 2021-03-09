@@ -2,6 +2,9 @@ package eu.timerertim.downlomatic.core.framework;
 
 import java.net.URL;
 
+/**
+ * A {@code Page} defines website parameters
+ */
 public interface Page {
     /**
      * Returns the delay in milliseconds that is needed when accessing

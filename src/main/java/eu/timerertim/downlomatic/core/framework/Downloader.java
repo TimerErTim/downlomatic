@@ -12,13 +12,25 @@ import java.net.URL;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a single video on a WebSite and is used to retrieve a {@link Downloader}
+ */
 public abstract class Downloader {
+    /**
+     * The page this {@code Downloader} is defined by. Retrieved from {@link Downloader#getPage()}
+     */
     protected final Page page;
     private final URL pageURL;
     private EpisodeFormat format;
     private Download download;
     private URL videoURL;
 
+    /**
+     * Creates a {@code Downloader} object from the URL.
+     *
+     * @param pageURL the URL
+     * @throws MalformedURLException the exception that is thrown if the URL is not valid
+     */
     protected Downloader(URL pageURL) throws MalformedURLException {
         this.pageURL = pageURL;
         page = getPage();
@@ -27,7 +39,12 @@ public abstract class Downloader {
         }
     }
 
-
+    /**
+     * Creates a {@code Downloader} object from the URL.
+     *
+     * @param pageURLString the String representing URL to video site
+     * @throws MalformedURLException the exception that is thrown if the URL is not valid
+     */
     protected Downloader(String pageURLString) throws MalformedURLException {
         this(new URL(pageURLString));
     }
@@ -185,20 +202,51 @@ public abstract class Downloader {
         return "URL \"" + pageURL + "\" is no valid video on " + page.getPageDomain();
     }
 
+    /**
+     * Returns the file extension that is used if nothing else is specified by the user.
+     *
+     * @return the default file extension
+     */
     protected String getDefaultFileExtension() {
         return "mp4";
     }
 
     /**
      * Returns the {@code Page} that is associated with this {@code Downloader}.
+     * <p>
+     * Is used to set {@link Downloader#page}.
      *
      * @return the associated {@code Page}.
      */
     public abstract Page getPage();
 
-    protected abstract Pair<URL, EpisodeFormat> parseDownloader(URL pageURL);
-
+    /**
+     * Checks the URL for structural validity.
+     *
+     * @param url the URL to be checked
+     * @return true if the URL is valid
+     */
     protected abstract boolean isValidVideoURL(URL url);
+
+    /**
+     * Parses an {@code EpisodeFormat} and the download URL from the video URL.
+     * <p>
+     * The download URL is used to download the video and must lead directly to the video file. The {@link EpisodeFormat}
+     * is used to format the video similar to {@link java.time.format.DateTimeFormatter}. You set values like
+     * language, title, translation type and those values can be formatted to a String with
+     * {@link EpisodeFormat#format(String)}.
+     * <p>
+     * This is done in one method because it allows for only one request with the
+     * {@link eu.timerertim.downlomatic.utils.WebScrapers}. In case that can't be done because of the website's
+     * structure, there's always the opportunity to send requests for multiple URLs one after another.
+     * <p>
+     * If any problems occur, null is returned.
+     *
+     * @param pageURL the URL under which one should be able to find the video
+     * @return a {@code Pair} containing both the download URL and an {@code EpisodeFormat} object retrieved from the
+     * video URL, or null if errors occurred
+     */
+    protected abstract Pair<URL, EpisodeFormat> parseDownloader(URL pageURL);
 
     private void setDownloader() throws MalformedURLException {
         Pair<URL, EpisodeFormat> params = parseDownloader(pageURL);
