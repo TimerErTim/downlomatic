@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.core.framework;
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -12,14 +13,23 @@ import java.util.Set;
  * and useful methods.
  */
 public abstract class Series implements Iterable<Downloader> {
+    /**
+     * The page this {@code Downloader} is defined by. Retrieved from {@link Downloader#getPage()}
+     */
     protected final Page page;
     private final URL seriesURL;
     private final Set<Downloader> downloaders;
     private String name;
 
+    /**
+     * Creates a {@code Series} object from the URL.
+     *
+     * @param seriesURL the URL
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid URL
+     */
     protected Series(URL seriesURL) throws MalformedURLException {
         this.seriesURL = seriesURL;
-        this.downloaders = new LinkedHashSet<>();
+        this.downloaders = Collections.synchronizedSet(new LinkedHashSet<>());
         this.name = "";
         this.page = getPage();
         if (!isValidSeriesURL(seriesURL)) {
@@ -27,11 +37,24 @@ public abstract class Series implements Iterable<Downloader> {
         }
     }
 
-    protected Series(String seriesURLString) throws MalformedURLException {
+    /**
+     * Creates a {@code Series} object from the URL.
+     *
+     * @param seriesURLString the String representing URL to series site
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid URL
+     */
+    protected Series(@Nonnull String seriesURLString) throws MalformedURLException {
         this(new URL(seriesURLString));
     }
 
-    protected Series(String seriesURLString, String name) throws MalformedURLException {
+    /**
+     * Creates a {@code Series} object from the URL.
+     *
+     * @param seriesURLString the String representing URL to series site
+     * @param name            the name for graphical presentation of this {@code Series}
+     * @throws MalformedURLException the exception that is thrown if the URL is no valid URL
+     */
+    protected Series(@Nonnull String seriesURLString, String name) throws MalformedURLException {
         this(seriesURLString);
         this.name = name;
     }
@@ -163,14 +186,33 @@ public abstract class Series implements Iterable<Downloader> {
     }
 
     /**
-     * Returns the {@code Page} that is associated with this {@code Series}.
+     * Returns the {@code Page} that is associated with this {@code Downloader}.
+     * <p>
+     * Is used to set {@link Downloader#page}.
      *
      * @return the associated {@code Page}.
      */
     public abstract Page getPage();
 
+    /**
+     * Checks the URL for structural validity.
+     *
+     * @param seriesURL the URL to be checked
+     * @return true if the URL is valid
+     */
     protected abstract boolean isValidSeriesURL(URL seriesURL);
 
+    /**
+     * Parses a Set of {@code Downloader}s from the series URL.
+     * <p>
+     * The {@link Downloader}s generated can be accessed through {@link Series#iterator()}.
+     * <p>
+     * If any problems occur, null is returned.
+     *
+     * @param seriesURL the URL under which one should be able to find the video
+     * @return a {@code Pair} containing both the download URL and an {@code EpisodeFormat} object retrieved from the
+     * video URL, or null if errors occurred
+     */
     protected abstract Set<? extends Downloader> parseSeries(URL seriesURL);
 
     @Override
