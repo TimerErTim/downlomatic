@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EpisodeFormat {
-    private final List<Identifier> identifiers;
-
     public final static String DESCRIPTION = "These are the types of identifiers:\n" +
             "\"/S\": Means the name of the series\n" +
             "\"/s\": Means the number of the season\n" +
@@ -21,6 +19,8 @@ public class EpisodeFormat {
             "Characters, which can not be used in the name of a file will be removed. This are mainly Windows specific illegals.\n" +
             "If there is an identifier in the expression, which there is no value for, the identifier by default is left out and simply removed. You can adjust this behavior by using \"/[\" and \"/]\". You can put these identifiers around a segment of the expression. The segment will then only be displayed if every identifier inside that segment can successfully be filled in. If there are missing closing/opening identifier, the identifiers causing the problem are ignored.\n" +
             "In each of these segments you can make use of \"inverted identifiers\". Inverted identifiers make the segment they are in only visible if there exists no value for them. They can be created by putting a \"!\" directly after \"/\" of each identifier. For example \"/[S/sE/e/]/[/!sEpisode /E]\".";
+
+    private final List<Identifier> identifiers;
 
     EpisodeFormat(String seriesName, String seasonNumber, String episodeNumber, String episodeName,
                   String language, String translationType) {
