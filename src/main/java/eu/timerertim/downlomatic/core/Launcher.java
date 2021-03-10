@@ -29,7 +29,6 @@ public class Launcher {
     public final static Option SUBDIR_FORMAT = new Option(null, "subdir-format", true, "controls subdirectory creation according to the guidelines shown at the end " +
             "of this output");
 
-    //TODO: Add complete Documentation (JavaDoc) to framework package before release of 0.2.0
     public static void main(String... args) {
         CommandLine cmd = null;
         ParseException ex = null;

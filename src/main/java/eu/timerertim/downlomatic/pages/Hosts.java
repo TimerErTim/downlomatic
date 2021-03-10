@@ -42,7 +42,7 @@ public enum Hosts {
      *
      * @return true if not safe for work
      */
-    boolean isNsfw() {
+    public boolean isNsfw() {
         return nsfw;
     }
 }

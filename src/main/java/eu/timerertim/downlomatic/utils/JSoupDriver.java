@@ -287,7 +287,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
         @Override
         public String getAttribute(String name) {
-            return element.attr(name);
+            return element.hasAttr(name) ? element.attr(name) : null;
         }
 
         @Override
