@@ -60,8 +60,7 @@ public abstract class Series implements Iterable<Downloader> {
     }
 
     /**
-     * Returns a {@code Series} object containing the given {@code Downloader}s
-     * and name.
+     * Returns a {@code Series} object containing the given {@code Downloader}s.
      * <p>
      * Not that the resulting instance will neither have a source URL
      * nor a {@link Page} to reference to.
@@ -73,8 +72,26 @@ public abstract class Series implements Iterable<Downloader> {
      * @return an anonymous {@code Series} instance or null if that is not possible
      */
     public static Series custom(Set<? extends Downloader> downloaders) {
+        return custom(downloaders, null);
+    }
+
+    /**
+     * Returns a {@code Series} object containing the given {@code Downloader}s
+     * and name.
+     * <p>
+     * Not that the resulting instance will neither have a source URL
+     * nor a {@link Page} to reference to.
+     * <p>
+     * If any complications occur, which really shouldn't happen, null is
+     * returned instead.
+     *
+     * @param downloaders the {@code Set} of {@code Downloader}s
+     * @param name        the name of the custom {@code Series}
+     * @return an anonymous {@code Series} instance or null if that is not possible
+     */
+    public static Series custom(Set<? extends Downloader> downloaders, String name) {
         try {
-            return new Series((URL) null) {
+            return new Series("https://github.com/TimerErTim/downlomatic", name) {
                 @Override
                 protected Set<? extends Downloader> parseSeries(URL seriesURL) {
                     return downloaders;
