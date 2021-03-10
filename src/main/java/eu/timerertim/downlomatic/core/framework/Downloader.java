@@ -13,7 +13,7 @@ import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 
 /**
- * Represents a single video on a WebSite and is used to retrieve a {@link Downloader}
+ * Represents a single video on a website and is used to retrieve a {@link Download}.
  */
 public abstract class Downloader {
     /**
