@@ -16,10 +16,8 @@ public class CollectiveDownloadBuilder {
     private final static String DEFAULT_FORMAT_SUBDIR = "/S/[" + (File.separator.equals("/") ? "//" : File.separator) + "Season /s/]";
 
     private final Set<? extends Series> seriesSet;
-
-    private int maxDownloads;
-
     private final String path;
+    private int maxDownloads;
     private String formatSubDir;
     private String formatDownload;
     private Runnable onFinish;
