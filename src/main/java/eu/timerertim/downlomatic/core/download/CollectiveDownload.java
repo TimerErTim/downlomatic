@@ -14,6 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Can be used to download multiple files/videos at once and must be built with a {@link CollectiveDownloadBuilder}.
+ */
 public class CollectiveDownload {
     private final static long CHECK_INTERVAL = 500;
 
@@ -314,6 +317,9 @@ public class CollectiveDownload {
         return state;
     }
 
+    /**
+     * Enum defining state of the {@code CollectiveDownload}.
+     */
     public enum State {
         IDLE, RUNNING, PAUSED, FINISHED
     }
