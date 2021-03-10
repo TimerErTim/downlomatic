@@ -4,6 +4,9 @@ import eu.timerertim.downlomatic.core.framework.Page;
 
 import java.net.URL;
 
+/**
+ * Defines values for vivo.sx.
+ */
 public class VivoPage implements Page {
     public static final VivoPage PAGE = new VivoPage();
 

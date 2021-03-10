@@ -14,6 +14,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A collection of individual {@link HentaiPlayDownloader}s. Provides some neat
+ * and useful methods.
+ */
 public class HentaiPlaySeries extends Series {
     /**
      * Creates a {@code HentaiPlaySeries} object from the URL.

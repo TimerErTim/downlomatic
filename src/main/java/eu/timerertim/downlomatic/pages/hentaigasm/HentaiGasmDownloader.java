@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.pages.hentaigasm;
 
+import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.core.format.EpisodeFormat;
 import eu.timerertim.downlomatic.core.format.EpisodeFormatBuilder;
 import eu.timerertim.downlomatic.core.framework.Downloader;
@@ -14,6 +15,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Pattern;
 
+/**
+ * Represents a single video on hentaigasm and is used to retrieve a {@link Download}.
+ */
 public class HentaiGasmDownloader extends Downloader {
     /**
      * Creates a {@code HentaiGasmDownloader} object from the URL.
