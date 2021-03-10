@@ -16,6 +16,9 @@ import java.nio.channels.FileChannel;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
+/**
+ * Downloads a single file from an URL via HTTP protocol.
+ */
 public class Download {
     private final long size;
     private final IntConsumer onRead;
