@@ -1,6 +1,5 @@
 package eu.timerertim.downlomatic.core.download;
 
-import eu.timerertim.downlomatic.utils.ReadableConsumerByteChannel;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -10,9 +9,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 
@@ -367,6 +368,48 @@ public class Download {
             if (!referenceDownload.paused) {
                 actionAfterFinish.accept(downloadSuccess);
             }
+        }
+    }
+
+    private static class ReadableConsumerByteChannel implements ReadableByteChannel {
+        private final ReadableByteChannel byteChannel;
+        private final IntConsumer onRead;
+
+        private int totalByteRead;
+
+        public ReadableConsumerByteChannel(ReadableByteChannel byteChannel, IntConsumer onRead) {
+            this.byteChannel = byteChannel;
+            this.onRead = onRead;
+            totalByteRead = 0;
+        }
+
+        @Override
+        public int read(ByteBuffer byteBuffer) throws IOException {
+            int nRead = byteChannel.read(byteBuffer);
+            notifyBytesRead(nRead);
+            return nRead;
+        }
+
+        protected void notifyBytesRead(int nRead) {
+            if (nRead <= 0) {
+                return;
+            }
+            totalByteRead += nRead;
+            onRead.accept(totalByteRead);
+        }
+
+        public int getTotalByteRead() {
+            return totalByteRead;
+        }
+
+        @Override
+        public boolean isOpen() {
+            return byteChannel.isOpen();
+        }
+
+        @Override
+        public void close() throws IOException {
+            byteChannel.close();
         }
     }
 }
