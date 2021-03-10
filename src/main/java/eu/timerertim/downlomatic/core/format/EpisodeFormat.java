@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Allows to format video titles comparable to {@link java.time.format.DateTimeFormatter}.
+ * <p>
+ * Due to this being immutable it has to be built with a {@link EpisodeFormatBuilder}. The formatting happens
+ * through {@link EpisodeFormat#format(String)} which takes a "template" as input. Everything you need to know is
+ * described in that methods JavaDoc documentation.
+ */
 public class EpisodeFormat {
     public final static String DESCRIPTION = "These are the types of identifiers:\n" +
             "\"/S\": Means the name of the series\n" +
