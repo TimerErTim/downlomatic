@@ -16,6 +16,9 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * JSoup based implementation of Selenium's {@link WebDriver} for uniform webpage parsing procedure.
+ */
 public class JSoupDriver implements WebDriver, SearchContext {
     private final static String USER_AGENT = "Mozilla/5.0 (Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0";
 

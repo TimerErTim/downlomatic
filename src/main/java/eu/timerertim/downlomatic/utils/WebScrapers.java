@@ -8,6 +8,9 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 
 import java.util.logging.Level;
 
+/**
+ * Provides webscrapers for usage. Has to be initialized at least once in order to work.
+ */
 public class WebScrapers {
     private static JSoupDriver jSoupDriver;
     private static FirefoxDriver firefoxDriver;
