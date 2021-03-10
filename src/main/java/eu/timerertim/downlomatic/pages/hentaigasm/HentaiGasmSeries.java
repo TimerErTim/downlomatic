@@ -14,6 +14,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A collection of individual {@link HentaiGasmDownloader}s. Provides some neat and useful methods.
+ */
 public class HentaiGasmSeries extends Series {
     /**
      * Creates a {@code HentaiGasmSeries} object from the URL.

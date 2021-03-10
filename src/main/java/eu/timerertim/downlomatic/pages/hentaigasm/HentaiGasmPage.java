@@ -13,6 +13,9 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Defines the interaction with and values for hentaigasm.
+ */
 public class HentaiGasmPage extends Host {
     public final static HentaiGasmPage PAGE = new HentaiGasmPage();
 

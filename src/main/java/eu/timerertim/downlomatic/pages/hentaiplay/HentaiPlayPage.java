@@ -14,6 +14,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Defines the interaction with and values for hentaiplay.
+ */
 public class HentaiPlayPage extends Host {
     public static final HentaiPlayPage PAGE = new HentaiPlayPage();
 

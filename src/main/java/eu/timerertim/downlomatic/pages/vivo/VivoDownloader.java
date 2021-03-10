@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.pages.vivo;
 
+import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.core.format.EpisodeFormat;
 import eu.timerertim.downlomatic.core.format.EpisodeFormatBuilder;
 import eu.timerertim.downlomatic.core.framework.Downloader;
@@ -15,6 +16,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+/**
+ * Represents a single video on vivo.sx and is used to retrieve a {@link Download}
+ */
 public class VivoDownloader extends Downloader {
     /**
      * Creates a VivoDownloader Object from the URL.
