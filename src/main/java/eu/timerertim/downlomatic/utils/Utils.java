@@ -11,6 +11,9 @@ import org.apache.commons.cli.*;
 
 import static eu.timerertim.downlomatic.core.Launcher.*;
 
+/**
+ * Provides some neutral helper functions and helps in code reuse.
+ */
 public class Utils {
     private static Options options;
     private static HelpFormatter help;
