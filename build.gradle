@@ -34,7 +34,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile) {
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jvmTarget = "11"
 }
 
