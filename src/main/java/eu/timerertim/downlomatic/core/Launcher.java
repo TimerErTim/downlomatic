@@ -4,6 +4,7 @@ import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.graphics.GUI;
 import eu.timerertim.downlomatic.pages.Hosts;
+import eu.timerertim.downlomatic.utils.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
@@ -11,12 +12,14 @@ import org.apache.commons.cli.ParseException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static eu.timerertim.downlomatic.utils.Utils.*;
 
 public class Launcher {
     public final static Option HELP = new Option(null, "help", false, "shows this");
+    public final static Option FILE_LOGGING = new Option(null, "no-file-logging", false, "enables logging to file");
     public final static Option NSFW = new Option("x", "nsfw", false, "display NSFW hosts in GUI\nif you want to show GUI you need pass only this or no argument");
     public final static Option DESTINATION_DIRECTORY = new Option("d", "destination", true, "the download destination folder");
     public final static Option HOST = new Option("h", "host", true, "the host to download from:");
@@ -30,6 +33,12 @@ public class Launcher {
             "of this output");
 
     public static void main(String... args) {
+        List<String> arguments = new LinkedList<>(Arrays.asList(args));
+
+        if (!arguments.remove("--" + FILE_LOGGING.getLongOpt())) {
+            Log.setFileLogging(true);
+        }
+
         CommandLine cmd = null;
         ParseException ex = null;
         try {
@@ -39,7 +48,6 @@ public class Launcher {
         }
 
         if (cmd == null) {
-            List<String> arguments = Arrays.asList(args);
 
             if (arguments.contains("--" + HELP.getLongOpt())) {
                 printHelp();
