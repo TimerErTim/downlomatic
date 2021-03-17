@@ -66,6 +66,7 @@ public class Utils {
      */
     public static CommandLine parseOptions(String[] args) throws ParseException {
         HELP.setRequired(false);
+        FILE_LOGGING.setRequired(false);
         NSFW.setRequired(false);
         HOST.setRequired(true);
         HOST.setArgName("host");
