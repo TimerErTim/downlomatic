@@ -66,11 +66,12 @@ public class HentaiGasmPage extends Host {
             }
 
             List<WebElement> elements = driver.findElements(By.tagName("a"));
+
             for (WebElement element : elements) {
-                if (element.getAttribute("rel").equals("bookmark")) {
+                if ("bookmark".equals(element.getAttribute("rel"))) {
                     String link = element.getAttribute("href");
                     String title = element.getText();
-                    String seriesName = title.replaceAll("\\d+ (Subbed|Raw)", "");
+                    String seriesName = title.replaceAll(" \\d+ (Subbed|Raw)", "");
 
                     Set<String> links = map.computeIfAbsent(seriesName, k -> new LinkedHashSet<>());
                     links.add(link);
@@ -95,6 +96,11 @@ public class HentaiGasmPage extends Host {
                     @Override
                     protected Set<? extends Downloader> parseSeries(URL seriesURL) {
                         return downloaders;
+                    }
+
+                    @Override
+                    protected boolean isValidSeriesURL(URL seriesURL) {
+                        return true;
                     }
                 };
                 parsedSeries.add(series);
