@@ -1,5 +1,7 @@
 package eu.timerertim.downlomatic.core.framework;
 
+import eu.timerertim.downlomatic.utils.logging.Log;
+
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -123,6 +125,7 @@ public abstract class Series implements Iterable<Downloader> {
                 }
             };
         } catch (MalformedURLException e) {
+            Log.wtf("Custom Series has invalid seriesURL. That's logically not possible.", e);
             return null;
         }
     }

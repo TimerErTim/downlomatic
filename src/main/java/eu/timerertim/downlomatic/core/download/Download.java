@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.core.download;
 
+import eu.timerertim.downlomatic.utils.logging.Log;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -340,7 +341,8 @@ public class Download {
         downloaded = getDownloaded();
         try {
             src.close();
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            Log.w("Source ByteChannel could not be closed", ex);
         } finally {
             src = null;
         }

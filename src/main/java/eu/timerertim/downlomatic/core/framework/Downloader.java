@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.core.framework;
 import com.google.common.io.Files;
 import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.core.format.EpisodeFormat;
+import eu.timerertim.downlomatic.utils.logging.Log;
 import javafx.util.Pair;
 
 import java.io.File;
@@ -106,7 +107,7 @@ public abstract class Downloader {
                 Files.createParentDirs(file);
                 download = new Download(videoURL, file, onRead);
             } catch (IOException e) {
-                download = null;
+                Log.e("Download could not be created.", e);
             }
             return download;
         }
