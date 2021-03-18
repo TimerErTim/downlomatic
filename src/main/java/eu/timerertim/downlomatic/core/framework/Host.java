@@ -1,5 +1,7 @@
 package eu.timerertim.downlomatic.core.framework;
 
+import eu.timerertim.downlomatic.utils.logging.Log;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
@@ -24,6 +26,7 @@ public abstract class Host implements Page {
         try {
             listURL = getListURL();
         } catch (MalformedURLException e) {
+            Log.wtf(getPageDomain() + " Host has no valid URL to parse Series from.", e);
             listURL = null;
         }
         this.listURL = listURL;
