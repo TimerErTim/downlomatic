@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.utils;
 
+import eu.timerertim.downlomatic.utils.logging.Log;
 import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -27,6 +27,8 @@ public class JSoupDriver implements WebDriver, SearchContext {
     private Connection con;
     private Document doc;
     private URL url;
+
+    private String statusMessage;
 
     public JSoupDriver() {
         cookies = new HashMap<>();
@@ -44,16 +46,19 @@ public class JSoupDriver implements WebDriver, SearchContext {
         dataModifier.accept(con);
         try {
             Connection.Response res = con.url(url).cookies(cookies).execute();
+            statusMessage = res.statusMessage();
             cookies.putAll(res.cookies());
             doc = res.parse();
             this.url = new URL(url);
         } catch (IOException e) {
-            java.util.logging.Logger.getLogger("org.openqa.selenium").log(Level.WARNING, getClass().getSimpleName() + " was not able to parse from URL: " + url, e);
+            Log.w(getClass().getSimpleName() + " was not able to parse from URL: " + url, e);
             doc = null;
+            statusMessage = null;
             this.url = null;
         } catch (NullPointerException e) {
-            java.util.logging.Logger.getLogger("org.openqa.selenium").log(Level.SEVERE, getClass().getSimpleName() + " is closed", e);
+            Log.f(getClass().getSimpleName() + " is closed", e);
             doc = null;
+            statusMessage = null;
             this.url = null;
         }
     }
@@ -76,12 +81,12 @@ public class JSoupDriver implements WebDriver, SearchContext {
 
     @Override
     public List<WebElement> findElements(By by) {
-        return by.findElements(new JSoupWebElement(doc));
+        return doc == null ? new LinkedList<>() : by.findElements(new JSoupWebElement(doc));
     }
 
     @Override
     public WebElement findElement(By by) {
-        return by.findElement(new JSoupWebElement(doc));
+        return doc == null ? null : by.findElement(new JSoupWebElement(doc));
     }
 
     @Override
@@ -90,6 +95,15 @@ public class JSoupDriver implements WebDriver, SearchContext {
             return doc.toString();
         } else
             return null;
+    }
+
+    /**
+     * Returns the response status message.
+     *
+     * @return the status message
+     */
+    public String getStatusMessage() {
+        return statusMessage;
     }
 
     @Override
@@ -136,7 +150,7 @@ public class JSoupDriver implements WebDriver, SearchContext {
     }
 
     private void generateConnection() {
-        con = new HttpConnection().userAgent(USER_AGENT);
+        con = new HttpConnection().userAgent(USER_AGENT).ignoreHttpErrors(true);
     }
 
     private void generateOptions() {
