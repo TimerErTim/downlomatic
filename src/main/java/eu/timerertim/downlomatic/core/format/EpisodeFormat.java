@@ -1,9 +1,13 @@
 package eu.timerertim.downlomatic.core.format;
 
+import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Allows to format video titles comparable to {@link java.time.format.DateTimeFormatter}.
@@ -38,7 +42,7 @@ public class EpisodeFormat {
         identifiers.add(new Identifier("e", episodeNumber));
         identifiers.add(new Identifier("L", language));
         identifiers.add(new Identifier("T", translationType));
-        identifiers.add(new Identifier("//", "/"));
+        identifiers.add(new Literal("//", "/"));
     }
 
     /**
@@ -75,8 +79,8 @@ public class EpisodeFormat {
      * <p>
      * In each of these segments you can make use of "inverted identifiers". Inverted identifiers make
      * the segment they are in only successful (and thus visible) if there exists no value for them.
-     * They can be created by putting a "!" directly after "/" of each identifier. For example
-     * "{@code /[S/sE/e/]/[/!sEpisode /E]}" would create "Episode 1" for the first Episode which doesn't have a
+     * They can be created by putting a "!" directly after "/" of each identifier. Does not work with literals! For
+     * example "{@code /[S/sE/e/]/[/!sEpisode /E]}" would create "Episode 1" for the first Episode which doesn't have a
      * season number. If it has one, it creates "S1E1" (assuming it's the first season).
      *
      * @param expression a String expression used as template for formatting
@@ -92,12 +96,10 @@ public class EpisodeFormat {
             matcher = pattern.matcher(expression);
         }
 
-
         String temp = expression.replaceAll("(\\/\\[|\\/\\])", "");
-        for (Identifier identifier : identifiers) {
-            temp = temp.replaceAll(identifier.getReplaceRegex(), identifier.getValue());
-        }
-        return temp.replaceAll("[\\\\\\/:*?\"<>|]", "");
+        temp = replaceSimultaneous(temp);
+
+        return temp.replaceAll("[\\\\:*?\"<>|]", "");
     }
 
     private String formatSegment(String segment) {
@@ -105,42 +107,80 @@ public class EpisodeFormat {
             boolean hasValue = identifier.hasValue();
             if (segment.contains(identifier.getIdentifier()) && !hasValue || segment.contains(identifier.getNegativeIdentifier()) && hasValue) {
                 return "";
-            } else {
-                segment = segment.replaceAll(identifier.getReplaceRegex(), identifier.getValue());
             }
         }
 
-        return segment;
+        return replaceSimultaneous(segment);
+    }
+
+    private String replaceSimultaneous(String input) {
+        String regexp = identifiers.stream().map(Identifier::getReplaceRegex).collect(Collectors.joining("|"));
+        Map<String, String> replacements = new HashMap<>();
+        identifiers.forEach(identifier -> {
+            replacements.put(identifier.getIdentifier(), identifier.getValue());
+            replacements.put(identifier.getNegativeIdentifier(), identifier.getValue());
+        });
+
+        StringBuffer sb = new StringBuffer();
+        Pattern p = Pattern.compile(regexp);
+        Matcher m = p.matcher(input);
+
+        while (m.find()) {
+            m.appendReplacement(sb, replacements.get(m.group()));
+        }
+        m.appendTail(sb);
+
+        return sb.toString();
     }
 
     private static class Identifier {
         private final String identifier, negativeIdentifier, value;
 
         private Identifier(String key, String value) {
-            this.identifier = "/" + key;
-            this.negativeIdentifier = "/!" + key;
+            this("/" + key, "/!" + key, value);
+        }
+
+        private Identifier(String identifier, String negativeIdentifier, String value) {
+            this.identifier = identifier;
+            this.negativeIdentifier = negativeIdentifier;
             this.value = value;
         }
 
-        private boolean hasValue() {
+        protected boolean hasValue() {
             return value != null;
         }
 
-        private String getIdentifier() {
-            return identifier;
-        }
-
-        private String getNegativeIdentifier() {
-            return negativeIdentifier;
-        }
-
-        private String getReplaceRegex() {
+        protected String getReplaceRegex() {
             return "(" + Pattern.quote(getIdentifier()) + "|" +
                     Pattern.quote(getNegativeIdentifier()) + ")";
         }
 
-        private String getValue() {
+        protected String getIdentifier() {
+            return identifier;
+        }
+
+        protected String getNegativeIdentifier() {
+            return negativeIdentifier;
+        }
+
+        protected String getValue() {
             return (value != null ? value : "");
+        }
+    }
+
+    private static class Literal extends Identifier {
+        private Literal(@Nonnull String key, @Nonnull String value) {
+            super(key, String.valueOf(Character.MIN_VALUE), value);
+        }
+
+        @Override
+        protected boolean hasValue() {
+            return true;
+        }
+
+        @Override
+        protected String getReplaceRegex() {
+            return "(" + Pattern.quote(getIdentifier()) + ")";
         }
     }
 }
