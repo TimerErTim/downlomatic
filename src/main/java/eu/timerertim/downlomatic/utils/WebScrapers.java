@@ -57,8 +57,6 @@ public class WebScrapers {
      * Initializes the WebScraper for handling (non-)JavaScript websites.
      */
     public static void initialize() {
-        java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
-
         WebDriverManager.firefoxdriver().setup();
 
         initializeFirefoxDriver();
@@ -66,6 +64,7 @@ public class WebScrapers {
     }
 
     private static void initializeFirefoxDriver() {
+        java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
         FirefoxOptions options = new FirefoxOptions().setHeadless(true).setLogLevel(FirefoxDriverLogLevel.FATAL).addArguments("--log", "fatal");
         options.setCapability("marionette", true);
         (firefoxDriver = new FirefoxDriver(options)).setLogLevel(Level.OFF);
