@@ -16,7 +16,7 @@ class EpisodeFormatTest {
 
     @Test
     fun `Literal negative identifier should be ignored`() {
-        val expected = "Test/!/ string/!/ will be printed"
+        val expected = "Test! string! will be printed"
         val format = EpisodeFormatBuilder().build()
 
         val result = format.format("Test/!/ string/[/!/ will be printed/]")
@@ -52,6 +52,53 @@ class EpisodeFormatTest {
         val result = format.format(
             "/e is the number/[ and /S is the series/]/[ /E the name with language /L/]" +
                     "/[ this block should be displayed with number /e/!L/]/[ display this name /E/[ with type /T/]/]"
+        )
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Replacement should work simultaneously not iteratively`() {
+        val expected = "/// Text /Series Name"
+        val format = EpisodeFormatBuilder()
+            .setSeriesName("Series Name")
+            .setEpisodeNumber("Number")
+            .setEpisodeName("Episode Name")
+            .build()
+
+        val result = format.format(
+            "/[/////[///]/] Text: /[/[///]/[/S/]/]"
+        )
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Faulty brackets should not cause error`() {
+        val format = EpisodeFormatBuilder()
+            .build()
+
+        val result = try {
+            format.format("/[///]/]///[/// ] Text: /[/[///]/[/S/]")
+            "No error"
+        } catch (e: RuntimeException) {
+            "Error"
+        }
+
+        assertEquals("No error", result)
+    }
+
+    @Test
+    fun `Negative Identifiers in brackets`() {
+        val expected = "Series Name and"
+        val format = EpisodeFormatBuilder()
+            .setSeriesName("Series Name")
+            .setEpisodeNumber("Number")
+            .setEpisodeName("Episode Name")
+            .build()
+
+        val result = format.format(
+            "/[/S/[/!S no series/]/] and/[/!S /[/S should not be displayed/]/]"
         )
 
         assertEquals(expected, result)
