@@ -121,4 +121,16 @@ class EpisodeFormatTest {
 
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `Negative top level identifiers should be removed`() {
+        val expected = "Test string"
+        val format = EpisodeFormatBuilder()
+            .setEpisodeName("Name")
+            .build()
+
+        val result = format.format("Test/!E string/[/!/!E will be printed/]")
+
+        assertEquals(expected, result)
+    }
 }
