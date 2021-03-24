@@ -92,41 +92,8 @@ public class EpisodeFormat {
 
     /**
      * Formats the episodes description to a readable {@code String} using the given expression.
-     * <b> Important to read this documentation </b>
      * <p>
-     * These are the types of identifiers:<ul>
-     * <li>"<b>/S</b>": Means the name of the series
-     * <li>"<b>/s</b>": Means the number of the season
-     * <li>"<b>/E</b>": Means the name of the episode
-     * <li>"<b>/e</b>": Means the number of the episode
-     * <li>"<b>/L</b>": Means the main target audience language of the episode
-     * <li>"<b>/T</b>": Means the type of translation
-     * <li>"<b>/[</b>" or "<b>/]</b>": Covered in the last paragraph
-     * <li>"<b>//</b>": Means literally "/"
-     * </ul><p>
-     * If those identifiers are found in the given expression, they are
-     * replaced by their respective meaning.<br>
-     * Every other part of the expression (exception explained in the following
-     * paragraph) is seen as literal and returned as
-     * is.
-     * <p>
-     * Illegal characters in the expression will be removed. Illegal characters are characters,
-     * which can not be used in the name of a file. This includes Windows specific illegals.
-     * <p>
-     * If there is an identifier in the expression, which can't be filled because
-     * the according field in this Object is null, the identifier by default is left out
-     * and simply removed. You can adjust this behavior by using the last (two) identifiers
-     * of the above list, which are <b>/[</b> and <b>/]</b>. You can put these identifiers
-     * around a segment of the expression. The segment will only be displayed in the formatted
-     * text if the other identifiers inside that segment can successfully be filled in. If there
-     * is no other identifier inside or a missing closing/opening identifier, the segment will be
-     * returned as is, which basically means, that the identifiers causing the problem are ignored.
-     * <p>
-     * In each of these segments you can make use of "inverted identifiers". Inverted identifiers make
-     * the segment they are in only successful (and thus visible) if there exists no value for them.
-     * They can be created by putting a "!" directly after "/" of each identifier. Does not work with literals! For
-     * example "{@code /[S/sE/e/]/[/!sEpisode /E]}" would create "Episode 1" for the first Episode which doesn't have a
-     * season number. If it has one, it creates "S1E1" (assuming it's the first season).
+     * <b> Important to read the documentation under the following link: {@value WIKI_URL} </b>
      *
      * @param expression a String expression used as template for formatting
      * @return a formatted String representation of an episode
