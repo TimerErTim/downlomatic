@@ -2,11 +2,14 @@ package eu.timerertim.downlomatic.core.format
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class EpisodeFormatTest {
+    val seperator = File.separator
+
     @Test
     fun `Literal should be replaced`() {
-        val expected = "Test string/format"
+        val expected = "Test string${seperator}format"
         val format = EpisodeFormatBuilder().build()
 
         val result = format.format("Test string//format")
@@ -26,7 +29,7 @@ class EpisodeFormatTest {
 
     @Test
     fun `Literal in combination with other identifiers`() {
-        val expected = "Titel Name der Episode/Nummer Trans /T"
+        val expected = "Titel Name der Episode${seperator}Nummer Trans ${seperator}T"
         val format = EpisodeFormatBuilder()
             .setEpisodeName("Name der Episode")
             .setEpisodeNumber("Nummer")
@@ -59,7 +62,7 @@ class EpisodeFormatTest {
 
     @Test
     fun `Replacement should work simultaneously not iteratively`() {
-        val expected = "/// Text /Series Name"
+        val expected = "${seperator}${seperator}${seperator} Text ${seperator}Series Name"
         val format = EpisodeFormatBuilder()
             .setSeriesName("Series Name")
             .setEpisodeNumber("Number")
