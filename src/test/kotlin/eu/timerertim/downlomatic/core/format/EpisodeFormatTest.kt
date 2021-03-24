@@ -106,4 +106,19 @@ class EpisodeFormatTest {
 
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `Illegals in identifier content should be removed`() {
+        val expected = "SeriesName and Number"
+        val format = EpisodeFormatBuilder()
+            .setSeriesName("Series/Name")
+            .setEpisodeNumber("Number<")
+            .build()
+
+        val result = format.format(
+            "/[/S/[/!S no series/]/] and /e/[/!S /[/S should not be displayed/]/]"
+        )
+
+        assertEquals(expected, result)
+    }
 }
