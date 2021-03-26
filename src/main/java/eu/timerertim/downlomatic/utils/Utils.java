@@ -5,11 +5,8 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import eu.timerertim.downlomatic.core.format.EpisodeFormat;
-import eu.timerertim.downlomatic.pages.Hosts;
-import org.apache.commons.cli.*;
-
-import static eu.timerertim.downlomatic.core.Launcher.*;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
 
 /**
  * Provides some neutral helper functions and helps in code reuse.
@@ -56,65 +53,5 @@ public class Utils {
      */
     public static void onExit() {
         WebScrapers.close();
-    }
-
-    /**
-     * Parses commandline arguments for easier usage.
-     *
-     * @param args the commandline arguments
-     * @return an abstract presentation
-     */
-    public static CommandLine parseOptions(String[] args) throws ParseException {
-        HELP.setRequired(false);
-        FILE_LOGGING.setRequired(false);
-        NSFW.setRequired(false);
-        HOST.setRequired(true);
-        HOST.setArgName("host");
-        SERIES.setRequired(false);
-        SERIES.setArgName("url");
-        DOWNLOADER.setRequired(false);
-        DOWNLOADER.setArgName("url");
-        ALL.setRequired(false);
-        DESTINATION_DIRECTORY.setRequired(true);
-        DESTINATION_DIRECTORY.setArgName("directory");
-        MAX_DOWNLOADS.setRequired(false);
-        MAX_DOWNLOADS.setArgName("threads");
-        DOWNLOAD_FORMAT.setRequired(false);
-        DOWNLOAD_FORMAT.setArgName("formatting");
-        SUBDIR_FORMAT.setRequired(false);
-        SUBDIR_FORMAT.setArgName("formatting");
-
-        // List HOSTS in usage
-        final Hosts[] values = Hosts.values();
-        for (int i = 0; i < values.length; i++) {
-            HOST.setDescription(HOST.getDescription() + (i > 0 ? ", " : " ") + values[i].name());
-        }
-
-        OptionGroup src = new OptionGroup();
-        src.addOption(SERIES).addOption(DOWNLOADER).addOption(ALL);
-        src.setRequired(true);
-
-        options = new Options();
-        options.addOption(DESTINATION_DIRECTORY).
-                addOption(HOST).
-                addOptionGroup(src).
-                addOption(NSFW).
-                addOption(MAX_DOWNLOADS).
-                addOption(DOWNLOAD_FORMAT).
-                addOption(SUBDIR_FORMAT).
-                addOption(HELP);
-
-        CommandLineParser commandLineParser = new DefaultParser();
-        help = new HelpFormatter();
-
-        return commandLineParser.parse(options, args);
-    }
-
-    /**
-     * Prints a help message.
-     */
-    public static void printHelp() {
-        help.printHelp("AnimeDownloader -d <directory> -h <host> -a | -b <url> | -s <url> [-f <formatting>] [--subdir-format <formatting>] [-m <threads>]",
-                null, options, "\n" + EpisodeFormat.DESCRIPTION);
     }
 }

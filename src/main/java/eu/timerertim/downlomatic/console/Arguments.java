@@ -37,9 +37,9 @@ public enum Arguments {
                 option.setArgName("url");
             }),
     ALL(new Option("a", "all", false, "download every single video from the host")),
-    MAX_DOWNLOADS(new Option("m", "max-threads", true, "the maximum amount of downloads being executed at the same time"),
+    MAX_DOWNLOADS(new Option("t", "threads", true, "the maximum amount of downloads being executed at the same time"),
             option -> {
-                option.setArgName("threads");
+                option.setArgName("amount");
             }),
     DOWNLOAD_FORMAT(new Option("f", "format", true, "the format of every single downloaded video"),
             option -> {
