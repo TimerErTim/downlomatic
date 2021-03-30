@@ -20,8 +20,6 @@ public class Utils {
      * successful execution.
      */
     public static void initializeSetup() {
-        WebScrapers.initialize();
-
         // Windows 10 VT100 Terminal - copied from Stackoverflow
         if (System.getProperty("os.name").startsWith("Windows")) {
             try {

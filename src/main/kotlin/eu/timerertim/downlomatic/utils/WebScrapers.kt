@@ -1,27 +1,31 @@
-package eu.timerertim.downlomatic.utils;
+package eu.timerertim.downlomatic.utils
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxDriverLogLevel;
-import org.openqa.selenium.firefox.FirefoxOptions;
-
-import java.util.logging.Level;
+import io.github.bonigarcia.wdm.WebDriverManager
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.firefox.FirefoxDriver
+import org.openqa.selenium.firefox.FirefoxDriverLogLevel
+import org.openqa.selenium.firefox.FirefoxOptions
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * Provides webscrapers for usage. Has to be initialized at least once in order to work.
  */
-public class WebScrapers {
-    private static JSoupDriver jSoupDriver;
-    private static FirefoxDriver firefoxDriver;
+object WebScrapers {
+    private var jSoupDriver: JSoupDriver? = null
+    private var firefoxDriver: FirefoxDriver? = null
 
     /**
      * Returns the WebDriver responsible for handling non js webscraping.
      *
      * @return the JSoupDriver
      */
-    public static JSoupDriver noJavaScript() {
-        return jSoupDriver;
+    @JvmStatic
+    fun noJavaScript(): JSoupDriver? {
+        if (jSoupDriver == null) {
+            initializeJSoupDriver()
+        }
+        return jSoupDriver
     }
 
     /**
@@ -29,48 +33,55 @@ public class WebScrapers {
      *
      * @return the FirefoxDriver
      */
-    public static WebDriver javaScript() {
-        return firefoxDriver;
+    @JvmStatic
+    fun javaScript(): WebDriver? {
+        if (firefoxDriver == null) {
+            initializeFirefoxDriver()
+        }
+        return firefoxDriver
     }
 
     /**
      * If one of the WebDrivers happens to be closed, you can reinitialize them with this method.
      */
-    public static void reInitialize() {
+    fun reInitialize() {
         if (firefoxDriver.toString().contains("null")) {
-            initializeFirefoxDriver();
+            initializeFirefoxDriver()
         }
         if (jSoupDriver.toString().contains("null")) {
-            initializeJSoupDriver();
+            initializeJSoupDriver()
         }
     }
 
     /**
      * Closes both WebDrivers to release resources.
      */
-    public static void close() {
-        firefoxDriver.quit();
-        jSoupDriver.quit();
+    @JvmStatic
+    fun close() {
+        firefoxDriver?.quit()
+        jSoupDriver?.quit()
     }
 
     /**
      * Initializes the WebScraper for handling (non-)JavaScript websites.
      */
-    public static void initialize() {
-        WebDriverManager.firefoxdriver().setup();
-
-        initializeFirefoxDriver();
-        initializeJSoupDriver();
+    @JvmStatic
+    fun initialize() {
+        initializeFirefoxDriver()
+        initializeJSoupDriver()
     }
 
-    private static void initializeFirefoxDriver() {
-        java.util.logging.Logger.getLogger("org.openqa.selenium").setLevel(Level.OFF);
-        FirefoxOptions options = new FirefoxOptions().setHeadless(true).setLogLevel(FirefoxDriverLogLevel.FATAL).addArguments("--log", "fatal");
-        options.setCapability("marionette", true);
-        (firefoxDriver = new FirefoxDriver(options)).setLogLevel(Level.OFF);
+    private fun initializeFirefoxDriver() {
+        WebDriverManager.firefoxdriver().setup()
+
+        Logger.getLogger("org.openqa.selenium").level = Level.OFF
+        val options =
+            FirefoxOptions().setHeadless(true).setLogLevel(FirefoxDriverLogLevel.FATAL).addArguments("--log", "fatal")
+        options.setCapability("marionette", true)
+        FirefoxDriver(options).also { firefoxDriver = it }.setLogLevel(Level.OFF)
     }
 
-    private static void initializeJSoupDriver() {
-        jSoupDriver = new JSoupDriver();
+    private fun initializeJSoupDriver() {
+        jSoupDriver = JSoupDriver()
     }
 }
