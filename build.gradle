@@ -10,6 +10,7 @@ group 'eu.timerertim'
 version '0.4.0-rc.1'
 
 mainClassName = "${group}.downlomatic.core.Launcher"
+def programArguments = ["--no-file-logging", "-v"]
 
 repositories {
     mavenCentral()
@@ -67,11 +68,11 @@ runtime{
 }
 
 run {
-    args '--no-file-logging'
+    args = programArguments
 }
 
 runShadow{
-    args run.args
+    args = programArguments
 }
 
 jar {
