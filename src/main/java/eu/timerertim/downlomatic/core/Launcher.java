@@ -7,6 +7,7 @@ import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.graphics.GUI;
 import eu.timerertim.downlomatic.pages.Hosts;
+import eu.timerertim.downlomatic.utils.logging.Level;
 import eu.timerertim.downlomatic.utils.logging.Log;
 import org.apache.commons.cli.ParseException;
 
@@ -26,6 +27,10 @@ public class Launcher {
                 Log.setFileLogging(true);
                 requiredSizeForGUI--;
             }
+            if (parsedArguments.hasArgument(Arguments.VERBOSE)) {
+                Log.setConsoleVerbosity(Level.ALL);
+                requiredSizeForGUI++;
+            }
 
             if (parsedArguments.hasArgument(Arguments.HELP)) {
                 ConsoleUtils.printHelp();
@@ -33,12 +38,17 @@ public class Launcher {
             }
 
             if (!parsedArguments.hasRequiredArguments()) {
-                if (parsedArguments.hasArgument(Arguments.NSFW) && parsedArguments.getSize() == requiredSizeForGUI) {
-                    GUI.start(Arguments.NSFW.getOption().getLongOpt());
-                } else if (parsedArguments.getSize() == requiredSizeForGUI - 1) {
-                    GUI.start();
-                } else {
-                    showErrorHelpMessage(parsedArguments.getMissingArgumentMessage());
+                try {
+                    if (parsedArguments.hasArgument(Arguments.NSFW) && parsedArguments.getSize() == requiredSizeForGUI) {
+                        GUI.start(Arguments.NSFW.getOption().getLongOpt());
+                    } else if (parsedArguments.getSize() == requiredSizeForGUI - 1) {
+                        GUI.start();
+                    } else {
+                        showErrorHelpMessage(parsedArguments.getMissingArgumentMessage());
+                    }
+                } catch (RuntimeException e) {
+                    Log.w("GUI experienced problem preventing proper execution.");
+                    showErrorHelpMessage("GUI experienced problems. Please refer to following help page as alternative:\n");
                 }
             } else {
                 launchCLI(parsedArguments);
@@ -55,7 +65,7 @@ public class Launcher {
         String downloadFormat = null, subdirFormat = null;
 
         try {
-            host = Hosts.valueOf(args.get(Arguments.HOST)).getHost();
+            host = Hosts.valueOf(args.get(Arguments.HOST).toUpperCase()).getHost();
         } catch (IllegalArgumentException e) {
             showErrorHelpMessage("Illegal argument: host has to be a valid type");
         }

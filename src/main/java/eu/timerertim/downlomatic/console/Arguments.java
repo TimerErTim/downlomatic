@@ -12,6 +12,7 @@ import java.util.function.Consumer;
  */
 public enum Arguments {
     NO_FILE_LOGGING(new Option(null, "no-file-logging", false, "disables logging to file"), true),
+    VERBOSE(new Option("v", "verbose", false, "enables verbose console logging for debugging purposes"), true),
     DESTINATION_DIRECTORY(new Option("d", "destination", true, "the download destination folder"),
             option -> {
                 option.setRequired(true);
