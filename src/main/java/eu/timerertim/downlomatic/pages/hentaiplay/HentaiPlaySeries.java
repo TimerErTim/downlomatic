@@ -66,7 +66,7 @@ public class HentaiPlaySeries extends Series {
         List<WebElement> elements = driver.findElements(By.tagName("a"));
         for (WebElement element : elements) {
             try {
-                if (element.getAttribute("rel").equals("bookmark")) {
+                if ("bookmark".equals(element.getAttribute("rel"))) {
                     HentaiPlayDownloader downloader = new HentaiPlayDownloader(element.getAttribute("href"));
                     downloaders.add(downloader);
                 }
