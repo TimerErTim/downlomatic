@@ -10,6 +10,9 @@ import java.util.*
 object ConsoleUtils {
     private const val USAGE = "\"downlomatic -d <directory> -h <host> -a | -b <url> | -s <url> " +
             "[-f <formatting>] [--subdir-format <formatting>] [-t <amount>]\""
+    private const val HEADER = ""
+    private const val FOOTER =
+        "Formatting follows the rules described under the following URL: ${EpisodeFormat.WIKI_URL}"
 
     // Create a parser which doesn't fail on missing options
     private val parser = object : DefaultParser() {
@@ -70,9 +73,9 @@ object ConsoleUtils {
         val help = HelpFormatter()
         help.printHelp(
             USAGE + "\n\n",
-            null,
+            HEADER,
             shownArguments,
-            "\nFormatting follows the rules described under the following URL: " + EpisodeFormat.WIKI_URL
+            "\n" + FOOTER
         )
     }
 
