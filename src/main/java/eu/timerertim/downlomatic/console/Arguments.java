@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Under the hood, it works with {@link Option}s.
  */
 public enum Arguments {
-    FILE_LOGGING(new Option(null, "no-file-logging", false, "disables logging to file"), true),
+    NO_FILE_LOGGING(new Option(null, "no-file-logging", false, "disables logging to file"), true),
     DESTINATION_DIRECTORY(new Option("d", "destination", true, "the download destination folder"),
             option -> {
                 option.setRequired(true);
