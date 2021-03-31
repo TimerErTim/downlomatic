@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * Builds an immutable {@link CollectiveDownload} which can be configured using this class.
  */
 public class CollectiveDownloadBuilder {
-    private final static String DEFAULT_FORMAT_DOWNLOAD = "/[/S - /[S/sE/e /[/E/]/]/[/!sEpisode /e/]/]/[/!S/E/] (/L)";
+    private final static String DEFAULT_FORMAT_DOWNLOAD = "/[/S - /[S/sE/e /[/E/]/]/[/!sEpisode /e/]/]/[/!S/E/]/[ (/L)/]";
     private final static String DEFAULT_FORMAT_SUBDIR = "/S/[" + (File.separator.equals("/") ? "//" : File.separator) + "Season /s/]";
 
     private final Set<? extends Series> seriesSet;
