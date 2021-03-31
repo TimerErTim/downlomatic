@@ -16,14 +16,14 @@ import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.function.Consumer;
-import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
 /**
  * Downloads a single file from an URL via HTTP protocol.
  */
 public class Download {
     private final long size;
-    private final IntConsumer onRead;
+    private final LongConsumer onRead;
     private final URL srcURL;
     private final File destFile;
 
@@ -43,7 +43,7 @@ public class Download {
      * @param onRead the action on byte reads
      * @throws IOException error when creating local fields
      */
-    public Download(URL url, File file, IntConsumer onRead) throws IOException {
+    public Download(URL url, File file, LongConsumer onRead) throws IOException {
         this.srcURL = url;
         this.destFile = file;
         this.size = url.openConnection().getContentLength();
@@ -58,7 +58,7 @@ public class Download {
      * @param onRead     the action on byte reads
      * @throws IOException error when creating local fields
      */
-    public Download(String urlString, String fileString, IntConsumer onRead) throws IOException {
+    public Download(String urlString, String fileString, LongConsumer onRead) throws IOException {
         this(new URL(urlString), new File(fileString), onRead);
     }
 
@@ -247,8 +247,7 @@ public class Download {
      * @return the downloaded size
      */
     public long getDownloaded() {
-        long currentDownloaded = ((src != null ? src.getTotalByteRead() : 0) + downloaded);
-        return (currentDownloaded == size ? currentDownloaded : currentDownloaded % size);
+        return downloaded;
     }
 
     /**
@@ -326,7 +325,8 @@ public class Download {
         }
         src = new ReadableConsumerByteChannel(
                 Channels.newChannel(urlConnection.getInputStream()),
-                onRead);
+                onRead,
+                this);
 
     }
 
@@ -338,7 +338,6 @@ public class Download {
     }
 
     private void updateDownloaded() {
-        downloaded = getDownloaded();
         try {
             src.close();
         } catch (IOException ex) {
@@ -375,14 +374,13 @@ public class Download {
 
     private static class ReadableConsumerByteChannel implements ReadableByteChannel {
         private final ReadableByteChannel byteChannel;
-        private final IntConsumer onRead;
+        private final Download download;
+        private final LongConsumer onRead;
 
-        private int totalByteRead;
-
-        public ReadableConsumerByteChannel(ReadableByteChannel byteChannel, IntConsumer onRead) {
+        public ReadableConsumerByteChannel(ReadableByteChannel byteChannel, LongConsumer onRead, Download download) {
             this.byteChannel = byteChannel;
             this.onRead = onRead;
-            totalByteRead = 0;
+            this.download = download;
         }
 
         @Override
@@ -396,12 +394,8 @@ public class Download {
             if (nRead <= 0) {
                 return;
             }
-            totalByteRead += nRead;
-            onRead.accept(totalByteRead);
-        }
-
-        public int getTotalByteRead() {
-            return totalByteRead;
+            download.downloaded += nRead;
+            onRead.accept(download.downloaded);
         }
 
         @Override

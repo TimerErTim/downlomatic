@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 import java.util.regex.Pattern;
 
 /**
@@ -98,7 +98,7 @@ public abstract class Downloader {
      * @return a Download Object representing the video download.
      * @throws MalformedURLException the exception that is thrown if the URL is no valid video
      */
-    public Download generateVideoDownload(String fileString, IntConsumer onRead) throws MalformedURLException {
+    public Download generateVideoDownload(String fileString, LongConsumer onRead) throws MalformedURLException {
         if (videoURL == null && generateVideoURL() == null) {
             throw new MalformedURLException(getInvalidVideoMessage());
         } else {
