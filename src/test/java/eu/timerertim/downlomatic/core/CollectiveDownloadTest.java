@@ -3,14 +3,12 @@ package eu.timerertim.downlomatic.core;
 import eu.timerertim.downlomatic.core.download.CollectiveDownload;
 import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.pages.hentaiplay.HentaiPlaySeries;
-import eu.timerertim.downlomatic.utils.WebScrapers;
 
 import java.net.MalformedURLException;
 
 
 public class CollectiveDownloadTest {
     public static void main(String[] args) throws MalformedURLException, InterruptedException {
-        WebScrapers.initialize();
         HentaiPlaySeries series = new HentaiPlaySeries("https://hentaiplay.net/episode-list/dropout/");
 
         CollectiveDownloadBuilder downloadManager = new CollectiveDownloadBuilder("/home/timerertim/Downloads/", series);
