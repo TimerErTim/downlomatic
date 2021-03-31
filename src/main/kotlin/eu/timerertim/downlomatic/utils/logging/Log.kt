@@ -30,7 +30,7 @@ object Log {
 
     init {
         consoleHandler.level = DEFAULT_CONSOLE_VERBOSITY.level
-        consoleHandler.formatter = Format
+        consoleHandler.formatter = MessageFormat
 
         logger.level = java.util.logging.Level.ALL
         logger.useParentHandlers = false
@@ -42,6 +42,13 @@ object Log {
         get() = Level.findLevel(consoleHandler.level)
         set(value) {
             consoleHandler.level = value.level
+
+            // Enables/Disables detail format for debugging and lower log levels
+            if (value.level.intValue() <= Level.DEBUG.level.intValue()) {
+                consoleHandler.formatter = DetailFormat
+            } else {
+                consoleHandler.formatter = MessageFormat
+            }
         }
 
     @JvmStatic
@@ -62,7 +69,7 @@ object Log {
                 Files.createParentDirs(File(DEFAULT_FILE_PATTERN.replaceFirst("/", File.separator)))
                 fileHandler = FileHandler(DEFAULT_FILE_PATTERN, FILE_SIZE, FILE_COUNT, FILE_APPEND)
                 fileHandler?.level = fileVerbosity.level
-                fileHandler?.formatter = Format
+                fileHandler?.formatter = DetailFormat
                 logger.addHandler(fileHandler)
             } else if (fileHandler != null && !value) {
                 logger.removeHandler(fileHandler)
@@ -140,7 +147,22 @@ object Log {
         return entry
     }
 
-    private object Format : Formatter() {
+    private object MessageFormat : Formatter() {
+        override fun format(record: LogRecord): String {
+            val message = formatMessage(record)
+
+            val formatBuilder = StringBuilder(message)
+
+            if (record.thrown != null) {
+                formatBuilder.append("\n\tCause: ${record.thrown.localizedMessage}")
+            }
+
+
+            return formatBuilder.appendLine().toString()
+        }
+    }
+
+    private object DetailFormat : Formatter() {
         override fun format(record: LogRecord): String {
             val zdt = ZonedDateTime.ofInstant(record.instant, ZoneId.systemDefault())
                 .format(DateTimeFormatter.ofPattern("MM.dd HH:mm:ss.SS"))
