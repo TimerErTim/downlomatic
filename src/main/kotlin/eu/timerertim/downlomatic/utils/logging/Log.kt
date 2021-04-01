@@ -165,7 +165,7 @@ object Log {
     private object DetailFormat : Formatter() {
         override fun format(record: LogRecord): String {
             val zdt = ZonedDateTime.ofInstant(record.instant, ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("MM.dd HH:mm:ss.SS"))
+                .format(DateTimeFormatter.ofPattern("YYYY.MM.ddd HH:mm:ss.SS"))
             var source = "${record.threadID}/"
             if (record.sourceClassName != null) {
                 source += record.sourceClassName
