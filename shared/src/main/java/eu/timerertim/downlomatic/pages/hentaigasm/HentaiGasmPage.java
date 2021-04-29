@@ -62,7 +62,7 @@ public class HentaiGasmPage extends Host {
             if (page == 1) {
                 driver.get(listURL.toString());
             } else {
-                driver.get(listURL.toString() + "page/" + page + "/");
+                driver.get(listURL + "page/" + page + "/");
             }
 
             List<WebElement> elements = driver.findElements(By.tagName("a"));

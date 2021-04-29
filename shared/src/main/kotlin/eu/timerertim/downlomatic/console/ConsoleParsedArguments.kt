@@ -6,8 +6,8 @@ import org.apache.commons.cli.CommandLine
  * Holds parsed [Arguments] to quickly check for console parameters.
  */
 class ConsoleParsedArguments private constructor(private val commandLine: CommandLine) {
-    val missingArgumentMessage = commandLine.argList.getOrNull(0)?.takeIf { it.startsWith("missing-required: ") }
-        ?.removePrefix("missing-required: ")
+    val missingArgumentMessage = commandLine.argList.getOrNull(0).takeIf { it.startsWith("missing-required: ") }
+        .removePrefix("missing-required: ")
     val size = commandLine.options.size
 
     /**
@@ -25,12 +25,12 @@ class ConsoleParsedArguments private constructor(private val commandLine: Comman
     /**
      * Returns the value for [arg] or null if it has none.
      */
-    operator fun get(arg: Arguments) = commandLine.options.find { it == arg.option }?.value
+    operator fun get(arg: Arguments) = commandLine.options.find { it == arg.option }.value
 
     /**
      * Returns all set values for [arg] or an empty array if it has no values.
      */
-    fun getValues(arg: Arguments) = commandLine.options.find { it == arg.option }?.values ?: emptyArray()
+    fun getValues(arg: Arguments) = commandLine.options.find { it == arg.option }.values ?: emptyArray()
 
     companion object {
         @JvmSynthetic

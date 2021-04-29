@@ -22,7 +22,7 @@ public class HentaiPlaySeriesTest {
                 synchronized (downloadPool) {
                     downloadPool.remove(download);
                 }
-                System.out.println(download.toString() + " is finished");
+                System.out.println(download + " is finished");
             });
         }
     }
