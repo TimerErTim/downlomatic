@@ -1,89 +1,26 @@
 plugins {
-    id 'java'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.runtime' version '1.12.1'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32' apply false
 }
 
-group 'eu.timerertim'
-version '0.4.0-rc.1'
+subprojects {
+    group 'eu.timerertim'
 
-mainClassName = "${group}.downlomatic.core.Launcher"
-def programArguments = ["--no-file-logging", "-v"]
+    apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
-    implementation 'org.jsoup:jsoup:1.13.1'
-    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
-    implementation 'io.github.bonigarcia:webdrivermanager:4.3.1'
-
-    implementation 'net.java.dev.jna:jna:5.7.0'
-    implementation 'net.java.dev.jna:jna-platform:5.7.0'
-    implementation 'commons-cli:commons-cli:1.4'
-
-    runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
-    runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
-    runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jvmTarget = "11"
-}
-
-javafx {
-    version = "11"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
-}
-
-runtime{
-    additive = true
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    modules = ['java.base',
-               'jdk.crypto.cryptoki']
-
-    imageZip = file("$buildDir/${name}-${version}.zip")
-
-    targetPlatform("linux-x64"){
-        jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz")
-    }
-    targetPlatform("win-x64"){
-        jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_windows_hotspot_11.0.9.1_1.zip")
-    }
-    targetPlatform("macOs-x64"){
-        jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_mac_hotspot_11.0.9.1_1.tar.gz")
+    repositories {
+        mavenCentral()
     }
 
-    launcher{
-        noConsole = true
+    dependencies {
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     }
-}
-
-run {
-    args = programArguments
-}
-
-runShadow{
-    args = programArguments
-}
-
-jar {
-    manifest{
-        attributes 'Main-Class': mainClassName
+    
+    test {
+        useJUnitPlatform()
     }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
 
-test {
-    useJUnitPlatform()
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+        kotlinOptions.jvmTarget = "11"
+    }
 }
