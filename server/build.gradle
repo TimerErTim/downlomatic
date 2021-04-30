@@ -10,6 +10,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
 
+    implementation 'org.litote.kmongo:kmongo:4.2.6'
+
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     implementation 'io.github.bonigarcia:webdrivermanager:4.3.1'
