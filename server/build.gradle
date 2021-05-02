@@ -7,8 +7,6 @@ version '0.1.0'
 dependencies {
     implementation(project(":shared"))
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-
 
     implementation 'org.litote.kmongo:kmongo:4.2.6'
 
