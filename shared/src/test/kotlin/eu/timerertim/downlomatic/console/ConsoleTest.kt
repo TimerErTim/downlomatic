@@ -1,17 +1,42 @@
 package eu.timerertim.downlomatic.console
 
+import org.apache.commons.cli.Option
 import org.apache.commons.cli.ParseException
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle
 
-class ConsoleUtilsTest {
+@TestInstance(Lifecycle.PER_CLASS)
+class ConsoleTest {
+    lateinit var console: Console
+    val singleArgument = object : Argument {
+        override val option = Option("a", "all", true, "test").apply {
+            isRequired = true
+        }
+        override val isHidden = false
+    }
+
+    @BeforeAll
+    fun `Init Console`() {
+        val config = ConsoleConfig(
+            arrayOf(
+                singleArgument
+            ),
+            emptyArray()
+        )
+
+        console = Console(config)
+    }
+
     @Test
     fun `Print help without error`() {
         val expected = "success"
 
         val result = try {
-            ConsoleUtils.printHelp()
+            console.printHelp()
             expected
         } catch (e: Exception) {
             "fail"
@@ -24,7 +49,7 @@ class ConsoleUtilsTest {
     fun `Missing argument state can be requested`() {
         val expected = false
 
-        val parsedArguments = ConsoleUtils.parseArgs("-t", "10")
+        val parsedArguments = console.parseArgs()
         val result = parsedArguments.hasRequiredArguments()
 
         assertEquals(expected, result)
@@ -34,7 +59,7 @@ class ConsoleUtilsTest {
     fun `No missing arguments can be requested`() {
         val expected = true
 
-        val parsedArguments = ConsoleUtils.parseArgs("-d", "hsad", "-h", "ALL", "-a")
+        val parsedArguments = console.parseArgs("-a", "stuff")
         val result = parsedArguments.hasRequiredArguments()
 
         assertEquals(expected, result)
@@ -45,7 +70,7 @@ class ConsoleUtilsTest {
         val expected = "fail"
 
         val result = try {
-            ConsoleUtils.parseArgs("---wtf", "dripplenipple")
+            console.parseArgs("---wtf", "dripplenipple")
             "success"
         } catch (e: ParseException) {
             expected
@@ -56,9 +81,9 @@ class ConsoleUtilsTest {
 
     @Test
     fun `ParsedArguments size represents right amount`() {
-        val expected = 3
+        val expected = 1
 
-        val parsedArguments = ConsoleUtils.parseArgs("-d", "hsad", "-h", "ALL", "-a")
+        val parsedArguments = console.parseArgs("-a", "stuff")
         val result = parsedArguments.size
 
         assertEquals(expected, result)
@@ -68,8 +93,11 @@ class ConsoleUtilsTest {
     fun `hasArgument works`() {
         val expected = true
 
-        val parsedArguments = ConsoleUtils.parseArgs("-a")
-        val result = parsedArguments.hasArgument(Arguments.ALL) xor parsedArguments.hasArgument(Arguments.SERIES)
+        val parsedArguments = console.parseArgs("-a", "testStuff")
+        val result = parsedArguments.hasArgument(singleArgument) xor parsedArguments.hasArgument(object : Argument {
+            override val option = Option("t", "stuff")
+            override val isHidden = true
+        })
 
         assertEquals(expected, result)
     }
@@ -79,9 +107,9 @@ class ConsoleUtilsTest {
         val value = "testValue"
         val expected = value
 
-        val parsedArguments = ConsoleUtils.parseArgs("-d", value)
-        val result = if (parsedArguments.hasArgument(Arguments.DESTINATION_DIRECTORY)) {
-            parsedArguments[Arguments.DESTINATION_DIRECTORY]
+        val parsedArguments = console.parseArgs("-a", value)
+        val result = if (parsedArguments.hasArgument(singleArgument)) {
+            parsedArguments[singleArgument]
         } else {
             ""
         }
@@ -94,19 +122,8 @@ class ConsoleUtilsTest {
         val value = arrayOf("testValue")
         val expected = value
 
-        val parsedArguments = ConsoleUtils.parseArgs("-d", value[0])
-        val result = parsedArguments.getValues(Arguments.DESTINATION_DIRECTORY)
-
-        assertArrayEquals(expected, result)
-    }
-
-    @Test
-    fun `Multiple values work for empty values`() {
-        val expected = emptyArray<String>()
-
-        val parsedArguments = ConsoleUtils.parseArgs("-a")
-        val result = parsedArguments.getValues(Arguments.DESTINATION_DIRECTORY)
-            .union(parsedArguments.getValues(Arguments.ALL).toList()).toTypedArray()
+        val parsedArguments = console.parseArgs("-a", value[0])
+        val result = parsedArguments.getValues(singleArgument)
 
         assertArrayEquals(expected, result)
     }
