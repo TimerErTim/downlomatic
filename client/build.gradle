@@ -32,8 +32,6 @@ jar {
 dependencies {
     implementation(project(":shared"))
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib"
-
 
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
