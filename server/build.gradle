@@ -1,8 +1,10 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
+    id 'application'
 }
 
 version '0.1.0'
+mainClassName = "eu.timerertim.downlomatic.server.LauncherKt"
 
 dependencies {
     implementation(project(":shared"))
@@ -10,7 +12,14 @@ dependencies {
 
     implementation 'org.litote.kmongo:kmongo:4.2.6'
 
+    def ktor_version = '1.5.4'
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    implementation "io.ktor:ktor-server-cio:$ktor_version"
+    implementation "io.ktor:ktor-jackson:$ktor_version"
+
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     implementation 'io.github.bonigarcia:webdrivermanager:4.3.1'
+
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
