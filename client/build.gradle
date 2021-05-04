@@ -32,6 +32,9 @@ jar {
 dependencies {
     implementation(project(":shared"))
 
+    def ktor_version = '1.5.4'
+    implementation "io.ktor:ktor-client-core:$ktor_version"
+    implementation "io.ktor:ktor-client-cio:$ktor_version"
 
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
