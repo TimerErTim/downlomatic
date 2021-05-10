@@ -2,6 +2,7 @@ package eu.timerertim.downlomatic.console
 
 import org.apache.commons.cli.*
 import java.util.*
+import kotlin.system.exitProcess
 
 /**
  * Provides helpful methods for CLI and terminal interaction.
@@ -75,6 +76,22 @@ open class Console(config: ConsoleConfig) {
             "\n" + footer,
             usage == null
         )
+    }
+
+    /**
+     * Shows the specified [errorMessage] before executing [printHelp] and exiting with the specified [errorCode]
+     * (defaults to 1)
+     */
+    @JvmOverloads
+    fun showErrorHelpMessage(errorMessage: String, errorCode: Int = 1): Nothing {
+        println(
+            """
+            $errorMessage
+            
+            """.trimIndent()
+        )
+        printHelp()
+        exitProcess(errorCode)
     }
 
     @JvmSynthetic
