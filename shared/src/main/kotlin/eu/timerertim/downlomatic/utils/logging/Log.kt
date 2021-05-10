@@ -14,7 +14,7 @@ import java.util.logging.*
 object Log {
     private val DEFAULT_CONSOLE_VERBOSITY = Level.ERROR
     private val DEFAULT_FILE_VERBOSITY = Level.ALL
-    private const val FILE_SIZE = 128 * 1000L
+    private const val FILE_SIZE = 256 * 1000L
     private const val FILE_COUNT = 2
     private const val FILE_APPEND = true
     private val DEFAULT_FILE_PATTERN = this::class.java.protectionDomain.codeSource.location.path
