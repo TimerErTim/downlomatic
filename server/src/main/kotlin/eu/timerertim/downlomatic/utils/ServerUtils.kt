@@ -31,7 +31,7 @@ object ServerUtils {
             }
         } catch (exception: MongoClientException) {
             Log.f(
-                "An error occurred while attempting to connect to the local MongoDB. Make sure the mongodb is" +
+                "An error occurred while attempting to connect to the local MongoDB. Make sure MongoDB is " +
                         "running and has authorization deactivated!", exception
             )
             exit(2)
