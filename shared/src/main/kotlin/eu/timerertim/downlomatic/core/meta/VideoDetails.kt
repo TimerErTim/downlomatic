@@ -6,7 +6,7 @@ import java.time.LocalDate
  * This uniquely identifies episodes/movies.
  *
  * It contains all relevant information to identify a video. Furthermore, [VideoDetails] can be used
- * to create a unique file name.
+ * to create a unique file name and search for a [Video][eu.timerertim.downlomatic.core.video.Video].
  */
 data class VideoDetails(
     val title: String? = null,
@@ -21,5 +21,6 @@ data class VideoDetails(
         Translation.OV -> spokenLanguage
         Translation.DUB -> spokenLanguage
         Translation.SUB -> subtitleLanguage
-    } ?: Language.ENGLISH
+    } ?: Language.ENGLISH,
+    val tags: List<Tag> = emptyList()
 )
