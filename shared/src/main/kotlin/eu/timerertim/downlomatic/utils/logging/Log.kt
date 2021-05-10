@@ -81,6 +81,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun d(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.DEBUG, message, cause))
     }
@@ -90,6 +91,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun i(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.INFO, message, cause))
     }
@@ -99,6 +101,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun w(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.WARN, message, cause))
     }
@@ -108,6 +111,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun e(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.ERROR, message, cause))
     }
@@ -117,6 +121,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun f(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.FATAL, message, cause))
     }
@@ -126,6 +131,7 @@ object Log {
      */
     @JvmStatic
     @JvmOverloads
+    @Synchronized
     fun wtf(message: String, cause: Throwable? = null) {
         logger.log(createLogEntry(Level.ASSERT, message, cause))
     }
