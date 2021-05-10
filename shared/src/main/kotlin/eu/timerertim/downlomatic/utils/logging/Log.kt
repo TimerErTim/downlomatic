@@ -64,7 +64,7 @@ object Log {
         get() = logger.handlers.contains(fileHandler)
         set(value) {
             if (fileHandler == null && value) {
-                File(DEFAULT_FILE_PATTERN.replace("/", File.separator)).mkdirs()
+                File(DEFAULT_FILE_PATTERN.replace("/", File.separator)).parentFile.mkdirs()
                 fileHandler = FileHandler(DEFAULT_FILE_PATTERN, FILE_SIZE, FILE_COUNT, FILE_APPEND)
                 fileHandler?.level = fileVerbosity.level
                 fileHandler?.formatter = DetailFormat
