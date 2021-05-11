@@ -9,7 +9,7 @@ import org.litote.kmongo.KMongo
 /**
  * This object handles the connection to the MongoDB instance.
  */
-object DownlomaticDatabase {
+object MongoDBConnection {
     private const val USER = "downlomaticUser"
     private const val PASSWORD = "wzrw<X/!8\$JQC=W&"
     private const val APPLICATION = "downlomatic"
