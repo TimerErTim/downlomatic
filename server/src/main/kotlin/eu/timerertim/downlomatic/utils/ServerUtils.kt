@@ -25,7 +25,7 @@ object ServerUtils {
         // Setup database connection
         try {
             try {
-                DownlomaticDatabase.testConnection()
+                MongoDBConnection.testConnection()
             } catch (exception: ExceptionInInitializerError) {
                 throw exception.cause!!
             }
