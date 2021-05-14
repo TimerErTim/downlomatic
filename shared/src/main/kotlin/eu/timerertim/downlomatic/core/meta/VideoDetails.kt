@@ -24,3 +24,51 @@ data class VideoDetails(
     } ?: Language.ENGLISH,
     val tags: List<Tag> = emptyList()
 )
+
+/**
+ * Provides the ability to build a [VideoDetails] object with the ability to copy a already existing configuration and
+ * without immediately making it immutable.
+ */
+data class VideoDetailsBuilder(
+    var title: String? = null,
+    var series: String? = null,
+    var season: Int? = null,
+    var episode: Int? = null,
+    var release: LocalDate? = null,
+    var spokenLanguage: Language? = null,
+    var subtitleLanguage: Language? = null,
+    var translation: Translation = Translation.OV,
+    var audienceLanguage: Language? = null,
+    var tags: List<Tag> = emptyList()
+) {
+    /**
+     * "Builds" this object into a immutable [VideoDetails] object.
+     */
+    fun build() =
+        if (audienceLanguage == null) {
+            VideoDetailsBuilder(
+                title,
+                series,
+                season,
+                episode,
+                release,
+                spokenLanguage,
+                subtitleLanguage,
+                translation,
+                tags = tags
+            )
+        } else {
+            VideoDetailsBuilder(
+                title,
+                series,
+                season,
+                episode,
+                release,
+                spokenLanguage,
+                subtitleLanguage,
+                translation,
+                audienceLanguage,
+                tags
+            )
+        }
+}
