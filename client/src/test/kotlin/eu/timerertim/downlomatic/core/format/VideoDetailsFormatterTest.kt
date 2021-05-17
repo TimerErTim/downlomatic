@@ -141,7 +141,19 @@ class VideoDetailsFormatterTest {
             title = "Name"
         )
 
-        val result = VideoDetailsFormatter("Test/!E string/[/!/!E will be printed/]").format(videoDetails)
+        val result = VideoDetailsFormatter("Test/!N string/[/!/!N will be printed/]").format(videoDetails)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Identifier in Segment should only result in empty String with that Identifier would be replaced`() {
+        val expected = "Test !N String"
+        val videoDetails = VideoDetails(
+            title = "Name"
+        )
+
+        val result = VideoDetailsFormatter("Test /[//!N /]/[//String/]").format(videoDetails)
 
         assertEquals(expected, result)
     }
