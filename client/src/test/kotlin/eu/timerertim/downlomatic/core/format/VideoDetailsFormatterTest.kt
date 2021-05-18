@@ -68,8 +68,8 @@ class VideoDetailsFormatterTest {
         )
 
         val result = VideoDetailsFormatter(
-            "/e is the number/[ and /S is the series/]/[ /N the name with language /L/]" +
-                    "/[ this block should be displayed with number /e/!L/]/[ display this name /N/[ with type /T/]/]"
+            "/e is the number/[ and /S is the series/]/[ /N the name with language /V/]" +
+                    "/[ this block should be displayed with number /e/!V/]/[ display this name /N/[ with type /y/]/]"
         ).format(videoDetails)
 
         assertEquals(expected, result)
@@ -148,7 +148,7 @@ class VideoDetailsFormatterTest {
 
     @Test
     fun `Identifier in Segment should only result in empty String with that Identifier would be replaced`() {
-        val expected = "Test !N String"
+        val expected = "Test /!N /String"
         val videoDetails = VideoDetails(
             title = "Name"
         )
