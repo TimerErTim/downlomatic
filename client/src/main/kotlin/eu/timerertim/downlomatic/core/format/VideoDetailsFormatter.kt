@@ -21,20 +21,20 @@ class VideoDetailsFormatter(pattern: String) {
     private lateinit var identifiers: List<Replaceable>
 
     /**
-     * Formats the episodes description to a readable `String` using the given expression.
+     * Formats the [videoDetails] to a readable [String].
      *
      *
      * ** Important to read the documentation under the following link:  [WIKI_URL]**
      *
      * @param  videoDetails the `VideoDetails` to be formatted
-     * @return a formatted String representation of an episode
+     * @return a formatted String representation of a video
      */
     fun format(videoDetails: VideoDetails): String {
-        identifiers = mutableListOf(*staticIdentifiers.toTypedArray()).also {
-            for (template in dynamicIdentifiers) {
-                it.add(template[videoDetails])
+        identifiers = mutableListOf(*staticIdentifiers.toTypedArray()).apply {
+            dynamicIdentifiers.forEach {
+                add(it[videoDetails]) // Generate Identifiers from dynamic identifiers
             }
-        }.sortedBy(Replaceable::priority)
+        }.sortedBy(Replaceable::priority) // Sort by priority
 
         return contentList.joinToString("") { it.process() }
     }
@@ -45,6 +45,7 @@ class VideoDetailsFormatter(pattern: String) {
         private const val openingBracket = "/["
         private const val closingBracket = "/]"
 
+        // Replaceable which can be used for every format function call
         private val staticIdentifiers = listOf(
             Literal("//", File.separator),
 
@@ -61,6 +62,7 @@ class VideoDetailsFormatter(pattern: String) {
             Illegal("|")
         )
 
+        // Identifiers which need to be reevaluated on each format function call
         private val dynamicIdentifiers = listOf(
             IdentifierTemplate("N", VideoDetails::title),
             IdentifierTemplate("S", VideoDetails::series),
@@ -127,18 +129,16 @@ class VideoDetailsFormatter(pattern: String) {
         val identifier = "/$key"
         val negativeIdentifier = "/!$key"
 
-        override val replaceRegex = generateReplaceRegex()
+        override val replaceRegex = Regex(
+            "(" + Pattern.quote(identifier) + "|" +
+                    Pattern.quote(negativeIdentifier) + ")"
+        )
 
         override val _value = value?.replace(
             staticIdentifiers
                 .filterIsInstance<Illegal>().joinToString("|") { it.replaceRegex.pattern }.toRegex(),
             ""
-        )
-
-        fun generateReplaceRegex() = Regex(
-            "(" + Pattern.quote(identifier) + "|" +
-                    Pattern.quote(negativeIdentifier) + ")"
-        )
+        ) // Remove Illegals from Identifiers, because it makes the most sense here
     }
 
     private class Literal(override val key: String, override val _value: String) : Replaceable(1)
