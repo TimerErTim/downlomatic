@@ -10,19 +10,14 @@ version '0.1.0'
 
 applicationName = parent.name
 mainClassName = "${group}.downlomatic.core.Launcher"
-def programArguments = ["--no-file-logging", "-v"]
-
-
-run {
-    args = programArguments
-}
 
 runShadow{
-    args = programArguments
+    args = ["--no-file-logging", "-v"]
 }
 
 dependencies {
     implementation(project(":shared"))
+
 
     def ktor_version = '1.5.4'
     implementation "io.ktor:ktor-client-core:$ktor_version"
