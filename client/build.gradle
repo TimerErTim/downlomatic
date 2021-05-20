@@ -8,6 +8,7 @@ plugins {
 
 version '0.1.0'
 
+applicationName = parent.name
 mainClassName = "${group}.downlomatic.core.Launcher"
 def programArguments = ["--no-file-logging", "-v"]
 
@@ -18,15 +19,6 @@ run {
 
 runShadow{
     args = programArguments
-}
-
-jar {
-    manifest{
-        attributes 'Main-Class': mainClassName
-    }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }
 
 dependencies {
@@ -52,7 +44,7 @@ runtime{
     modules = ['java.base',
                'jdk.crypto.cryptoki']
 
-    imageZip = file("$buildDir/${name}-${version}.zip")
+    imageZip = file("$buildDir/${applicationName}-${version}.zip")
 
     targetPlatform("linux-x64"){
         jdkHome = jdkDownload("https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz")
