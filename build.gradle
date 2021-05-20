@@ -27,3 +27,36 @@ subprojects {
         kotlinOptions.jvmTarget = "11"
     }
 }
+
+
+def GROUP = "downlomatic"
+
+task("distServer") {
+    group GROUP
+    description "Packs the server as distributable under the build/server/ directory"
+
+    dependsOn "server:installDist"
+    doLast {
+        copy {
+            from "${project("server").buildDir}/install", {
+                include "**"
+            }
+            into "$buildDir"
+        }
+    }
+}
+
+task("distClient") {
+    group GROUP
+    description "Packs the client as distributable under the build/client/ directory"
+
+    dependsOn "client:runtimeZip"
+    doLast {
+        copy {
+            from "${project("client").buildDir}", {
+                include "downlomatic-*-*.zip"
+            }
+            into "$buildDir/${project("client").name}"
+        }
+    }
+}
