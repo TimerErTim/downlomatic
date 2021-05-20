@@ -4,7 +4,8 @@ plugins {
 }
 
 version '0.1.0'
-mainClassName = "eu.timerertim.downlomatic.server.LauncherKt"
+
+mainClassName = "${group}.downlomatic.server.LauncherKt"
 
 dependencies {
     implementation(project(":shared"))
