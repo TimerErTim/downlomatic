@@ -31,6 +31,38 @@ subprojects {
 
 def GROUP = "downlomatic"
 
+task("runServer") {
+    group GROUP
+    description "Runs the server with development optimised arguments"
+
+    def programArguments = ["--no-file-logging", "-v"]
+
+    dependsOn "server:run"
+    doFirst {
+        project("server") {
+            run {
+                args = programArguments
+            }
+        }
+    }
+}
+
+task("runClient") {
+    group GROUP
+    description "Runs the client with development optimised arguments connecting to the official server"
+
+    def programArguments = ["--no-file-logging", "-v"]
+
+    dependsOn "client:runShadow"
+    doFirst {
+        project("client") {
+            runShadow {
+                args = programArguments
+            }
+        }
+    }
+}
+
 task("distServer") {
     group GROUP
     description "Packs the server as distributable under the build/server/ directory"
