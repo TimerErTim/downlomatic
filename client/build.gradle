@@ -9,7 +9,7 @@ plugins {
 version '0.1.0'
 
 applicationName = parent.name
-mainClassName = "${group}.downlomatic.core.Launcher"
+mainClassName = "${group}.downlomatic.client.LauncherKt"
 
 runShadow{
     args = ["--no-file-logging", "-v"]
