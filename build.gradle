@@ -31,39 +31,41 @@ subprojects {
 
 def GROUP = "downlomatic"
 
-task("runServer") {
+tasks.register("runServer") {
     group GROUP
     description "Runs the server with development optimised arguments"
 
     def programArguments = ["--no-file-logging", "-v"]
 
-    dependsOn "server:run"
-    doFirst {
-        project("server") {
-            run {
-                args = programArguments
-            }
-        }
+    dependsOn tasks.getByPath("server:run").configure {
+        args = programArguments
     }
 }
 
-task("runClient") {
+tasks.register("runClient") {
     group GROUP
     description "Runs the client with development optimised arguments connecting to the official server"
 
     def programArguments = ["--no-file-logging", "-v"]
+    ext.programArgumentsBase = programArguments
 
-    dependsOn "client:runShadow"
-    doFirst {
-        project("client") {
-            runShadow {
-                args = programArguments
-            }
-        }
+    dependsOn tasks.getByPath("client:runShadow").configure {
+        args = programArguments
     }
 }
 
-task("distServer") {
+tasks.register("runClientLocally") {
+    group GROUP
+    description "Runs the client locally, connecting to the running local server, with development optimised arguments"
+
+    def programArguments = runClient.ext.programArgumentsBase + "--local"
+
+    dependsOn tasks.getByPath("client:runShadow").configure {
+        args = programArguments
+    }
+}
+
+tasks.register("distServer") {
     group GROUP
     description "Packs the server as distributable under the build/server/ directory"
 
@@ -78,7 +80,7 @@ task("distServer") {
     }
 }
 
-task("distClient") {
+tasks.register("distClient") {
     group GROUP
     description "Packs the client as distributable under the build/client/ directory"
 
