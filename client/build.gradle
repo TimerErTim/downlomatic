@@ -11,10 +11,6 @@ version '0.1.0'
 applicationName = parent.name
 mainClassName = "${group}.downlomatic.client.LauncherKt"
 
-runShadow {
-    args = ["--no-file-logging", "-v"]
-}
-
 dependencies {
     implementation(project(":shared"))
 
