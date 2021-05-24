@@ -9,7 +9,7 @@ import org.apache.commons.cli.Option
  *
  * Under the hood, it works with [Option]s.
  */
-enum class ClientArguments(override val option: Option, override val isHidden: Boolean = false) : Argument {
+enum class ClientArgument(override val option: Option, override val isHidden: Boolean = false) : Argument {
     NO_FILE_LOGGING(Option(null, "no-file-logging", false, "disables logging to file"), true),
     VERBOSE(
         Option(

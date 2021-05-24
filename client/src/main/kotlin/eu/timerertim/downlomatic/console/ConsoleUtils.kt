@@ -8,8 +8,8 @@ import eu.timerertim.downlomatic.core.format.VideoDetailsFormatter
  */
 object ConsoleUtils : Console(
     ConsoleConfig(
-        ClientArguments.values(),
-        ClientArgumentGroups.values(),
+        ClientArgument.values(),
+        ClientArgumentGroup.values(),
         "\"downlomatic -d <directory> -h <host> -a | -b <url> | -s <url> " +
                 "[-f <formatting>] [--subdir-format <formatting>] [-t <amount>]\"",
         "",
