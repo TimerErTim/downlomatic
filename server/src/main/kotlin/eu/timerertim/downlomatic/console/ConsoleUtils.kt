@@ -6,8 +6,8 @@ package eu.timerertim.downlomatic.console
  */
 object ConsoleUtils : Console(
     ConsoleConfig(
-        ServerArguments.values(),
-        ServerArgumentGroups.values(),
+        ServerArgument.values(),
+        ServerArgumentGroup.values(),
         "java -jar downlomatic"
     )
 )

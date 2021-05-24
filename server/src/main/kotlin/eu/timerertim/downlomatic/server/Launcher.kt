@@ -2,7 +2,7 @@ package eu.timerertim.downlomatic.server
 
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
-import eu.timerertim.downlomatic.console.ServerArguments
+import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.utils.ServerUtils
 import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
@@ -16,14 +16,14 @@ fun main(args: Array<String>) {
 }
 
 private fun processArgs(arguments: ParsedArguments) {
-    if (arguments.hasArgument(ServerArguments.HELP)) {
+    if (arguments.hasArgument(ServerArgument.HELP)) {
         ConsoleUtils.printHelp()
     } else {
         if (arguments.hasRequiredArguments()) {
             ServerUtils.setup()
 
             // Further config
-            if (arguments.hasArgument(ServerArguments.VERBOSE)) {
+            if (arguments.hasArgument(ServerArgument.VERBOSE)) {
                 Log.consoleVerbosity = Level.ALL
             }
 

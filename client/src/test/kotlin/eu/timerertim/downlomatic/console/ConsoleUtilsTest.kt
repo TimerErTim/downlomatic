@@ -70,7 +70,7 @@ class ConsoleUtilsTest {
 
         val parsedArguments = ConsoleUtils.parseArgs("-a")
         val result =
-            parsedArguments.hasArgument(ClientArguments.ALL) xor parsedArguments.hasArgument(ClientArguments.SERIES)
+            parsedArguments.hasArgument(ClientArgument.ALL) xor parsedArguments.hasArgument(ClientArgument.SERIES)
 
         assertEquals(expected, result)
     }
@@ -81,8 +81,8 @@ class ConsoleUtilsTest {
         val expected = value
 
         val parsedArguments = ConsoleUtils.parseArgs("-d", value)
-        val result = if (parsedArguments.hasArgument(ClientArguments.DESTINATION_DIRECTORY)) {
-            parsedArguments[ClientArguments.DESTINATION_DIRECTORY]
+        val result = if (parsedArguments.hasArgument(ClientArgument.DESTINATION_DIRECTORY)) {
+            parsedArguments[ClientArgument.DESTINATION_DIRECTORY]
         } else {
             ""
         }
@@ -96,7 +96,7 @@ class ConsoleUtilsTest {
         val expected = value
 
         val parsedArguments = ConsoleUtils.parseArgs("-d", value[0])
-        val result = parsedArguments.getValues(ClientArguments.DESTINATION_DIRECTORY)
+        val result = parsedArguments.getValues(ClientArgument.DESTINATION_DIRECTORY)
 
         assertArrayEquals(expected, result)
     }
@@ -106,8 +106,8 @@ class ConsoleUtilsTest {
         val expected = emptyArray<String>()
 
         val parsedArguments = ConsoleUtils.parseArgs("-a")
-        val result = parsedArguments.getValues(ClientArguments.DESTINATION_DIRECTORY)
-            .union(parsedArguments.getValues(ClientArguments.ALL).toList()).toTypedArray()
+        val result = parsedArguments.getValues(ClientArgument.DESTINATION_DIRECTORY)
+            .union(parsedArguments.getValues(ClientArgument.ALL).toList()).toTypedArray()
 
         assertArrayEquals(expected, result)
     }
