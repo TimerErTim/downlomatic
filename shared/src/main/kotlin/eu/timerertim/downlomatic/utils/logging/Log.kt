@@ -136,6 +136,12 @@ object Log {
         logger.log(createLogEntry(Level.ASSERT, message, cause))
     }
 
+    /**
+     * Closes the global logging object in order to free system resources.
+     */
+    @JvmStatic
+    fun close() = logger.handlers.forEach { it.close() }
+
     private fun createLogEntry(level: Level, message: String, cause: Throwable?): LogRecord {
         val entry = LogRecord(level.level, message)
         entry.thrown = cause

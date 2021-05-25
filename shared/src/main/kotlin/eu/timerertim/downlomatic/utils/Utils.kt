@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.utils
 
+import eu.timerertim.downlomatic.utils.logging.Log
 import kotlin.system.exitProcess
 
 /**
@@ -20,6 +21,8 @@ object Utils {
      */
     @JvmStatic
     fun exit(errorCode: Int) {
+        // Close Logging object
+        Log.close()
 
         // Exit with the given errorCode
         exitProcess(errorCode)
