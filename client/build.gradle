@@ -19,6 +19,8 @@ dependencies {
     implementation "io.ktor:ktor-client-core:$ktor_version"
     implementation "io.ktor:ktor-client-cio:$ktor_version"
 
+    implementation 'no.tornado:tornadofx:1.7.20'
+
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'
