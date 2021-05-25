@@ -6,6 +6,4 @@ version '0.5.0'
 
 dependencies {
     api 'commons-cli:commons-cli:1.4'
-    implementation 'net.java.dev.jna:jna:5.7.0'
-    implementation 'net.java.dev.jna:jna-platform:5.7.0'
 }

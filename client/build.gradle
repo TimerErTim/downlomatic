@@ -22,6 +22,9 @@ dependencies {
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'
+
+    implementation 'net.java.dev.jna:jna:5.7.0'
+    implementation 'net.java.dev.jna:jna-platform:5.7.0'
 }
 
 javafx {
