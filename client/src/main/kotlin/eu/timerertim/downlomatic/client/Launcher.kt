@@ -4,6 +4,7 @@ import eu.timerertim.downlomatic.console.ClientArgument
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.utils.ClientUtils
+import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
 import kotlin.system.exitProcess
 
@@ -24,10 +25,10 @@ private fun processArgs(arguments: ParsedArguments) {
             // Start server, catch and handle exceptions
             try {
                 startClient()
-                ClientUtils.exit(0)
+                ClientUtils.exit()
             } catch (exception: Exception) {
                 Log.f("A fatal error broke the execution", exception)
-                ClientUtils.exit(3)
+                ClientUtils.exit(Utils.GENERIC_EXIT_CODE)
             }
         } else {
             arguments.missingArgumentMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }

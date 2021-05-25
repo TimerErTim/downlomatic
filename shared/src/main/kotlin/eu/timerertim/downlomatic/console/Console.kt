@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.console
 
+import eu.timerertim.downlomatic.utils.Utils
 import org.apache.commons.cli.*
 import java.util.*
 import kotlin.system.exitProcess
@@ -83,7 +84,7 @@ open class Console(config: ConsoleConfig) {
      * (defaults to 1)
      */
     @JvmOverloads
-    fun showErrorHelpMessage(errorMessage: String, errorCode: Int = 1): Nothing {
+    fun showErrorHelpMessage(errorMessage: String, errorCode: Int = Utils.ARGUMENT_EXIT_CODE): Nothing {
         println(
             """
             $errorMessage
