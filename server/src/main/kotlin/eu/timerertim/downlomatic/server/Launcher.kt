@@ -4,7 +4,6 @@ import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.utils.ServerUtils
-import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
 import kotlin.system.exitProcess
 
@@ -22,10 +21,6 @@ private fun processArgs(arguments: ParsedArguments) {
         if (arguments.hasRequiredArguments()) {
             ServerUtils.setup()
 
-            // Further config
-            if (arguments.hasArgument(ServerArgument.VERBOSE)) {
-                Log.consoleVerbosity = Level.ALL
-            }
 
             // Start server, catch and handle exceptions
             try {
