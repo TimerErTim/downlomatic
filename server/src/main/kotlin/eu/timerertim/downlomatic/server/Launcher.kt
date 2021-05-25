@@ -19,7 +19,7 @@ private fun processArgs(arguments: ParsedArguments) {
         ConsoleUtils.printHelp()
     } else {
         if (arguments.hasRequiredArguments()) {
-            ServerUtils.setup()
+            ServerUtils.setup(arguments)
 
 
             // Start server, catch and handle exceptions
