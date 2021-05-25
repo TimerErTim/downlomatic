@@ -3,6 +3,9 @@ package eu.timerertim.downlomatic.utils
 import com.sun.jna.Function
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinNT.HANDLE
+import eu.timerertim.downlomatic.console.ClientArgument
+import eu.timerertim.downlomatic.console.ConsoleUtils
+import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
 
@@ -14,14 +17,19 @@ object ClientUtils {
      * Sets up the client to allow successful execution.
      */
     @JvmStatic
-    fun setup() {
+    @JvmOverloads
+    fun setup(arguments: ParsedArguments = ConsoleUtils.parseArgs()) {
         // Invoke neutral Utils setup
         Utils.setup()
 
 
         // Setup logging
-        Log.fileLogging = true
-        Log.consoleVerbosity = Level.WARN
+        if (arguments.hasArgument(ClientArgument.VERBOSE)) {
+            Log.consoleVerbosity = Level.ALL
+        }
+        if (!arguments.hasArgument(ClientArgument.NO_FILE_LOGGING)) {
+            Log.fileLogging = true
+        }
 
         // Windows 10 VT100 Terminal - copied from Stackoverflow
         if (System.getProperty("os.name").startsWith("Windows")) {

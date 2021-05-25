@@ -1,6 +1,9 @@
 package eu.timerertim.downlomatic.utils
 
 import com.mongodb.MongoClientException
+import eu.timerertim.downlomatic.console.ConsoleUtils
+import eu.timerertim.downlomatic.console.ParsedArguments
+import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
 
@@ -12,14 +15,18 @@ object ServerUtils {
      * Sets up the server to allow successful execution.
      */
     @JvmStatic
-    fun setup() {
+    @JvmOverloads
+    fun setup(arguments: ParsedArguments = ConsoleUtils.parseArgs()) {
         // Invoke neutral Utils setup
         Utils.setup()
 
 
         // Setup logging
-        Log.fileLogging = true
-        Log.consoleVerbosity = Level.WARN
+        Log.consoleVerbosity = if (arguments.hasArgument(ServerArgument.VERBOSE)) Level.ALL
+        else Level.WARN
+        if (!arguments.hasArgument(ServerArgument.NO_FILE_LOGGING)) {
+            Log.fileLogging = true
+        }
 
         // Setup database connection
         try {
