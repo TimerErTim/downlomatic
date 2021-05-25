@@ -8,7 +8,6 @@ import eu.timerertim.downlomatic.utils.logging.Log
  * Provides some neat helper functions for the server.
  */
 object ServerUtils {
-
     /**
      * Sets up the server to allow successful execution.
      */
@@ -46,6 +45,8 @@ object ServerUtils {
     @JvmOverloads
     fun exit(errorCode: Int = 0) {
 
+
+        // Close shared resources
         Utils.exit(errorCode)
     }
 }
