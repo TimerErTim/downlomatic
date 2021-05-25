@@ -40,7 +40,7 @@ object ServerUtils {
                 "An error occurred while attempting to connect to the local MongoDB. Make sure MongoDB is " +
                         "running and has authorization deactivated!", exception
             )
-            exit(2)
+            exit(Utils.CONNECTION_EXIT_CODE)
         }
     }
 
