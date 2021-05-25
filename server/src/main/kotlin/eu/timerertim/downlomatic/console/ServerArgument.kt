@@ -7,7 +7,8 @@ import org.apache.commons.cli.Option
  */
 enum class ServerArgument(override val option: Option, override val isHidden: Boolean = false) : Argument {
     HELP(Option(null, "help", false, "shows this")),
-    VERBOSE(Option("verbose", "v", false, "enables all levels of log messages"), true);
+    VERBOSE(Option("v", "verbose", false, "enables all levels of log messages"), true),
+    NO_FILE_LOGGING(Option(null, "no-file-logging", false, "disables file logging"), true);
 
     constructor(option: Option, isHidden: Boolean, setup: Option.() -> Unit) : this(option, isHidden) {
         setup(this.option)
