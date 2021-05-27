@@ -1,14 +1,17 @@
 package eu.timerertim.downlomatic.console
 
 import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.Options
 
 /**
  * Holds parsed [Argument]s to quickly check for console parameters.
  */
-class ParsedArguments private constructor(private val commandLine: CommandLine) {
+class ParsedArguments private constructor(private val commandLine: CommandLine, shownArguments: Options) {
     val missingArgumentMessage = commandLine.argList.getOrNull(0)?.takeIf { it.startsWith("missing-required: ") }
         ?.removePrefix("missing-required: ")
     val size = commandLine.options.size
+    val sizeHidden = commandLine.options.toMutableList().apply { removeAll(shownArguments.options) }.size
+    val sizeShown = commandLine.options.count { shownArguments.options.contains(it) }
 
     /**
      * Checks for all required [Argument]s.
@@ -34,6 +37,6 @@ class ParsedArguments private constructor(private val commandLine: CommandLine) 
 
     companion object {
         @JvmSynthetic
-        fun Console._build(line: CommandLine) = ParsedArguments(line)
+        fun Console._build(line: CommandLine, shownArguments: Options) = ParsedArguments(line, shownArguments)
     }
 }
