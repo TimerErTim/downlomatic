@@ -9,22 +9,22 @@ import kotlin.system.exitProcess
  * Provides helpful methods for CLI and terminal interaction.
  */
 open class Console(config: ConsoleConfig) {
-    companion object {
-        // Create a parser which doesn't fail on missing options
-        private val parser = object : DefaultParser() {
-            override fun parse(
-                options: Options?,
-                arguments: Array<out String>?,
-                properties: Properties?,
-                stopAtNonOption: Boolean
-            ): CommandLine {
-                try {
-                    super.parse(options, arguments, properties, stopAtNonOption)
-                } catch (ex: MissingOptionException) {
-                    cmd.argList.add(0, "missing-required: ${ex.message}")
-                }
-                return cmd
+    // Create a parser which doesn't fail on missing options
+    private val parser = object : DefaultParser() {
+        override fun parse(
+            options: Options?,
+            arguments: Array<out String>?,
+            properties: Properties?,
+            stopAtNonOption: Boolean
+        ): CommandLine {
+            try {
+                super.parse(options, arguments, properties, stopAtNonOption)
+            } catch (ex: MissingOptionException) {
+                cmd.argList.add(0, "missing-required: ${ex.message}")
+            } catch (ex: UnrecognizedOptionException) {
+                showErrorHelpMessage(ex.localizedMessage)
             }
+            return cmd
         }
     }
 
