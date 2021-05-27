@@ -97,5 +97,5 @@ open class Console(config: ConsoleConfig) {
 
     @JvmSynthetic
     private fun ParsedArguments.Companion.build(line: CommandLine): ParsedArguments =
-        with(ParsedArguments.Companion) { return _build(line) }
+        with(ParsedArguments.Companion) { return _build(line, shownArguments) }
 }

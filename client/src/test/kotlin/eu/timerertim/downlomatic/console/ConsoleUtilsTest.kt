@@ -111,4 +111,14 @@ class ConsoleUtilsTest {
 
         assertArrayEquals(expected, result)
     }
+
+    @Test
+    fun `Shown and hidden argument amount adds up to total amount`() {
+        val parsedArguments = ConsoleUtils.parseArgs("--nsfw", "--help", "--no-file-logging", "-v", "-a")
+
+        val expected = parsedArguments.size
+        val result = parsedArguments.sizeHidden + parsedArguments.sizeShown
+
+        assertEquals(expected, result)
+    }
 }
