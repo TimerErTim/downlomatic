@@ -46,7 +46,7 @@ tasks.register("runClient") {
     group GROUP
     description "Runs the client with development optimised arguments connecting to the official server"
 
-    def programArguments = ["--no-file-logging", "-v"]
+    def programArguments = ["--no-file-logging", "-v", "-x"]
     ext.programArgumentsBase = programArguments
 
     dependsOn tasks.getByPath("client:runShadow").configure {
