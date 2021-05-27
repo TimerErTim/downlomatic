@@ -22,7 +22,7 @@ private fun processArgs(arguments: ParsedArguments) {
         if (arguments.hasRequiredArguments()) {
             ClientUtils.setup(arguments)
 
-            // Start server, catch and handle exceptions
+            // Start client, catch and handle exceptions
             try {
                 startClient()
                 ClientUtils.exit()
