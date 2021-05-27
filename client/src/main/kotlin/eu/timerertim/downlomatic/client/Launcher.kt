@@ -3,9 +3,11 @@ package eu.timerertim.downlomatic.client
 import eu.timerertim.downlomatic.console.ClientArgument
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
+import eu.timerertim.downlomatic.graphics.GUI
 import eu.timerertim.downlomatic.utils.ClientUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
+import tornadofx.launch
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -19,19 +21,27 @@ private fun processArgs(arguments: ParsedArguments) {
     if (arguments.hasArgument(ClientArgument.HELP)) {
         ConsoleUtils.printHelp()
     } else {
-        if (arguments.hasRequiredArguments()) {
-            ClientUtils.setup(arguments)
-
-            // Start client, catch and handle exceptions
-            try {
-                startClient()
-                ClientUtils.exit()
-            } catch (exception: Exception) {
-                Log.f("A fatal error broke the execution", exception)
-                ClientUtils.exit(Utils.GENERIC_EXIT_CODE)
-            }
+        // Decide starting method or exit if no viable one was found
+        val start = if (arguments.hasRequiredArguments()) {
+            ::startClient
+        } else if (arguments.size == arguments.sizeHidden) {
+            { launch<GUI>() }
+        } else if (arguments.size == arguments.sizeHidden + 1 && arguments.hasArgument(ClientArgument.NSFW)) {
+            { launch<GUI>(ClientArgument.NSFW.name) }
         } else {
-            arguments.missingArgumentMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }
+            arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
+        }
+
+        // Setup program for execution
+        ClientUtils.setup(arguments)
+
+        // Start client, catch and handle exceptions
+        try {
+            start()
+            ClientUtils.exit()
+        } catch (exception: Exception) {
+            Log.f("A fatal error broke the execution", exception)
+            ClientUtils.exit(Utils.GENERIC_EXIT_CODE)
         }
     }
 }
