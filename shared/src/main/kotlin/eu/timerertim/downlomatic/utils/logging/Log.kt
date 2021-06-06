@@ -18,7 +18,7 @@ object Log {
     private const val FILE_COUNT = 2
     private const val FILE_APPEND = true
     private val DEFAULT_FILE_PATTERN = this::class.java.protectionDomain.codeSource.location.path
-        .replace(File.separator, "/").replaceAfterLast("/lib/downlomatic", "", "")
+        .replace(File.separator, "/").replaceAfterLast("/lib/client", "", "")
         .replaceAfterLast("/lib", "").replaceAfterLast("/", "") +
             "logs/downlomatic%g.%u.log"
 
