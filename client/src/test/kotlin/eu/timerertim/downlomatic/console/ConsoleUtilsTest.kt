@@ -4,20 +4,13 @@ import org.apache.commons.cli.ParseException
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
 class ConsoleUtilsTest {
     @Test
     fun `Print help without error`() {
-        val expected = "success"
-
-        val result = try {
-            ConsoleUtils.printHelp()
-            expected
-        } catch (e: Exception) {
-            "fail"
-        }
-
-        assertEquals(expected, result)
+        assertDoesNotThrow { ConsoleUtils.printHelp() }
     }
 
     @Test
@@ -42,16 +35,7 @@ class ConsoleUtilsTest {
 
     @Test
     fun `Unrecognized arguments should cause error`() {
-        val expected = "fail"
-
-        val result = try {
-            ConsoleUtils.parseArgs("---wtf", "dripplenipple")
-            "success"
-        } catch (e: ParseException) {
-            expected
-        }
-
-        assertEquals(expected, result)
+        assertThrows<ParseException> { ConsoleUtils.parseArgs("---wtf", "dripplenipple") }
     }
 
     @Test

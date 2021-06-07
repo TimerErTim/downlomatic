@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -93,14 +94,7 @@ class VideoDetailsFormatterTest {
     fun `Faulty brackets should not cause error`() {
         val format = VideoDetailsFormatter("/[///]/]///[/// ] Text: /[/[///]/[/S/]")
 
-        val result = try {
-            format.format(VideoDetails())
-            "No error"
-        } catch (e: RuntimeException) {
-            "Error"
-        }
-
-        assertEquals("No error", result)
+        assertDoesNotThrow { format.format(VideoDetails()) }
     }
 
     @Test
