@@ -2,11 +2,9 @@ package eu.timerertim.downlomatic.console
 
 import org.apache.commons.cli.Option
 import org.apache.commons.cli.ParseException
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -33,16 +31,7 @@ class ConsoleTest {
 
     @Test
     fun `Print help without error`() {
-        val expected = "success"
-
-        val result = try {
-            console.printHelp()
-            expected
-        } catch (e: Exception) {
-            "fail"
-        }
-
-        assertEquals(expected, result)
+        assertDoesNotThrow { console.printHelp() }
     }
 
     @Test
@@ -69,14 +58,7 @@ class ConsoleTest {
     fun `Unrecognized arguments should cause error`() {
         val expected = "fail"
 
-        val result = try {
-            console.parseArgs("---wtf", "dripplenipple")
-            "success"
-        } catch (e: ParseException) {
-            expected
-        }
-
-        assertEquals(expected, result)
+        assertThrows<ParseException> { console.parseArgs("---wtf", "dripplenipple") }
     }
 
     @Test
