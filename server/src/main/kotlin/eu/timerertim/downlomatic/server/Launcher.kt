@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     @Suppress("NAME_SHADOWING")
-    val args = ConsoleUtils.parseArgs(*args)
+    val args = ConsoleUtils.tryParseArgs(*args)
     processArgs(args)
     exitProcess(0)
 }

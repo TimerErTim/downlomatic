@@ -21,8 +21,6 @@ open class Console(config: ConsoleConfig) {
                 super.parse(options, arguments, properties, stopAtNonOption)
             } catch (ex: MissingOptionException) {
                 cmd.argList.add(0, "missing-required: ${ex.message}")
-            } catch (ex: UnrecognizedOptionException) {
-                showErrorHelpMessage(ex.localizedMessage)
             }
             return cmd
         }
@@ -63,6 +61,18 @@ open class Console(config: ConsoleConfig) {
     @Throws(ParseException::class)
     fun parseArgs(vararg args: String): ParsedArguments {
         return ParsedArguments.build(parser.parse(allArguments, args))
+    }
+
+    /**
+     * Returns [ParsedArguments] based on parsed [args] or exits the program by showing a help message
+     * in case of unrecognized given [args].
+     */
+    fun tryParseArgs(vararg args: String): ParsedArguments {
+        try {
+            return parseArgs(*args)
+        } catch (ex: UnrecognizedOptionException) {
+            showErrorHelpMessage(ex.localizedMessage)
+        }
     }
 
     /**
