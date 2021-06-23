@@ -25,7 +25,7 @@ object Utils {
      * Exits the program with the given [errorCode]. Additionally, it closes and cleans everything not needed anymore.
      */
     @JvmStatic
-    fun exit(errorCode: Int) {
+    fun exit(errorCode: Int): Nothing {
         // Close Logging object
         Log.close()
 
