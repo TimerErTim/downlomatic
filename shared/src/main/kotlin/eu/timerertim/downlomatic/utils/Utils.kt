@@ -66,12 +66,12 @@ object Utils {
         return when {
             bytes == Long.MIN_VALUE || bytes < 0 -> "N/A"
             bytes < 1024L -> "${bytes}B"
-            bytes <= 0xfffccccccccccccL shr 40 -> "%.1fKiB".format(bytes.toDouble() / (0x1 shl 10))
-            bytes <= 0xfffccccccccccccL shr 30 -> "%.1fMiB".format(bytes.toDouble() / (0x1 shl 20))
-            bytes <= 0xfffccccccccccccL shr 20 -> "%.1fGiB".format(bytes.toDouble() / (0x1 shl 30))
-            bytes <= 0xfffccccccccccccL shr 10 -> "%.1fTiB".format(bytes.toDouble() / (0x1 shl 40))
-            bytes <= 0xfffccccccccccccL -> "%.1fPiB".format((bytes shr 10).toDouble() / (0x1 shl 40))
-            else -> "%.1fEiB".format((bytes shr 20).toDouble() / (0x1 shl 40))
+            bytes <= 0xfffccccccccccccL shr 40 -> "%.1fKiB".format((bytes.toDouble() / (0x1 shl 10)).floor(1))
+            bytes <= 0xfffccccccccccccL shr 30 -> "%.1fMiB".format((bytes.toDouble() / (0x1 shl 20)).floor(1))
+            bytes <= 0xfffccccccccccccL shr 20 -> "%.1fGiB".format((bytes.toDouble() / (0x1 shl 30)).floor(1))
+            bytes <= 0xfffccccccccccccL shr 10 -> "%.1fTiB".format((bytes.toDouble() / (0x1 shl 40)).floor(1))
+            bytes <= 0xfffccccccccccccL -> "%.1fPiB".format(((bytes shr 10).toDouble() / (0x1 shl 40)).floor(1))
+            else -> "%.1fEiB".format(((bytes shr 20).toDouble() / (0x1 shl 40)).floor(1))
         }
     }
 
