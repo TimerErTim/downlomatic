@@ -58,7 +58,7 @@ object ClientUtils {
      */
     @JvmStatic
     @JvmOverloads
-    fun exit(errorCode: Int = 0) {
+    fun exit(errorCode: Int = 0): Nothing {
 
 
         // Close shared resources
