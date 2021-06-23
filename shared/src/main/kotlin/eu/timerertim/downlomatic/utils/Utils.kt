@@ -1,6 +1,10 @@
 package eu.timerertim.downlomatic.utils
 
 import eu.timerertim.downlomatic.utils.logging.Log
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.security.MessageDigest
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -88,4 +92,36 @@ object Utils {
      */
     @JvmStatic
     fun Double.floor(digit: Int) = floor(this * (10L pow digit)) / (10L pow digit)
+
+    /**
+     * Calculates the SHA-512 checksum for [this] InputStream.
+     *
+     * Can throw an [IOException] when errors occur because of the InputStream.
+     */
+    @JvmStatic
+    @Throws(IOException::class)
+    fun InputStream.generateSHA512Checksum(): String { // Source: https://medium.com/codelit/generating-sha-512-checksum-of-a-file-in-android-42ae135b0a52
+        // Generate the bytes
+        val checksumBuffer = ByteArrayOutputStream()
+        val buffer = ByteArray(1024)
+        while (true) {
+            val readNum = read(buffer)
+            if (readNum == -1) break
+            checksumBuffer.write(buffer, 0, readNum)
+        }
+
+        // Generate the checksum
+        val digest = MessageDigest.getInstance("SHA-512")
+        val hash = digest.digest(checksumBuffer.toByteArray())
+
+        // Create Hex String
+        val hexString = StringBuilder()
+        for (byte in hash) {
+            var h: String = Integer.toHexString(0xFF and byte.toInt())
+            while (h.length < 2)
+                h = "0$h"
+            hexString.append(h)
+        }
+        return hexString.toString()
+    }
 }
