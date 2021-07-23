@@ -128,10 +128,12 @@ class VideoDetailsFormatter(pattern: String) {
     ) : Replaceable(0) {
         val identifier = "/$key"
         val negativeIdentifier = "/!$key"
+        val positiveIdentifier = "/?$key"
 
         override val replaceRegex = Regex(
             "(" + Pattern.quote(identifier) + "|" +
-                    Pattern.quote(negativeIdentifier) + ")"
+                    Pattern.quote(negativeIdentifier) + "|" +
+                    Pattern.quote(positiveIdentifier) + ")"
         )
 
         override val _value = value?.replace(
@@ -144,7 +146,7 @@ class VideoDetailsFormatter(pattern: String) {
     private class Literal(override val key: String, override val _value: String) : Replaceable(1)
 
     private class Illegal(override val key: String) : Replaceable(2) {
-        override val _value = ""
+        override val _value: String? = null
     }
 
     private class IdentifierTemplate<T : Any>(
@@ -225,6 +227,7 @@ class VideoDetailsFormatter(pattern: String) {
                 is Identifier -> {
                     replacements[it.identifier] = it.value
                     replacements[it.negativeIdentifier] = ""
+                    replacements[it.positiveIdentifier] = ""
                 }
                 else -> replacements[it.key] = it.value
             }
@@ -241,6 +244,10 @@ class VideoDetailsFormatter(pattern: String) {
         return sb.toString()
     }
 
+    /**
+     * Checks for validity regarding identifiers in a segment.
+     * Returns true when [this] is invalid and should thus result in an empty segment.
+     */
     private fun String.checkForIdentifiers(): Boolean {
         // Create replacement regular expression
         val regexp = identifiers.stream().map { it.replaceRegex.pattern }
@@ -252,16 +259,21 @@ class VideoDetailsFormatter(pattern: String) {
         // Create replacement map out of replacement pool
         val identifierMap: MutableMap<String, Identifier> = HashMap()
         val negativeIdentifierMap: MutableMap<String, Identifier> = HashMap()
+        val positiveIdentifierMap: MutableMap<String, Identifier> = HashMap()
         identifiers.forEach {
             identifierMap[it.identifier] = it
             negativeIdentifierMap[it.negativeIdentifier] = it
+            positiveIdentifierMap[it.positiveIdentifier] = it
         }
 
         // Check everything "simultaneously"
         val p = Pattern.compile(regexp)
         val m = p.matcher(this)
         while (m.find()) {
-            if (identifierMap[m.group()]?.hasValue == false || negativeIdentifierMap[m.group()]?.hasValue == true) {
+            if (identifierMap[m.group()]?.hasValue == false ||
+                negativeIdentifierMap[m.group()]?.hasValue == true ||
+                positiveIdentifierMap[m.group()]?.hasValue == false
+            ) {
                 return true
             }
         }
