@@ -1,5 +1,6 @@
 package eu.timerertim.downlomatic.core.video
 
+import eu.timerertim.downlomatic.core.meta.Metadata
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import java.net.URL
 
