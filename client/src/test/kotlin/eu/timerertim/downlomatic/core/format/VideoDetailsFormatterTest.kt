@@ -141,13 +141,51 @@ class VideoDetailsFormatterTest {
     }
 
     @Test
-    fun `Identifier in Segment should only result in empty String with that Identifier would be replaced`() {
+    fun `Identifier in segment should only result in empty String when that identifier would be replaced`() {
         val expected = "Test /!N /String"
         val videoDetails = VideoDetails(
             title = "Name"
         )
 
         val result = VideoDetailsFormatter("Test /[//!N /]/[//String/]").format(videoDetails)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Positive top level identifiers should be removed`() {
+        val expected = "Tested string n stuff"
+        val videoDetails = VideoDetails(
+            title = "Yeah",
+            series = "Series"
+        )
+
+        val result = VideoDetailsFormatter("Tested/?N string /[/!N will/]n stuff").format(videoDetails)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Literal positive identifier should be ignored`() {
+        val expected = "Test string will be printed"
+
+        val result = VideoDetailsFormatter("Test/?/ string/[/?/ will be printed/]").format(videoDetails)
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `Positive identifiers in brackets`() {
+        val expected = "Series Name and Episode 4"
+        val videoDetails = VideoDetails(
+            series = "Series Name",
+            episode = 4,
+            title = "Episode Name"
+        )
+
+        val result = VideoDetailsFormatter(
+            "/[/?N/S/[/!S/?N no series/]/] and/[/?S Episode /e/[ /?y jap /]/]"
+        ).format(videoDetails)
 
         assertEquals(expected, result)
     }
