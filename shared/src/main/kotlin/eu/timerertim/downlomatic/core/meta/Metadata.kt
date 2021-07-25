@@ -1,5 +1,8 @@
 package eu.timerertim.downlomatic.core.meta
 
+import eu.timerertim.downlomatic.utils.Utils.generateSHA512Checksum
+import kotlinx.coroutines.runBlocking
+import java.io.InputStream
 import java.time.LocalDateTime
 
 /**
@@ -13,6 +16,11 @@ data class Metadata(
     val httpType: String? = null,
     val lastModified: LocalDateTime? = null
 ) : Comparable<Metadata> {
+    /**
+     * The SHA512 Checksum of the actual video file
+     */
+    var hashCode = ""
+        private set
 
     /**
      * Compares this and one [other] Metadata.
@@ -47,4 +55,18 @@ data class Metadata(
      * false if it should be updated.
      */
     fun isUpToDate(new: Metadata) = compareTo(new) >= 0
+
+
+    /**
+     * Injects the SHA512 checksum calculated based on the [input] into
+     * [Metadata]s.
+     */
+    class HashCodeInjector(private val input: InputStream) {
+        /**
+         * Injects the SHA512 checksum calculated from [input] into the [target].
+         */
+        fun inject(target: Metadata) = runBlocking {
+            target.hashCode = input.generateSHA512Checksum()
+        }
+    }
 }
