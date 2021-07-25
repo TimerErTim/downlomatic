@@ -1,7 +1,6 @@
 package eu.timerertim.downlomatic.core.meta
 
 import eu.timerertim.downlomatic.utils.Utils.generateSHA512Checksum
-import kotlinx.coroutines.runBlocking
 import java.io.InputStream
 import java.time.LocalDateTime
 
@@ -65,7 +64,7 @@ data class Metadata(
         /**
          * Injects the SHA512 checksum calculated from [input] into the [target].
          */
-        fun inject(target: Metadata) = runBlocking {
+        fun inject(target: Metadata) {
             target.hashCode = input.generateSHA512Checksum()
         }
     }

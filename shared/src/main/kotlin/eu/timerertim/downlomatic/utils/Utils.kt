@@ -1,6 +1,8 @@
 package eu.timerertim.downlomatic.utils
 
 import eu.timerertim.downlomatic.utils.logging.Log
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.yield
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -100,15 +102,17 @@ object Utils {
      */
     @JvmStatic
     @Throws(IOException::class)
-    fun InputStream.generateSHA512Checksum(): String { // Source: https://medium.com/codelit/generating-sha-512-checksum-of-a-file-in-android-42ae135b0a52
-        // Generate the bytes
-        val checksumBuffer = ByteArrayOutputStream()
-        val buffer = ByteArray(1024)
-        while (true) {
-            val readNum = read(buffer)
-            if (readNum == -1) break
-            checksumBuffer.write(buffer, 0, readNum)
-        }
+    fun InputStream.generateSHA512Checksum() =
+        runBlocking { // Source: https://medium.com/codelit/generating-sha-512-checksum-of-a-file-in-android-42ae135b0a52
+            // Generate the bytes
+            val checksumBuffer = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            while (true) {
+                val readNum = read(buffer)
+                if (readNum == -1) break
+                checksumBuffer.write(buffer, 0, readNum)
+                yield()
+            }
 
         // Generate the checksum
         val digest = MessageDigest.getInstance("SHA-512")
@@ -121,7 +125,8 @@ object Utils {
             while (h.length < 2)
                 h = "0$h"
             hexString.append(h)
+            yield()
         }
-        return hexString.toString()
+            hexString.toString()
     }
 }
