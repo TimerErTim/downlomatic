@@ -6,5 +6,9 @@ version '0.5.0'
 
 dependencies {
     api 'commons-cli:commons-cli:1.4'
-    api "com.github.mpetazzoni:ttorrent:ttorrent-2.0"
+
+    def bt_version = "1.9"
+    api "com.github.atomashpolskiy:bt-core:$bt_version"
+    api "com.github.atomashpolskiy:bt-http-tracker-client:$bt_version"
+    api "com.github.atomashpolskiy:bt-dht:$bt_version"
 }
