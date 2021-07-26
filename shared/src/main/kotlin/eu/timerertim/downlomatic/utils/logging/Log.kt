@@ -12,6 +12,10 @@ import java.util.logging.*
  * Global logging object. Every logging action should happen through this.
  */
 object Log {
+    init {
+        System.setProperty("java.util.logging.manager", NoResetLogManager::class.java.name)
+    }
+
     private val DEFAULT_CONSOLE_VERBOSITY = Level.ERROR
     private val DEFAULT_FILE_VERBOSITY = Level.ALL
     private const val FILE_SIZE = 256 * 1000L
@@ -58,7 +62,6 @@ object Log {
             }
         }
 
-
     @JvmStatic
     var fileLogging: Boolean
         get() = logger.handlers.contains(fileHandler)
@@ -75,6 +78,7 @@ object Log {
                 fileHandler = null
             }
         }
+
 
     /**
      * Send a [DEBUG][Level.DEBUG] log message and log the optional [cause].
@@ -140,7 +144,7 @@ object Log {
      * Closes the global logging object in order to free system resources.
      */
     @JvmStatic
-    fun close() = logger.handlers.forEach { it.close() }
+    fun close() = logger.handlers.forEach { it.close() }.also { NoResetLogManager.reset() }
 
     private fun createLogEntry(level: Level, message: String, cause: Throwable?): LogRecord {
         val entry = LogRecord(level.level, message)
@@ -155,6 +159,25 @@ object Log {
         }
 
         return entry
+    }
+
+    class NoResetLogManager : LogManager() {
+        init {
+            instance = this
+        }
+
+        override fun reset() {}
+        private fun _reset() {
+            super.reset()
+        }
+
+        companion object {
+            lateinit var instance: NoResetLogManager
+
+            fun reset() {
+                instance._reset()
+            }
+        }
     }
 
     private object MessageFormat : Formatter() {
@@ -175,7 +198,7 @@ object Log {
     private object DetailFormat : Formatter() {
         override fun format(record: LogRecord): String {
             val zdt = ZonedDateTime.ofInstant(record.instant, ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("YYYY.MM.dd HH:mm:ss.SS"))
+                .format(DateTimeFormatter.ofPattern("YYYY.MM.dd HH:mm:ss.SSS"))
             var source = "${record.threadID}/"
             if (record.sourceClassName != null) {
                 source += record.sourceClassName
