@@ -50,6 +50,7 @@ object ClientUtils {
             } catch (e: Exception) {
                 println("VT100 Emulation could not be activated for MS Windows: CLI presentation will look very bad")
             }
+            System.setProperty("java.net.preferIPv4Stack", "true") // Required by torrent library
         }
     }
 
