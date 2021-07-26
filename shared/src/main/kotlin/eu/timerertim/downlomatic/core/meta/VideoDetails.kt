@@ -8,6 +8,7 @@ import java.time.LocalDate
  * It contains all relevant information to identify a video. Furthermore, [VideoDetails] can be used
  * to create a unique file name and search for a [Video][eu.timerertim.downlomatic.core.video.Video].
  */
+@Suppress("EqualsOrHashCode")
 data class VideoDetails(
     val title: String? = null,
     val series: String? = null,
@@ -23,7 +24,21 @@ data class VideoDetails(
         Translation.SUB -> subtitleLanguage
     } ?: Language.ENGLISH,
     val tags: List<Tag> = emptyList()
-)
+) {
+    override fun hashCode(): Int {
+        var result = title?.hashCode() ?: 0
+        result = 31 * result + (series?.hashCode() ?: 0)
+        result = 31 * result + (season ?: 0)
+        result = 31 * result + (episode ?: 0)
+        result = 31 * result + (release?.hashCode() ?: 0)
+        result = 31 * result + (spokenLanguage?.toString().hashCode())
+        result = 31 * result + (subtitleLanguage?.toString().hashCode())
+        result = 31 * result + translation.toString().hashCode()
+        result = 31 * result + audienceLanguage.toString().hashCode()
+        result = 31 * result + tags.hashCode()
+        return result
+    }
+}
 
 /**
  * Provides the ability to build a [VideoDetails] object with the ability to copy a already existing configuration and

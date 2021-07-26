@@ -3,6 +3,8 @@ package eu.timerertim.downlomatic.server
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
+import eu.timerertim.downlomatic.core.dispatch.startKtor
+import eu.timerertim.downlomatic.core.dispatch.stopKtor
 import eu.timerertim.downlomatic.utils.ServerUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
@@ -23,14 +25,12 @@ private fun processArgs(arguments: ParsedArguments) {
         if (arguments.hasRequiredArguments()) {
             ServerUtils.setup(arguments)
 
-
             // Start server, catch and handle exceptions
             try {
                 startServer()
-                ServerUtils.exit()
             } catch (exception: Exception) {
                 Log.f("A fatal error broke the execution", exception)
-                ServerUtils.exit(Utils.GENERIC_EXIT_CODE)
+                exitProcess(Utils.GENERIC_EXIT_CODE)
             }
         } else {
             arguments.missingArgumentMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }
@@ -50,7 +50,9 @@ private fun startServer() {
 
     // Checks for user input exiting the program
     val input = Scanner(System.`in`)
-    while (input.nextLine().trim().lowercase(Locale.getDefault()) != "exit");
+    while (true) {
+        if (input.nextLine().trim().lowercase(Locale.getDefault()) == "exit") break
+    }
 }
 
 private fun stopServer() {
