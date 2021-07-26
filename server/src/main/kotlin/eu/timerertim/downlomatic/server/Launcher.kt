@@ -6,6 +6,7 @@ import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.utils.ServerUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
+import java.util.*
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -38,5 +39,22 @@ private fun processArgs(arguments: ParsedArguments) {
 }
 
 private fun startServer() {
-    //TODO: Implement server main functionality
+    startKtor()
+    //startFetcher()
+    Log.i("Server started")
+
+    Runtime.getRuntime().addShutdownHook(Thread {
+        stopServer()
+        ServerUtils.cleanup()
+    })
+
+    // Checks for user input exiting the program
+    val input = Scanner(System.`in`)
+    while (input.nextLine().trim().lowercase(Locale.getDefault()) != "exit");
+}
+
+private fun stopServer() {
+    Log.i("Stopping Server...")
+    stopKtor()
+    //stopFetcher()
 }

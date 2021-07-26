@@ -28,15 +28,27 @@ object Utils {
     }
 
     /**
-     * Exits the program with the given [errorCode]. Additionally, it closes and cleans everything not needed anymore.
+     * Exits the program with the given [errorCode]. Additionally, it closes and cleans everything not needed anymore by
+     * invoking [cleanup].
      */
     @JvmStatic
-    fun exit(errorCode: Int): Nothing {
-        // Close Logging object
-        Log.close()
+    @JvmOverloads
+    fun exit(errorCode: Int = 0): Nothing {
+        // Cleans up before exiting
+        cleanup()
 
         // Exit with the given errorCode
         exitProcess(errorCode)
+    }
+
+    /**
+     * Cleans and closes system resources and prepares for program exit. Is equivalent to [exit] but without the actual
+     * program shutdown.
+     */
+    @JvmStatic
+    fun cleanup() {
+        // Close Logging object
+        Log.close()
     }
 
     /**

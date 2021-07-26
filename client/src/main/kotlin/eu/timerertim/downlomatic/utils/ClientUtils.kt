@@ -8,6 +8,7 @@ import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
+import kotlin.system.exitProcess
 
 /**
  * Provides some neat helper functions for the client.
@@ -53,15 +54,28 @@ object ClientUtils {
     }
 
     /**
-     * Closes and cleans system resources and prepares the program to exit. The given [errorCode] is returned to the OS
+     * Closes and cleans system resources and exits the program. The given [errorCode] is returned to the OS
      * (defaults to 0).
      */
     @JvmStatic
     @JvmOverloads
     fun exit(errorCode: Int = 0): Nothing {
+        // Close resources
+        cleanup()
 
+        // Exits program
+        exitProcess(errorCode)
+    }
+
+    /**
+     * Closes and cleans system resources and prepares the program to exit. This is basically [exit] without a program
+     * shutdown.
+     */
+    @JvmStatic
+    fun cleanup() {
+        // Client specific cleanup
 
         // Close shared resources
-        Utils.exit(errorCode)
+        Utils.cleanup()
     }
 }
