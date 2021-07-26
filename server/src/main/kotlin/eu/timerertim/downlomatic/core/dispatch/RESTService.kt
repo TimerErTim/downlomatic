@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit
 private val ktorEngine = embeddedServer(CIO, Utils.KTOR_PORT) {
     install(ContentNegotiation) {
         jackson {
-            enable(SerializationFeature.INDENT_OUTPUT)
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             registerModule(JavaTimeModule())
         }
