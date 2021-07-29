@@ -4,6 +4,7 @@ import com.mongodb.MongoClientException
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
+import eu.timerertim.downlomatic.core.fetch.Fetcher
 import eu.timerertim.downlomatic.utils.logging.Level
 import eu.timerertim.downlomatic.utils.logging.Log
 import kotlin.system.exitProcess
@@ -44,6 +45,11 @@ object ServerUtils {
             )
             exit(Utils.CONNECTION_EXIT_CODE)
         }
+
+        // Setup fetcher config
+        if (arguments.hasArgument(ServerArgument.IGNORE_REDUNDANCY)) {
+            Fetcher.patchRedundancy = false
+        }
     }
 
     /**
@@ -67,6 +73,7 @@ object ServerUtils {
     @JvmStatic
     fun cleanup() {
         // Server specific cleanup
+        WebScrapers.close()
 
         // Close shared resources
         Utils.cleanup()

@@ -36,7 +36,7 @@ tasks.register("runServer") {
     group GROUP
     description "Runs the server with development optimised arguments"
 
-    def programArguments = ["--no-file-logging", "-v"]
+    def programArguments = ["--no-file-logging", "-v", "--ignore-redundancy"]
 
     dependsOn tasks.getByPath("server:run").configure {
         args = programArguments
