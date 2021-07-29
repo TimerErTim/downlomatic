@@ -15,20 +15,20 @@ dependencies {
     implementation(project(":shared"))
 
 
-    def ktor_version = '1.5.4'
+    def ktor_version = '1.6.1'
     implementation "io.ktor:ktor-client-core:$ktor_version"
     implementation "io.ktor:ktor-client-cio:$ktor_version"
 
     implementation "no.tornado:tornadofx:1.7.20"
     implementation "no.tornado:tornadofx-controlsfx:0.1.1"
-    implementation "no.tornado:tornadofx-controls:1.0.4"
+    implementation 'no.tornado:tornadofx-controls:1.0.6'
 
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:win'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:linux'
     runtimeOnly 'org.openjfx:javafx-graphics:$javafx.version:mac'
 
-    implementation 'net.java.dev.jna:jna:5.7.0'
-    implementation 'net.java.dev.jna:jna-platform:5.7.0'
+    implementation 'net.java.dev.jna:jna:5.8.0'
+    implementation 'net.java.dev.jna:jna-platform:5.8.0'
 }
 
 javafx {
