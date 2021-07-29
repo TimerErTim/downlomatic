@@ -1,7 +1,11 @@
 package eu.timerertim.downlomatic.core.dispatch
 
+import com.fasterxml.jackson.annotation.JsonFilter
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.utils.MongoDBConnection
 import eu.timerertim.downlomatic.utils.Utils
@@ -21,6 +25,13 @@ private val ktorEngine = embeddedServer(CIO, Utils.KTOR_PORT) {
         jackson {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             registerModule(JavaTimeModule())
+            addMixIn(Any::class.java, RESTFiler::class.java)
+            setFilterProvider(
+                SimpleFilterProvider().addFilter(
+                    "RESTFilter",
+                    SimpleBeanPropertyFilter.serializeAllExcept(Video::_id.name, VideoDetails::idHash.name)
+                )
+            )
         }
     }
     routing {
@@ -58,3 +69,6 @@ fun startKtor() {
 fun stopKtor() {
     ktorEngine.stop(1, 5, TimeUnit.SECONDS)
 }
+
+@JsonFilter("RESTFilter")
+interface RESTFiler

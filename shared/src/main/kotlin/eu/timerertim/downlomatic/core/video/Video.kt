@@ -9,5 +9,5 @@ import java.net.URL
  * to identify a video, process and download it.
  */
 data class Video(val url: URL, val details: VideoDetails, val metadata: Metadata) {
-    private val _id = details.hashCode()
+    val _id = details.idHash
 }

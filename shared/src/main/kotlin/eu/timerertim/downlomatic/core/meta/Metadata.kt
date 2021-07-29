@@ -18,7 +18,7 @@ data class Metadata(
     /**
      * The SHA512 Checksum of the actual video file
      */
-    var hashCode = ""
+    var checksum = ""
         private set
 
     /**
@@ -42,7 +42,7 @@ data class Metadata(
         }
 
         // Check based on size
-        if (size != other.size) {
+        if (size != other.size || other.size < 0) {
             return -1
         }
 
@@ -57,15 +57,22 @@ data class Metadata(
 
 
     /**
-     * Injects the SHA512 checksum calculated based on the [input] into
-     * [Metadata]s.
+     * Injects the SHA512 checksum calculated based on different inputs into
+     * [target].
      */
-    class HashCodeInjector(private val input: InputStream) {
+    class ChecksumInjector(private val target: Metadata) {
         /**
          * Injects the SHA512 checksum calculated from [input] into the [target].
          */
-        fun inject(target: Metadata) {
-            target.hashCode = input.generateSHA512Checksum()
+        fun inject(input: InputStream) {
+            target.checksum = input.generateSHA512Checksum()
+        }
+
+        /**
+         * Injects the [other] SHA512 checksum into the [target].
+         */
+        fun inject(other: Metadata) {
+            target.checksum = other.checksum
         }
     }
 }

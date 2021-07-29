@@ -5,6 +5,8 @@ import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.core.dispatch.startKtor
 import eu.timerertim.downlomatic.core.dispatch.stopKtor
+import eu.timerertim.downlomatic.core.fetch.startFetcher
+import eu.timerertim.downlomatic.core.fetch.stopFetcher
 import eu.timerertim.downlomatic.utils.ServerUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
@@ -39,8 +41,8 @@ private fun processArgs(arguments: ParsedArguments) {
 }
 
 private fun startServer() {
+    startFetcher()
     startKtor()
-    //startFetcher()
     Log.i("Server started")
 
     Runtime.getRuntime().addShutdownHook(Thread {
@@ -58,5 +60,5 @@ private fun startServer() {
 private fun stopServer() {
     Log.i("Stopping Server...")
     stopKtor()
-    //stopFetcher()
+    stopFetcher()
 }

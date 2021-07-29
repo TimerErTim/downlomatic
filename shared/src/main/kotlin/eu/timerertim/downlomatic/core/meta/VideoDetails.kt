@@ -25,7 +25,7 @@ data class VideoDetails(
     } ?: Language.ENGLISH,
     val tags: List<Tag> = emptyList()
 ) {
-    override fun hashCode(): Int {
+    val idHash by lazy {
         var result = title?.hashCode() ?: 0
         result = 31 * result + (series?.hashCode() ?: 0)
         result = 31 * result + (season ?: 0)
@@ -35,8 +35,7 @@ data class VideoDetails(
         result = 31 * result + (subtitleLanguage?.toString().hashCode())
         result = 31 * result + translation.toString().hashCode()
         result = 31 * result + audienceLanguage.toString().hashCode()
-        result = 31 * result + tags.hashCode()
-        return result
+        result
     }
 }
 
@@ -54,14 +53,27 @@ data class VideoDetailsBuilder(
     var subtitleLanguage: Language? = null,
     var translation: Translation = Translation.OV,
     var audienceLanguage: Language? = null,
-    var tags: List<Tag> = emptyList()
+    var tags: List<Tag> = listOf()
 ) {
     /**
-     * "Builds" this object into a immutable [VideoDetails] object.
+     * "Builds" this object into an immutable [VideoDetails] object.
      */
     fun build() =
-        if (audienceLanguage == null) {
-            VideoDetailsBuilder(
+        audienceLanguage?.let {
+            VideoDetails(
+                title,
+                series,
+                season,
+                episode,
+                release,
+                spokenLanguage,
+                subtitleLanguage,
+                translation,
+                it,
+                tags
+            )
+        }
+            ?: VideoDetails(
                 title,
                 series,
                 season,
@@ -72,18 +84,4 @@ data class VideoDetailsBuilder(
                 translation,
                 tags = tags
             )
-        } else {
-            VideoDetailsBuilder(
-                title,
-                series,
-                season,
-                episode,
-                release,
-                spokenLanguage,
-                subtitleLanguage,
-                translation,
-                audienceLanguage,
-                tags
-            )
-        }
 }

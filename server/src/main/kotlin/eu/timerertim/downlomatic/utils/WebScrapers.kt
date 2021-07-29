@@ -12,8 +12,8 @@ import java.util.logging.Logger
  * Provides webscrapers for usage. Has to be initialized at least once in order to work.
  */
 object WebScrapers {
-    private var jSoupDriver: JSoupDriver? = null
-    private var firefoxDriver: FirefoxDriver? = null
+    private lateinit var jSoupDriver: JSoupDriver
+    private lateinit var firefoxDriver: FirefoxDriver
 
     /**
      * Returns the WebDriver responsible for handling non js webscraping.
@@ -21,8 +21,8 @@ object WebScrapers {
      * @return the JSoupDriver
      */
     @JvmStatic
-    fun noJavaScript(): JSoupDriver? {
-        if (jSoupDriver == null) {
+    fun noJavaScript(): JSoupDriver {
+        if (this::jSoupDriver.isInitialized.not()) {
             initializeJSoupDriver()
         }
         return jSoupDriver
@@ -34,8 +34,8 @@ object WebScrapers {
      * @return the FirefoxDriver
      */
     @JvmStatic
-    fun javaScript(): WebDriver? {
-        if (firefoxDriver == null) {
+    fun javaScript(): WebDriver {
+        if (this::firefoxDriver.isInitialized.not()) {
             initializeFirefoxDriver()
         }
         return firefoxDriver
@@ -58,8 +58,8 @@ object WebScrapers {
      */
     @JvmStatic
     fun close() {
-        firefoxDriver?.quit()
-        jSoupDriver?.quit()
+        if (this::firefoxDriver.isInitialized) firefoxDriver.quit()
+        if (this::jSoupDriver.isInitialized) jSoupDriver.quit()
     }
 
     /**
