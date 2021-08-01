@@ -37,19 +37,18 @@ class PageNode(parentNode: ParentNode, url: URL, private val process: suspend Pa
             return
         }
 
-        children.forEachIndexed { index, childNode ->
-            if (childNode is Node) {
-                if (index > 0) { // Load parent page after delay
-                    delay(host.config.delay.random())
-                    if (host.config.requiresJS) {
-                        WebScrapers.javaScript().get(url.toString())
-                    } else {
-                        WebScrapers.noJavaScript().get(url.toString())
-                    }
-                    delay(host.config.delay.random())
-                }
+        children.forEach {
+            if (it is Node) {
+                it.fetch() // Fetch child
 
-                childNode.fetch() // Fetch child
+                // Load parent page after delay
+                delay(host.config.delay.random())
+                if (host.config.requiresJS) {
+                    WebScrapers.javaScript().get(url.toString())
+                } else {
+                    WebScrapers.noJavaScript().get(url.toString())
+                }
+                delay(host.config.delay.random())
             }
         }
     }
