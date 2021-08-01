@@ -10,10 +10,10 @@ import eu.timerertim.downlomatic.core.meta.Translation
 import eu.timerertim.downlomatic.utils.WebScrapers
 import org.openqa.selenium.By
 import java.net.URL
-import java.text.ParseException
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.regex.Pattern
 
 object HentaigasmCom : Host(HostConfig(
@@ -47,7 +47,7 @@ object HentaigasmCom : Host(HostConfig(
 
                             // Parse VideoDetails
                             var element = driver.findElement(By.id("headline"))?.findElement(By.id("title"))
-                            val title = element!!.text
+                            val title = element?.text ?: return@page
                             val seriesName = title.replace("\\d+ (Subbed|Raw)".toRegex(), "")
                             val postSeriesName =
                                 title.replace(Pattern.quote(seriesName).toRegex(), "").split(" ".toRegex())
@@ -67,10 +67,10 @@ object HentaigasmCom : Host(HostConfig(
                             if (extras != null) {
                                 release = try {
                                     LocalDate.parse(
-                                        extras[0].text, DateTimeFormatter.ofPattern("MMMM dd, yyyy")
+                                        extras[0].text, DateTimeFormatter.ofPattern("MMMM d, yyyy")
                                             .withZone(ZoneId.of("UTC"))
                                     )
-                                } catch (ex: ParseException) {
+                                } catch (ex: DateTimeParseException) {
                                     LocalDate.ofYearDay(extras[0].text.split(", ")[1].toInt(), 1)
                                 }
                                 tags = extras[2].findElements(By.tagName("a")).filter {
