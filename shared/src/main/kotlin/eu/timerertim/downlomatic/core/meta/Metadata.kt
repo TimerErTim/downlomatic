@@ -54,6 +54,15 @@ data class Metadata(
      * false if it should be updated.
      */
     fun isUpToDate(new: Metadata) = compareTo(new) >= 0
+    override fun toString(): String {
+        return "Metadata(" +
+                "size=$size, " +
+                "fileType='$fileType', " +
+                "httpType=$httpType, " +
+                "lastModified=$lastModified, " +
+                "checksum='$checksum'" +
+                ")"
+    }
 
 
     /**

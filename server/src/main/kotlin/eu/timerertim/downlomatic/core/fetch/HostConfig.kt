@@ -16,4 +16,11 @@ data class HostConfig @JvmOverloads constructor(
     val delay: LongRange,
     val requiresJS: Boolean = false,
     val defaultFileType: String = "mp4"
-)
+) {
+    var testing: Boolean = false
+        private set
+
+    fun Host.Tester._setTesting(value: Boolean) {
+        testing = value
+    }
+}
