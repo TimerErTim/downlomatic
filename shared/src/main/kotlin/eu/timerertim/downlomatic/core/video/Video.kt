@@ -10,4 +10,9 @@ import java.net.URL
  */
 data class Video(val url: URL, val details: VideoDetails, val metadata: Metadata) {
     val _id = details.idHash
+
+
+    override fun toString(): String {
+        return "Video(id=$_id, url=$url, details=$details, metadata=$metadata)"
+    }
 }

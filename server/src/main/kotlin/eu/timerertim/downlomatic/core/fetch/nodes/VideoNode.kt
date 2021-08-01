@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.core.fetch.nodes
 import com.google.common.io.Files
 import com.mongodb.client.model.ReplaceOptions
 import eu.timerertim.downlomatic.core.fetch.Fetcher
+import eu.timerertim.downlomatic.core.fetch.Host
 import eu.timerertim.downlomatic.core.meta.Metadata
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
@@ -42,11 +43,15 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             val metadata = generateMetadata(details)
             val video = Video(url, details, metadata)
 
-            // Insert into db
-            val collection = MongoDBConnection.db.getCollection<Video>(host.config.domain)
-            collection.replaceOneById(details.idHash, video, ReplaceOptions().apply {
-                upsert(true)
-            })
+            // Insert into db or display on screen
+            if (!host.config.testing) {
+                val collection = MongoDBConnection.db.getCollection<Video>(host.config.domain)
+                collection.replaceOneById(details.idHash, video, ReplaceOptions().apply {
+                    upsert(true)
+                })
+            } else {
+                Log.d(video.toString())
+            }
         } catch (ex: Exception) {
             Log.e("A problem occurred while trying to fetch video from URL \"$url\"", ex)
         }
@@ -72,8 +77,11 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             val metadata = Metadata(size, fileType, httpType, lastModified)
 
             // Compare it to old metadata if there is one
-            val collection = MongoDBConnection.db.getCollection<Video>(host.config.domain)
-            val oldVideo = collection.findOneById(details.idHash)
+            val oldVideo = if (!host.config.testing) {
+                MongoDBConnection.db.getCollection<Video>(host.config.domain).findOneById(details.idHash)
+            } else {
+                null
+            }
             if (oldVideo != null && oldVideo.metadata.isUpToDate(metadata) && Fetcher.patchRedundancy) {
                 Metadata.ChecksumInjector(metadata).inject(oldVideo.metadata)
             } else {
@@ -87,4 +95,6 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             throw IllegalArgumentException("URL must use the http protocol")
         }
     }
+
+    private val Host.idVideos get() = with(this) { _idVideos }
 }

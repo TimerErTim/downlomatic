@@ -37,6 +37,21 @@ data class VideoDetails(
         result = 31 * result + audienceLanguage.toString().hashCode()
         result
     }
+
+    override fun toString(): String {
+        return "VideoDetails(" +
+                "title=$title, " +
+                "series=$series, " +
+                "season=$season, " +
+                "episode=$episode, " +
+                "release=$release, " +
+                "spokenLanguage=$spokenLanguage, " +
+                "subtitleLanguage=$subtitleLanguage, " +
+                "translation=$translation, " +
+                "audienceLanguage=$audienceLanguage, " +
+                "tags=$tags" +
+                ")"
+    }
 }
 
 /**

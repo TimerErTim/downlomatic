@@ -32,6 +32,9 @@ class PageNode(parentNode: ParentNode, url: URL, private val process: suspend Pa
     override suspend fun fetch() {
         try {
             process(url)
+            if (host.config.testing) { // Logging for testing purposes
+                Log.d("Processed page \"$url\"")
+            }
         } catch (ex: Exception) {
             Log.e("An error occurred while processing URL \"$url\" of host ${host.config.domain}", ex)
             return
@@ -47,6 +50,9 @@ class PageNode(parentNode: ParentNode, url: URL, private val process: suspend Pa
                     WebScrapers.javaScript().get(url.toString())
                 } else {
                     WebScrapers.noJavaScript().get(url.toString())
+                }
+                if (host.config.testing) { // Logging for testing purposes
+                    Log.d("Automatically loaded page \"$url\"")
                 }
                 delay(host.config.delay.random())
             }
