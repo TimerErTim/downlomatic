@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 object HentaiplayNet : Host(HostConfig(
     "hentaiplay.net",
-    2000..5000L
+    5250..9500L
 ), {
     val driver = WebScrapers.noJavaScript()
     driver["https://hentaiplay.net/hentai-index/"]
