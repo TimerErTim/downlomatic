@@ -64,8 +64,8 @@ You know how to submit issues and Pull Requests? Have a look at the following gu
 - Before starting to work on rather bigger changes, additions, or bug fixes, open an appropriate issue and in it
   mention, that you'd like to implement the according solution.
 - The repository is currently managed only by myself. Keep that in mind when waiting for an answer. I try to respond as
-  quickly as possible. Usually, that takes **at most** one day, but there may be instances, in which it takes up to
-  three days. Be assured, that I will write back after all.
+  quickly as possible. Usually, that takes **around** one day, but there may be instances, in which it takes more. Be
+  assured, that I will write back after all.
 
 ### Issues
 
@@ -90,31 +90,29 @@ This project follows the ["fork-and-pull" Git workflow](https://github.com/susam
 
 Here is a quick list of things your Pull Request should do:
 
-- Increase the version numbers in `build.gradle` to the new version that this Pull Request would represent.
-  The [versioning scheme](#versioning-scheme) Downlomatic uses is [SemVer](http://semver.org/).
+- Increase the version numbers in `build.gradle` under the effected module to the new version that this Pull Request
+  would represent. The [versioning scheme](#versioning-scheme) Downlomatic uses is [SemVer](http://semver.org/).
 - Only fix/add the functionality in question
 - Pass a thorough [testing procedure](#testing)
-- Include [documentation](#documentation) via JavaDoc
+- Include [documentation](#documentation) via JavaDoc/KDoc
 - Be accompanied by a filled-out Pull Request template (is loaded automatically)
 
-Although it's not always necessary to open an issue for your PR, you should search already existing issues describing
-the problem you want to fix or additions you want to make. Let other people know that you're working on it by leaving a
-quick comment under the appropriate issue.
+Although it's not always necessary to open an issue for your PR, you should search for already existing issues
+describing the problem you want to fix or additions you want to make. Let other people know that you're working on it by
+leaving a quick comment under the appropriate issue.
 
 #### Setup
 
-As Downlomatic's code may also be written in Kotlin, I recommend
+As Downlomatic's code is primarily written in Kotlin, I recommend
 using [JetBrains IntelliJ IDEA](https://www.jetbrains.com/idea/)
 because it allows you to seamlessly import your cloned fork. If you manage to make it work in NetBeans or Eclipse, you
 are very well allowed to use that IDE, but there's no reason not to use IntelliJ, especially since its built-in code
-style is used for this repository.
+style and custom run configurations are used for this repository.
 
 ### Adding Hosts
 
-The most common contribution is implementing more hosts or pages. Pages define websites (like vivo.sx, animetoast.com,
-etc.)
-while hosts implement the interaction with them. Users can retrieve episodes, movies, and co. from hosts. Hosts
-implement pages, so they also define a website.
+The most common contribution is implementing more hosts. Hosts are crawled for videos by the server. The code
+implementation tells the server how to do that.
 
 Unfortunately not all websites are technically possible to implement. The following guidelines help you find a valid
 page:
@@ -124,17 +122,12 @@ page:
 - [ ] Website should not be protected by Cloudflare DDoS protection (while not ideal, it's still possible to implement
   such a website)
 
-To add support for a specific webpage, all you have to do is implementing the classes/interfaces in the `core.framework`
-package. Either implement Host or Page, and at least Downloader. How to do that and what to watch out for is documented
-with JavaDoc. You can also inspect the other implementations.
+To add support for a specific website/host, all you have to do is extending the abstract `Host` class with a no argument
+constructor. How to do that and what to watch out for is documented with KDoc. You can also inspect existing
+implementations.
 
-The implementation should happen in the `pages.<domainnameOfYourPage>` package. If that package already exists (e.g.
-"animetoast", which implements "animetoast.com", and you want to implement "animetoast.net"), refactor the package and
-implementation classes to the full domain ("animetoastcom") and name your package after the full domain
-("animetoastnet"), too.
-
-If you want the user to be able to download from and choose your Host, you have to register it in the Hosts enum, which
-can be found in the `pages` package, in the same way, the other Hosts were registered.
+The resulting subclass must reside inside the `eu.timerertim.downlomatic.hosts` package in the server module. You should
+name that class after the domain of the host (e.g. "animetoast.com" results in a class name of "AnimetoastCom").
 
 ## Conventions
 
@@ -148,7 +141,8 @@ style.
 
 ### Documentation
 
-Everything that is public or protected (even classes) should be documented via JavaDoc according to these guidelines
+Everything that is public or protected (even classes) should be documented via JavaDoc/KDoc according to these
+guidelines
 [JavaDoc coding standards](https://blog.joda.org/2012/11/javadoc-coding-standards.html). Public fields or constants do
 not have to be documented if their purpose and function are self-explanatory. You are also encouraged to document
 private and package-private methods and classes.  
@@ -166,7 +160,7 @@ covering good practices regarding version control in general.
 Consult this blog post [How to Write a Git Commit Message](https://chris.beams.io/posts/git-commit/) if you are not sure
 how to write good commit messages. This may sound trivial, but is quite important and requires some knowledge. There is
 only one further guideline other than the ones mentioned in that blog post: To reference anything GitHub related (
-issues, PRs, etc) to not use their GitHub IDs, but a link/URL.  
+issues, PRs, etc) do not use their GitHub IDs, but a link/URL.  
 However, you may want to prefix unfinished or work in progress commits with "**WIP:** " to indicate their state of
 completion. This is useful if you have to switch devices but want to save and synchronize your work. Just amend the
 following WIP commits. The final and complete commit should also be amended, but remove the "WIP: " prefix from the
@@ -175,9 +169,9 @@ commit message.
 ### Versioning Scheme
 
 The version of this project is defined in the `build.gradle` file. The scheme used is [SemVer](http://semver.org/).
-Please update the version accordingly before submitting your Pull Requests. You may find, that the current version has a
-suffix indicating pre-releases. If that's the case, leave the suffix as is and only change the major, minor, and patch
-number.
+Please update the version in the according module before submitting your Pull Requests. You may find, that the current
+version has a suffix indicating pre-releases. If that's the case, leave the suffix as is and only change the major,
+minor, and patch number.
 
 If you already know what kind of change you will make (bug fix, backward compatible, or breaking) you can use that to
 figure out whether to open an issue before you submit a PR. Incrementing
@@ -219,7 +213,7 @@ same license.
 First of all, thank you for contributing to this project. You will now be listed as a contributor and everyone can see,
 that thanks to you Downlomatic is what it is today.
 
-Contributors, who greatly impacted Downlomatic's development, have a very good chance to be mentioned under
+Contributors, who greatly impacted Downlomatic's development, will be mentioned under
 the [Credits section](README.md#credits). They are also able to become a Collaborator and thus manage this repository.
 
 ## Help
