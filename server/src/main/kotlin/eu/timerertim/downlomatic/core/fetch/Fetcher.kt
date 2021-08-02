@@ -10,7 +10,7 @@ import kotlin.system.measureTimeMillis
 
 /**
  * Object responsible for fetching [Video]s from known [Host]s. Hosts are known if they are
- * in the [eu.timerertim.downlomatic.pages] package.
+ * in the [eu.timerertim.downlomatic.hosts] package.
  */
 object Fetcher {
     private val scope = CoroutineScope(Dispatchers.IO)

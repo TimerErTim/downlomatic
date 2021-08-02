@@ -6,7 +6,7 @@ import eu.timerertim.downlomatic.console.ConsoleUtils;
 import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.graphics.GUI;
-import eu.timerertim.downlomatic.pages.Hosts;
+import eu.timerertim.downlomatic.hosts.Hosts;
 import eu.timerertim.downlomatic.utils.logging.Level;
 import eu.timerertim.downlomatic.utils.logging.Log;
 import org.apache.commons.cli.ParseException;

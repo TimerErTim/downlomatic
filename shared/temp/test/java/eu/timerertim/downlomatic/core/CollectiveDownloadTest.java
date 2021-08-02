@@ -2,7 +2,7 @@ package eu.timerertim.downlomatic.core;
 
 import eu.timerertim.downlomatic.core.download.CollectiveDownload;
 import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
-import eu.timerertim.downlomatic.pages.hentaiplay.HentaiPlaySeries;
+import eu.timerertim.downlomatic.hosts.hentaiplay.HentaiPlaySeries;
 
 import java.net.MalformedURLException;
 

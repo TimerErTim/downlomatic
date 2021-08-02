@@ -1,8 +1,8 @@
-package eu.timerertim.downlomatic.pages.hentaiplayer;
+package eu.timerertim.downlomatic.hosts.hentaiplayer;
 
 import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.core.framework.Downloader;
-import eu.timerertim.downlomatic.pages.hentaiplay.HentaiPlaySeries;
+import eu.timerertim.downlomatic.hosts.hentaiplay.HentaiPlaySeries;
 
 import java.net.MalformedURLException;
 import java.util.LinkedHashSet;
