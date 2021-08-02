@@ -45,8 +45,8 @@ may be helpful for you.
 
 ## Roadmap
 
-- [x] Create easily extendable framework
-- [ ] Release stable version supporting CLI
+- [x] Create easily extendable server
+- [ ] Release CLI client program
 - [ ] Release GUI on top of already working CLI version
 - [ ] Add more supported media providers
 
