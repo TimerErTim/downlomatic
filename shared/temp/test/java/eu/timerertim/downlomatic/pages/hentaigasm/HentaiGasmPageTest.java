@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.pages.hentaigasm;
+package eu.timerertim.downlomatic.hosts.hentaigasm;
 
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.core.framework.Series;

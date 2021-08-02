@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.pages.vivo;
+package eu.timerertim.downlomatic.hosts.vivo;
 
 import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.utils.WebScrapers;

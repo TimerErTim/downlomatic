@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.pages.animetoast;
+package eu.timerertim.downlomatic.hosts.animetoast;
 
 import eu.timerertim.downlomatic.utils.JSoupDriver;
 import eu.timerertim.downlomatic.utils.WebScrapers;

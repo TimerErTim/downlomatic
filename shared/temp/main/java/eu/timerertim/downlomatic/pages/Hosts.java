@@ -1,8 +1,8 @@
-package eu.timerertim.downlomatic.pages;
+package eu.timerertim.downlomatic.hosts;
 
 import eu.timerertim.downlomatic.core.framework.Host;
-import eu.timerertim.downlomatic.pages.hentaigasm.HentaiGasmPage;
-import eu.timerertim.downlomatic.pages.hentaiplay.HentaiPlayPage;
+import eu.timerertim.downlomatic.hosts.hentaigasm.HentaiGasmPage;
+import eu.timerertim.downlomatic.hosts.hentaiplay.HentaiPlayPage;
 
 /**
  * This enum works as "registry" for {@code Host}s.

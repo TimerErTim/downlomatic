@@ -14,7 +14,7 @@ import org.litote.kmongo.nin
  * This is the superclass of all registered Hosts the server provides. It only needs two things:
  * - The [config] of the website which contains critical information
  * - A function which describes how to [fetch] videos from the host
- * In order for host implementations to be recognized, they need bo be placed in the package [eu.timerertim.downlomatic.pages].
+ * In order for host implementations to be recognized, they need bo be placed in the package [eu.timerertim.downlomatic.hosts].
  */
 abstract class Host(
     val config: HostConfig,

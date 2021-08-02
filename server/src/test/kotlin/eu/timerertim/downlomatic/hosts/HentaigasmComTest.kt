@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.pages
+package eu.timerertim.downlomatic.hosts
 
 import eu.timerertim.downlomatic.core.fetch.Host
 
