@@ -33,7 +33,7 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
         try {
             modify()
         } catch (ex: Exception) {
-            Log.e("An error occurred while modifying video under URL \"$url\" of host ${host.config.domain}", ex)
+            Log.e("An error occurred while modifying video under URL \"$url\" of host ${host.domain}", ex)
             return
         }
 
@@ -44,8 +44,8 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             val video = Video(url, details, metadata)
 
             // Insert into db or display on screen
-            if (!host.config.testing) {
-                val collection = MongoDBConnection.db.getCollection<Video>(host.config.domain)
+            if (!hostConfig.testing) {
+                val collection = MongoDBConnection.db.getCollection<Video>(host.domain)
                 collection.replaceOneById(details.idHash, video, ReplaceOptions().apply {
                     upsert(true)
                 })
@@ -66,7 +66,7 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
         return if (connection is HttpURLConnection) {
             // Get Metadata fields
             val size = connection.contentLengthLong
-            val fileType = Files.getFileExtension(connection.url.path).ifBlank { host.config.defaultFileType }
+            val fileType = Files.getFileExtension(connection.url.path).ifBlank { hostConfig.defaultFileType }
             val httpType = connection.contentType
             val lastModifiedMillis = connection.lastModified
             val lastModified = if (lastModifiedMillis == 0L) null else {
@@ -77,8 +77,8 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             val metadata = Metadata(size, fileType, httpType, lastModified)
 
             // Compare it to old metadata if there is one
-            val oldVideo = if (!host.config.testing) {
-                MongoDBConnection.db.getCollection<Video>(host.config.domain).findOneById(details.idHash)
+            val oldVideo = if (!hostConfig.testing) {
+                MongoDBConnection.db.getCollection<Video>(host.domain).findOneById(details.idHash)
             } else {
                 null
             }

@@ -32,7 +32,7 @@ object Fetcher {
                             it.fetch()
                         }
                     } catch (ex: Exception) {
-                        Log.e("An error occurred while fetching host ${it.config.domain}", ex)
+                        Log.e("An error occurred while fetching host ${it.domain}", ex)
                         Long.MAX_VALUE
                     }
                     delay(604800000L - duration) // 604800000 is the amount of ms a week has
@@ -71,13 +71,13 @@ fun startFetcher() {
     Log.d(if (hosts.isEmpty()) {
         "Found no host to fetch"
     } else {
-        "Found following hosts to fetch: " + hosts.joinToString { it.config.domain }
+        "Found following hosts to fetch: " + hosts.joinToString { it.domain }
     })
 
     // Remove redundant host collections from db
     if (Fetcher.patchRedundancy) {
         val removableCollections = MongoDBConnection.db.listCollectionNames().toMutableList().apply {
-            removeAll(hosts.map { it.config.domain })
+            removeAll(hosts.map { it.domain })
         }
         if (removableCollections.isNotEmpty()) {
             Log.w(
