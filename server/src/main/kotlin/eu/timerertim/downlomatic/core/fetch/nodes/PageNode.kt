@@ -10,7 +10,7 @@ import java.net.URL
  * This node represents a single page in a website. It can be used to parse data and create child [PageNode]s resulting
  * from that data.
  */
-class PageNode(parentNode: ParentNode, url: URL, private val process: suspend PageNode.(URL) -> Unit) :
+open class PageNode(parentNode: ParentNode, url: URL, private val process: suspend PageNode.(URL) -> Unit) :
     Node(
         parentNode as Node
     ), ParentNode, ChildNode {
@@ -32,11 +32,11 @@ class PageNode(parentNode: ParentNode, url: URL, private val process: suspend Pa
     override suspend fun fetch() {
         try {
             process(url)
-            if (host.config.testing) { // Logging for testing purposes
+            if (hostConfig.testing) { // Logging for testing purposes
                 Log.d("Processed page \"$url\"")
             }
         } catch (ex: Exception) {
-            Log.e("An error occurred while processing URL \"$url\" of host ${host.config.domain}", ex)
+            Log.e("An error occurred while processing URL \"$url\" of host ${host.domain}", ex)
             return
         }
 
@@ -44,17 +44,21 @@ class PageNode(parentNode: ParentNode, url: URL, private val process: suspend Pa
             if (it is Node) {
                 it.fetch() // Fetch child
 
-                // Load parent page after delay
-                delay(host.config.delay.random())
-                if (host.config.requiresJS) {
-                    WebScrapers.javaScript().get(url.toString())
-                } else {
-                    WebScrapers.noJavaScript().get(url.toString())
+                if (it !is VideoNode) {
+                    // Load parent page after delay
+                    delay(hostConfig.delay.random())
+                    if (hostConfig.requiresJS) {
+                        WebScrapers.javaScript().get(url.toString())
+                    } else {
+                        WebScrapers.noJavaScript().get(url.toString())
+                    }
+                    if (hostConfig.testing) { // Logging for testing purposes
+                        Log.d("Automatically loaded page \"$url\"")
+                    }
                 }
-                if (host.config.testing) { // Logging for testing purposes
-                    Log.d("Automatically loaded page \"$url\"")
-                }
-                delay(host.config.delay.random())
+
+                // Default delay
+                delay(hostConfig.delay.random())
             }
         }
     }

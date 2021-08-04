@@ -11,16 +11,18 @@ import org.litote.kmongo.getCollection
 import org.litote.kmongo.nin
 
 /**
- * This is the superclass of all registered Hosts the server provides. It only needs two things:
- * - The [config] of the website which contains critical information
+ * This is the superclass of all registered Hosts the server provides. It only needs three things:
+ * - The [domain] of the host. The Host will be registered with this name both internally and publicly.
+ * - The [config] of the website which contains the technical configuration
  * - A function which describes how to [fetch] videos from the host
  * In order for host implementations to be recognized, they need bo be placed in the package [eu.timerertim.downlomatic.hosts].
  */
 abstract class Host(
-    val config: HostConfig,
+    val domain: String,
+    private val config: HostConfig,
     fetch: suspend RootNode.() -> Unit
 ) {
-    private val root by lazy { RootNode(this, fetch) }
+    private val root by lazy { RootNode(this, config, fetch) }
     private val idVideos = mutableListOf<Int>()
 
     /**
@@ -30,10 +32,10 @@ abstract class Host(
         root.fetch()
         // Remove videos which haven't been fetched.
         if (Fetcher.patchRedundancy && !config.testing) {
-            val collection = MongoDBConnection.db.getCollection<Video>(config.domain)
+            val collection = MongoDBConnection.db.getCollection<Video>(domain)
             val deletedCount = collection.deleteMany(Video::_id nin idVideos).deletedCount
             if (deletedCount > 0) {
-                Log.w("$deletedCount videos were removed from the ${config.domain} MongoDB collection")
+                Log.w("$deletedCount videos were removed from the $domain MongoDB collection")
             }
         }
     }

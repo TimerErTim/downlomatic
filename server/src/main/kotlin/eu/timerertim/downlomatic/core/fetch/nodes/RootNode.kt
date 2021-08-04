@@ -1,11 +1,13 @@
 package eu.timerertim.downlomatic.core.fetch.nodes
 
 import eu.timerertim.downlomatic.core.fetch.Host
+import eu.timerertim.downlomatic.core.fetch.HostConfig
 import eu.timerertim.downlomatic.core.meta.VideoDetailsBuilder
 import eu.timerertim.downlomatic.utils.logging.Log
 import kotlinx.coroutines.delay
 
-class RootNode(host: Host, private val process: suspend RootNode.() -> Unit) : Node(host, VideoDetailsBuilder()),
+class RootNode(host: Host, config: HostConfig, private val process: suspend RootNode.() -> Unit) :
+    Node(host, config, VideoDetailsBuilder()),
     ParentNode {
     private val children = mutableListOf<ChildNode>()
 
@@ -17,14 +19,14 @@ class RootNode(host: Host, private val process: suspend RootNode.() -> Unit) : N
         try {
             process()
         } catch (ex: Exception) {
-            Log.e("An error occurred while processing RootNode of host ${host.config.domain}", ex)
+            Log.e("An error occurred while processing RootNode of host ${host.domain}", ex)
             return
         }
 
         children.forEachIndexed { index, childNode ->
             if (childNode is Node) {
                 if (index > 0) {
-                    delay(host.config.delay.random())
+                    delay(hostConfig.delay.random())
                 }
                 childNode.fetch()
             }

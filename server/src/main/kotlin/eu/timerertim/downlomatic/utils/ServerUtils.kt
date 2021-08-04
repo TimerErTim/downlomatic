@@ -46,7 +46,7 @@ object ServerUtils {
             exit(Utils.CONNECTION_EXIT_CODE)
         }
 
-        // Setup fetcher config
+        // Setup fetcher hostConfig
         if (arguments.hasArgument(ServerArgument.IGNORE_REDUNDANCY)) {
             Fetcher.patchRedundancy = false
         }

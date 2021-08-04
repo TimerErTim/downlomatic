@@ -1,23 +1,28 @@
 package eu.timerertim.downlomatic.core.fetch.nodes
 
 import eu.timerertim.downlomatic.core.fetch.Host
+import eu.timerertim.downlomatic.core.fetch.HostConfig
 import eu.timerertim.downlomatic.core.meta.VideoDetailsBuilder
 import java.net.URL
 
-sealed class Node(protected val host: Host, protected val videoDetailsBuilder: VideoDetailsBuilder) {
+sealed class Node(
+    protected val host: Host,
+    protected val hostConfig: HostConfig,
+    protected val videoDetailsBuilder: VideoDetailsBuilder
+) {
     // Properties regarding the VideoDetails
-    var title by this.videoDetailsBuilder::title
-    var series by this.videoDetailsBuilder::series
-    var season by this.videoDetailsBuilder::season
-    var episode by this.videoDetailsBuilder::episode
-    var release by this.videoDetailsBuilder::release
-    var spokenLanguage by this.videoDetailsBuilder::spokenLanguage
-    var subtitleLanguage by this.videoDetailsBuilder::subtitleLanguage
-    var translation by this.videoDetailsBuilder::translation
-    var audienceLanguage by this.videoDetailsBuilder::audienceLanguage
-    var tags by this.videoDetailsBuilder::tags
+    var title by videoDetailsBuilder::title
+    var series by videoDetailsBuilder::series
+    var season by videoDetailsBuilder::season
+    var episode by videoDetailsBuilder::episode
+    var release by videoDetailsBuilder::release
+    var spokenLanguage by videoDetailsBuilder::spokenLanguage
+    var subtitleLanguage by videoDetailsBuilder::subtitleLanguage
+    var translation by videoDetailsBuilder::translation
+    var audienceLanguage by videoDetailsBuilder::audienceLanguage
+    var tags by videoDetailsBuilder::tags
 
-    constructor(base: Node) : this(base.host, base.videoDetailsBuilder.copy())
+    constructor(base: Node) : this(base.host, base.hostConfig.copy(), base.videoDetailsBuilder.copy())
 
     /**
      * Fetches this node and all potential subnodes for [Video][eu.timerertim.downlomatic.core.video.Video]s.
@@ -26,6 +31,10 @@ sealed class Node(protected val host: Host, protected val videoDetailsBuilder: V
 
     protected companion object {
         suspend fun Node.fetch() = this.fetch()
+
+        val Node.hostConfig get() = this.hostConfig
+
+        val Node.videoDetailsBuilder get() = this.videoDetailsBuilder
     }
 }
 
