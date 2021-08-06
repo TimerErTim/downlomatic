@@ -62,7 +62,8 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
 
     private fun generateMetadata(details: VideoDetails): Metadata {
         val connection = url.openConnection()
-        connection.connectTimeout = 120_000
+        connection.connectTimeout = 60_000
+        connection.readTimeout = 240_000
         return if (connection is HttpURLConnection) {
             // Get Metadata fields
             val size = connection.contentLengthLong
