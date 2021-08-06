@@ -17,6 +17,14 @@ data class HostConfig @JvmOverloads constructor(
     var testing: Boolean = false
         private set
 
+    fun copy(
+        delay: LongRange = this.delay,
+        requiresJS: Boolean = this.requiresJS,
+        defaultFileType: String = this.defaultFileType,
+        testing: Boolean = this.testing
+    ) =
+        HostConfig(delay, requiresJS, defaultFileType).apply { this.testing = testing }
+
     fun Host.Tester._setTesting(value: Boolean) {
         testing = value
     }
