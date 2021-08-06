@@ -22,7 +22,7 @@ sealed class Node(
     var audienceLanguage by videoDetailsBuilder::audienceLanguage
     var tags by videoDetailsBuilder::tags
 
-    constructor(base: Node) : this(base.host, base.hostConfig.copy(), base.videoDetailsBuilder.copy())
+    constructor(base: Node) : this(base.host, base.hostConfig, base.videoDetailsBuilder.copy())
 
     /**
      * Fetches this node and all potential subnodes for [Video][eu.timerertim.downlomatic.core.video.Video]s.

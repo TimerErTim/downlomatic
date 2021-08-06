@@ -11,7 +11,7 @@ import kotlin.reflect.full.declaredMemberProperties
  */
 abstract class HostNode(config: HostConfig, parentNode: ParentNode, process: suspend RootNode.() -> Unit) :
     Node(parentNode as Node), ChildNode {
-    private val root = RootNode(host, config, process)
+    private val root = RootNode(host, config.copy(testing = hostConfig.testing), process)
 
     init {
         this.attachTo(parentNode)
@@ -26,5 +26,5 @@ abstract class HostNode(config: HostConfig, parentNode: ParentNode, process: sus
         }
     }
 
-    final override suspend fun fetch() = root.fetch()
+    public final override suspend fun fetch() = root.fetch()
 }
