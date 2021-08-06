@@ -1,9 +1,10 @@
 package eu.timerertim.downlomatic.hosts.nodes
 
 import eu.timerertim.downlomatic.core.fetch.HostConfig
-import eu.timerertim.downlomatic.core.fetch.nodes.HostNode
-import eu.timerertim.downlomatic.core.fetch.nodes.ParentNode
-import eu.timerertim.downlomatic.core.fetch.nodes.VideoNode
+import eu.timerertim.downlomatic.core.fetch.nodes.*
+import eu.timerertim.downlomatic.utils.WebScrapers
+import org.openqa.selenium.By
+import org.openqa.selenium.NoSuchElementException
 import java.net.URL
 
 private class VivoSx(parentNode: ParentNode, url: URL, private val modify: suspend VideoNode.() -> Unit) :
@@ -11,7 +12,29 @@ private class VivoSx(parentNode: ParentNode, url: URL, private val modify: suspe
         4250..7350L,
         requiresJS = true
     ), parentNode, {
+        val driver = WebScrapers.javaScript()
 
+        page(url) {
+            driver[it.toString()]
+
+            val videoNodes = driver.findElements(By.tagName("video"))
+            for (video in videoNodes) {
+                var source = try {
+                    video.findElement(By.tagName("source")).getAttribute("src")
+                } catch (ex: NoSuchElementException) {
+                    null
+                }
+                if (source != null &&
+                    source?.startsWith("https://node--")!! && source?.contains("vivo.sx")!! ||
+                    video.getAttribute("src")
+                        ?.also { source = it } != null &&
+                    source?.startsWith("https://node--")!! && source?.contains("vivo.sx")!!
+                ) {
+                    video(URL(source), modify)
+                }
+
+            }
+        }
     })
 
 
