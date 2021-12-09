@@ -1,0 +1,6 @@
+name: Package and Release
+
+on:
+  workflow_dispatch:
+
+jobs:
