@@ -47,10 +47,23 @@ compose.desktop {
                 TargetFormat.Exe
             )
 
+            linux {
+                debMaintainer = "timerertim@gmail.com"
+                appCategory = "misc;utils"
+                menuGroup = "Utility;Java"
+                appRelease = "0"
+                rpmLicenseType = "AGPL-3.0 License"
+            }
+
             macOS {
                 packageVersion = this@nativeDistributions.packageVersion?.removePrefix("0.")
 
+                bundleID = "eu.timerertim.downlomatic"
+            }
 
+            windows {
+                console = false
+                upgradeUuid = "F87E2223-5DE4-47B8-9ED1-51CC8FB9A71C"
             }
         }
     }
