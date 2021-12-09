@@ -3,4 +3,96 @@ name: Package and Release
 on:
   workflow_dispatch:
 
+  release:
+    types: [ published, created, edited ]
+
 jobs:
+  release:
+    name: Test, Build, Package and Release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK 17
+        id: jdk17_setup
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Setup JDK 11
+        id: jdk11_setup
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: temurin
+
+      - name: Verify Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Build and Test
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+
+      - name: Create Portable
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: "client:createDistributable"
+        env:
+          JPACKAGE_HOME: ${{ steps.jdk17_setup.outputs.path }}
+
+      - name: Create Installers
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: "client:package"
+        env:
+          JPACKAGE_HOME: ${{ steps.jdk17_setup.outputs.path }}
+
+      - name: Upload Portable
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}-portable
+          path: client/build/compose/binaries/main/app/
+          if-no-files-found: error
+
+      - name: Upload DMG Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: dmg-installer
+          path: client/build/compose/binaries/main/dmg/*.dmg
+
+      - name: Upload PKG Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: pkg-installer
+          path: client/build/compose/binaries/main/pkg/*.pkg
+
+      - name: Upload EXE Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: exe-installer
+          path: client/build/compose/binaries/main/exe/*.exe
+
+      - name: Upload MSI Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: msi-installer
+          path: client/build/compose/binaries/main/msi/*.msi
+
+      - name: Upload DEB Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: deb-installer
+          path: client/build/compose/binaries/main/deb/*.deb
+
+      - name: Upload RPM Installer
+        uses: actions/upload-artifact@v2
+        with:
+          name: rpm-installer
+          path: client/build/compose/binaries/main/rpm/*.rpm
