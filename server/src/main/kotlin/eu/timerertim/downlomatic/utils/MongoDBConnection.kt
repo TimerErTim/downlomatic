@@ -5,6 +5,8 @@ import com.mongodb.MongoCredential
 import com.mongodb.MongoSecurityException
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.KMongo
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * This object handles the connection to the MongoDB instance.
@@ -17,6 +19,9 @@ object MongoDBConnection {
     val db: MongoDatabase
 
     init {
+        // Logger deactivation
+        Logger.getLogger("org.mongodb.driver").level = Level.SEVERE
+
         // Settings setup
         val settingsBuilder = MongoClientSettings.builder()
         settingsBuilder.applicationName(APPLICATION)
