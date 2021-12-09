@@ -60,7 +60,8 @@ by default, subdirectories will only be created with the --${ALL.option.longOpt}
      """.trimIndent()
         )
     ),
-    HELP(Option(null, "help", false, "shows this"));
+    HELP(Option(null, "help", false, "shows this")),
+    NO_GUI(Option(null, "no-gui", false, "forces cli only mode"));
 
     constructor(option: Option, hidden: Boolean, setup: Option.() -> Unit) : this(option, hidden) {
         setup(this.option)
