@@ -7,6 +7,7 @@ import eu.timerertim.downlomatic.graphics.GUI
 import eu.timerertim.downlomatic.utils.ClientUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
+import java.awt.HeadlessException
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -21,12 +22,20 @@ private fun processArgs(arguments: ParsedArguments) {
         ConsoleUtils.printHelp()
     } else {
         // Decide starting method or exit if no viable one was found
-        val start = if (arguments.hasRequiredArguments()) {
+        val start = if (arguments.hasArgument(ClientArgument.NO_GUI) && arguments.hasRequiredArguments()) {
             ::startClient
-        } else if (arguments.size == arguments.sizeHidden) {
-            { GUI.start() }
-        } else if (arguments.size == arguments.sizeHidden + 1 && arguments.hasArgument(ClientArgument.NSFW)) {
-            { GUI.start() }
+        } else if (!arguments.hasArgument(ClientArgument.NO_GUI)) {
+            {
+                try {
+                    GUI.start()
+                } catch (ex: HeadlessException) {
+                    if (arguments.hasRequiredArguments()) {
+                        startClient()
+                    } else {
+                        arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
+                    }
+                }
+            }
         } else {
             arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
         }
