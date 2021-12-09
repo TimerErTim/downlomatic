@@ -72,6 +72,8 @@ object WebScrapers {
     }
 
     private fun initializeFirefoxDriver() {
+        Logger.getLogger("org.apache.hc.client5.http").level = Level.OFF
+        Logger.getLogger("org.apache.logging").level = Level.OFF
         WebDriverManager.firefoxdriver().setup()
 
         Logger.getLogger("org.openqa.selenium").level = Level.OFF

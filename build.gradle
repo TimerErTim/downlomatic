@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.20' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31' apply false
 }
 
 subprojects {
@@ -9,11 +11,13 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/' }
     }
 
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib"
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
 
 
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
@@ -24,7 +28,7 @@ subprojects {
         useJUnitPlatform()
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    tasks.withType(KotlinCompile) {
         kotlinOptions.jvmTarget = "11"
     }
 }
@@ -32,7 +36,7 @@ subprojects {
 
 def GROUP = "downlomatic"
 
-tasks.register("runServer") {
+/*tasks.register("runServer") {
     group GROUP
     description "Runs the server with development optimised arguments"
 
@@ -50,7 +54,7 @@ tasks.register("runClient") {
     def programArguments = ["--no-file-logging", "-v", "-x"]
     ext.programArgumentsBase = programArguments
 
-    dependsOn tasks.getByPath("client:runShadow").configure {
+    dependsOn tasks.getByPath("client:run").configure {
         args = programArguments
     }
 }
@@ -61,7 +65,7 @@ tasks.register("runClientLocally") {
 
     def programArguments = runClient.ext.programArgumentsBase + "--local"
 
-    dependsOn tasks.getByPath("client:runShadow").configure {
+    dependsOn tasks.getByPath("client:run").configure {
         args = programArguments
     }
 }
@@ -85,7 +89,7 @@ tasks.register("distClient") {
     group GROUP
     description "Packs the client as distributable under the build/client/ directory"
 
-    dependsOn "client:runtimeZip"
+    dependsOn "client:createDistributable"
     doLast {
         copy {
             from "${project("client").buildDir}", {
@@ -94,4 +98,4 @@ tasks.register("distClient") {
             into "$buildDir/${project("client").name}"
         }
     }
-}
+}*/

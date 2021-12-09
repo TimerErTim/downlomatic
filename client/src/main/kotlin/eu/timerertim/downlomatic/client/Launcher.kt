@@ -7,7 +7,6 @@ import eu.timerertim.downlomatic.graphics.GUI
 import eu.timerertim.downlomatic.utils.ClientUtils
 import eu.timerertim.downlomatic.utils.Utils
 import eu.timerertim.downlomatic.utils.logging.Log
-import tornadofx.launch
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -25,9 +24,9 @@ private fun processArgs(arguments: ParsedArguments) {
         val start = if (arguments.hasRequiredArguments()) {
             ::startClient
         } else if (arguments.size == arguments.sizeHidden) {
-            { launch<GUI>() }
+            { GUI.start() }
         } else if (arguments.size == arguments.sizeHidden + 1 && arguments.hasArgument(ClientArgument.NSFW)) {
-            { launch<GUI>(ClientArgument.NSFW.name) }
+            { GUI.start() }
         } else {
             arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
         }
