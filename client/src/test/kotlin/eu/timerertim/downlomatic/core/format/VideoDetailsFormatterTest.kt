@@ -142,7 +142,7 @@ class VideoDetailsFormatterTest {
 
     @Test
     fun `Identifier in segment should only result in empty String when that identifier would be replaced`() {
-        val expected = "Test /!N /String"
+        val expected = "Test $seperator!N ${seperator}String"
         val videoDetails = VideoDetails(
             title = "Name"
         )
