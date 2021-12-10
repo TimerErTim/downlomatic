@@ -7,9 +7,14 @@ on:
     types: [ published, created, edited ]
 
 jobs:
+  test:
+    name: Build and Test
+    uses: TimerErTim/downlomatic/.github/workflows/test.yml@master
+
   release:
-    name: Test, Build, Package and Release
+    name: Package and Release
     runs-on: ${{ matrix.os }}
+    needs: test
     strategy:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
@@ -33,12 +38,7 @@ jobs:
           distribution: temurin
 
       - name: Verify Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
-
-      - name: Build and Test
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: build
+        uses: gradle/wrapper-validation-action@v1.0.4
 
       - name: Create Portable
         uses: gradle/gradle-build-action@v2
