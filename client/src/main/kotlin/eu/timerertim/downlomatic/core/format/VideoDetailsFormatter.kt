@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.core.format
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import java.io.File
 import java.util.*
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.stream.Collectors
 import kotlin.reflect.KProperty1
@@ -238,7 +239,7 @@ class VideoDetailsFormatter(pattern: String) {
         val p = Pattern.compile(regexp)
         val m = p.matcher(this)
         while (m.find()) {
-            m.appendReplacement(sb, replacements[m.group()])
+            m.appendReplacement(sb, Matcher.quoteReplacement(replacements[m.group()]))
         }
         m.appendTail(sb)
         return sb.toString()
