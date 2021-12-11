@@ -2,7 +2,7 @@ package eu.timerertim.downlomatic.hosts.hentaiplayer;
 
 import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.hosts.hentaiplay.HentaiPlayDownloader;
-import eu.timerertim.downlomatic.utils.WebScrapers;
+import eu.timerertim.downlomatic.util.WebScrapers;
 
 import java.io.IOException;
 

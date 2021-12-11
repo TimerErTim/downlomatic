@@ -1,6 +1,6 @@
 package eu.timerertim.downlomatic.console
 
-import eu.timerertim.downlomatic.utils.Utils
+import eu.timerertim.downlomatic.util.Utils
 import org.apache.commons.cli.*
 import java.util.*
 import kotlin.system.exitProcess

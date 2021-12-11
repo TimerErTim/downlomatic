@@ -1,6 +1,6 @@
-package eu.timerertim.downlomatic.utils;
+package eu.timerertim.downlomatic.util;
 
-import eu.timerertim.downlomatic.utils.logging.Log;
+import eu.timerertim.downlomatic.util.logging.Log;
 import org.jsoup.Connection;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;

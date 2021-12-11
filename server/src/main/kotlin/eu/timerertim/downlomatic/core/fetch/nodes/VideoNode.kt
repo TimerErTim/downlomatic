@@ -7,8 +7,8 @@ import eu.timerertim.downlomatic.core.fetch.Host
 import eu.timerertim.downlomatic.core.meta.Metadata
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.utils.MongoDBConnection
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.logging.Log
 import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.replaceOneById

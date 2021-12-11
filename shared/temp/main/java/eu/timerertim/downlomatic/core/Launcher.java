@@ -7,15 +7,15 @@ import eu.timerertim.downlomatic.core.download.CollectiveDownloadBuilder;
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.graphics.GUI;
 import eu.timerertim.downlomatic.hosts.Hosts;
-import eu.timerertim.downlomatic.utils.logging.Level;
-import eu.timerertim.downlomatic.utils.logging.Log;
+import eu.timerertim.downlomatic.util.logging.Level;
+import eu.timerertim.downlomatic.util.logging.Log;
 import org.apache.commons.cli.ParseException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static eu.timerertim.downlomatic.utils.Utils.initializeSetup;
-import static eu.timerertim.downlomatic.utils.Utils.onExit;
+import static eu.timerertim.downlomatic.util.Utils.initializeSetup;
+import static eu.timerertim.downlomatic.util.Utils.onExit;
 
 public class Launcher {
     public static void main(String... args) {

@@ -7,7 +7,7 @@ import eu.timerertim.downlomatic.core.fetch.nodes.video
 import eu.timerertim.downlomatic.core.meta.Language
 import eu.timerertim.downlomatic.core.meta.Tag
 import eu.timerertim.downlomatic.core.meta.Translation
-import eu.timerertim.downlomatic.utils.WebScrapers
+import eu.timerertim.downlomatic.util.WebScrapers
 import org.openqa.selenium.By
 import java.net.URL
 import java.time.LocalDate

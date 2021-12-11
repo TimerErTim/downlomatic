@@ -1,6 +1,6 @@
 package eu.timerertim.downlomatic.core.download;
 
-import eu.timerertim.downlomatic.utils.logging.Log;
+import eu.timerertim.downlomatic.util.logging.Log;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 

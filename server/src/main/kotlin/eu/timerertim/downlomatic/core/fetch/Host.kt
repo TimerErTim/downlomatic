@@ -3,9 +3,9 @@ package eu.timerertim.downlomatic.core.fetch
 import eu.timerertim.downlomatic.core.fetch.nodes.RootNode
 import eu.timerertim.downlomatic.core.fetch.nodes.VideoNode
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.utils.MongoDBConnection
-import eu.timerertim.downlomatic.utils.logging.Level
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.logging.Level
+import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.runBlocking
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.nin
@@ -51,7 +51,7 @@ abstract class Host(
 
         /**
          * Tests the [host] by executing the fetch method but not using the
-         * [MongoDBConnection][eu.timerertim.downlomatic.utils.MongoDBConnection]. The resulting
+         * [MongoDBConnection][eu.timerertim.downlomatic.util.MongoDBConnection]. The resulting
          * [Video][eu.timerertim.downlomatic.core.video.Video] will be printed on the screen instead of being inserted
          * into the database.
          */

@@ -3,7 +3,7 @@ package eu.timerertim.downlomatic.core.framework;
 import com.google.common.io.Files;
 import eu.timerertim.downlomatic.core.download.Download;
 import eu.timerertim.downlomatic.core.format.EpisodeFormat;
-import eu.timerertim.downlomatic.utils.logging.Log;
+import eu.timerertim.downlomatic.util.logging.Log;
 import javafx.util.Pair;
 
 import java.io.File;
@@ -238,7 +238,7 @@ public abstract class Downloader {
      * {@link EpisodeFormat#format(String)}.
      * <p>
      * This is done in one method because it allows for only one request with the
-     * {@link eu.timerertim.downlomatic.utils.WebScrapers}. In case that can't be done because of the website's
+     * {@link eu.timerertim.downlomatic.util.WebScrapers}. In case that can't be done because of the website's
      * structure, there's always the opportunity to send requests for multiple URLs one after another.
      * <p>
      * If any problems occur, null is returned.

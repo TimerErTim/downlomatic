@@ -2,7 +2,7 @@ package eu.timerertim.downlomatic.hosts.nodes
 
 import eu.timerertim.downlomatic.core.fetch.HostConfig
 import eu.timerertim.downlomatic.core.fetch.nodes.*
-import eu.timerertim.downlomatic.utils.WebScrapers
+import eu.timerertim.downlomatic.util.WebScrapers
 import org.openqa.selenium.By
 import org.openqa.selenium.NoSuchElementException
 import java.net.URL
