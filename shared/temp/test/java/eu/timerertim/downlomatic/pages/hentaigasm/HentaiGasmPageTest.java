@@ -2,7 +2,7 @@ package eu.timerertim.downlomatic.hosts.hentaigasm;
 
 import eu.timerertim.downlomatic.core.framework.Host;
 import eu.timerertim.downlomatic.core.framework.Series;
-import eu.timerertim.downlomatic.utils.Utils;
+import eu.timerertim.downlomatic.util.Utils;
 
 import java.net.MalformedURLException;
 import java.util.Set;

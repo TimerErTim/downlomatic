@@ -1,6 +1,6 @@
 package eu.timerertim.downlomatic.core.meta
 
-import eu.timerertim.downlomatic.utils.Utils.generateSHA512Checksum
+import eu.timerertim.downlomatic.util.Utils.generateSHA512Checksum
 import java.io.InputStream
 import java.time.LocalDateTime
 

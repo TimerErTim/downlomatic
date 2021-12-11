@@ -1,8 +1,8 @@
 package eu.timerertim.downlomatic.core.fetch
 
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.utils.MongoDBConnection
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.*
 import org.reflections.Reflections
 import org.reflections.ReflectionsException

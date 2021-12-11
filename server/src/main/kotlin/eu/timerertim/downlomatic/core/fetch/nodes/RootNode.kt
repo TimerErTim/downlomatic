@@ -3,7 +3,7 @@ package eu.timerertim.downlomatic.core.fetch.nodes
 import eu.timerertim.downlomatic.core.fetch.Host
 import eu.timerertim.downlomatic.core.fetch.HostConfig
 import eu.timerertim.downlomatic.core.meta.VideoDetailsBuilder
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.delay
 
 class RootNode(host: Host, config: HostConfig, private val process: suspend RootNode.() -> Unit) :

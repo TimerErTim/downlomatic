@@ -7,9 +7,9 @@ import eu.timerertim.downlomatic.core.dispatch.startKtor
 import eu.timerertim.downlomatic.core.dispatch.stopKtor
 import eu.timerertim.downlomatic.core.fetch.startFetcher
 import eu.timerertim.downlomatic.core.fetch.stopFetcher
-import eu.timerertim.downlomatic.utils.ServerUtils
-import eu.timerertim.downlomatic.utils.Utils
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.ServerUtils
+import eu.timerertim.downlomatic.util.Utils
+import eu.timerertim.downlomatic.util.logging.Log
 import java.util.*
 import kotlin.system.exitProcess
 

@@ -4,9 +4,9 @@ import eu.timerertim.downlomatic.console.ClientArgument
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.graphics.GUI
-import eu.timerertim.downlomatic.utils.ClientUtils
-import eu.timerertim.downlomatic.utils.Utils
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.ClientUtils
+import eu.timerertim.downlomatic.util.Utils
+import eu.timerertim.downlomatic.util.logging.Log
 import java.awt.HeadlessException
 import kotlin.system.exitProcess
 

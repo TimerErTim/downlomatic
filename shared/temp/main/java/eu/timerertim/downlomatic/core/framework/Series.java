@@ -1,6 +1,6 @@
 package eu.timerertim.downlomatic.core.framework;
 
-import eu.timerertim.downlomatic.utils.logging.Log;
+import eu.timerertim.downlomatic.util.logging.Log;
 
 import javax.annotation.Nonnull;
 import java.net.MalformedURLException;

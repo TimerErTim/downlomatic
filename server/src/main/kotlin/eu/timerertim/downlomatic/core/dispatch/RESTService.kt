@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.utils.MongoDBConnection
-import eu.timerertim.downlomatic.utils.Utils
+import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.Utils
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -57,7 +57,7 @@ private val ktorEngine = embeddedServer(CIO, Utils.KTOR_PORT) {
 
 /**
  * Starts Ktor listening on the port
- * declared under [Utils][eu.timerertim.downlomatic.utils.Utils].
+ * declared under [Utils][eu.timerertim.downlomatic.util.Utils].
  */
 fun startKtor() {
     ktorEngine.start()

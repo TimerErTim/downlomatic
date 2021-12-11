@@ -1,7 +1,7 @@
 package eu.timerertim.downlomatic.hosts.animetoast;
 
-import eu.timerertim.downlomatic.utils.JSoupDriver;
-import eu.timerertim.downlomatic.utils.WebScrapers;
+import eu.timerertim.downlomatic.util.JSoupDriver;
+import eu.timerertim.downlomatic.util.WebScrapers;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 

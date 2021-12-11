@@ -5,7 +5,7 @@ package eu.timerertim.downlomatic.core.fetch
  * information about the [Host].
  * - [delay]: The delay range describing minimum and maximum delay in ms between processing two
  * [Node][eu.timerertim.downlomatic.core.fetch.nodes.Node]s.
- * - [requiresJS]: Defines the type of [WebScraper][eu.timerertim.downlomatic.utils.WebScrapers] to use when loading a
+ * - [requiresJS]: Defines the type of [WebScraper][eu.timerertim.downlomatic.util.WebScrapers] to use when loading a
  * webpage behind the scenes.
  * - [defaultFileType]: The filetype the host falls back to when the real filetype of a video can't be determined.
  */

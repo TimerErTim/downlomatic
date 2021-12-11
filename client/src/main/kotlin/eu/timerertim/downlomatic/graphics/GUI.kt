@@ -1,102 +1,89 @@
 package eu.timerertim.downlomatic.graphics
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.singleWindowApplication
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.window.application
+import eu.timerertim.downlomatic.core.download.Download
+import eu.timerertim.downlomatic.core.meta.Metadata
+import eu.timerertim.downlomatic.core.meta.VideoDetails
+import eu.timerertim.downlomatic.core.video.Video
+import kotlinx.coroutines.*
+import java.io.File
+import java.net.URL
+import kotlin.random.Random
+import kotlin.system.measureTimeMillis
 
-object GUI {
-    fun start() = singleWindowApplication(title = "Downlomatic") {
-
-    }
-
-    @Composable
-    fun LinearProgressIndicatorLabeled(
-        progressState: ProgressIndicatorLabeledState<out Number>,
-        labelAlignment: Alignment.Horizontal = Alignment.End
+val downloadList = mutableStateListOf<Download>(
+    object : Download(
+        Video(
+            URL("https://timerertim.eu"),
+            VideoDetails(title = "Target which is very very very long Target which is very very very long Target which is very very very long"),
+            Metadata(size = 2000000000L)
+        ),
+        File("path/to/target_which_is_very_long_to_test_overflow_of_text_target_which_is_.mp4")
     ) {
-        val modifier = Modifier.fillMaxWidth() then Modifier.height(10.dp) then
-                Modifier.padding(horizontal = 5.dp) then Modifier.clip(CircleShape)
-        val color = Color.Red
-        val percentage = progressState.percentage
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(progressState.label, modifier = Modifier.padding(horizontal = 5.dp).align(labelAlignment))
-            if (percentage < 0) {
-                LinearProgressIndicator(modifier = modifier, color = color)
-            } else {
-                LinearProgressIndicator(
-                    percentage, modifier = modifier, color = color
-                )
+        var bytes = 0L
+
+        val job = CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                if (Random.nextDouble() < 0.005) break
+                delay((Random.nextDouble() * 20).toLong())
             }
+            launch(Dispatchers.Main) {
+                var prevDownloaded = 0L
+                var duration = 25L
+                while (downloadedBytes < size && isActive) {
+                    duration = measureTimeMillis {
+                        downloadedBytes = bytes
+                        val dif = downloadedBytes - prevDownloaded
+                        speed = dif * duration
+                        prevDownloaded = bytes
+                        delay(25)
+                    }
+                }
+            }
+
+            while (bytes < size && isActive) {
+                bytes += (bytesPerTick * Random.nextDouble() * 2).toLong()
+            }
+        }
+        var bytesPerTick = 1F
+
+        override fun pauseDownload() {
+            bytesPerTick = 0F
+            isRunning = false
+        }
+
+        override fun continueDownload() {
+            bytesPerTick = 1024F
+            isRunning = true
+        }
+
+        override fun startDownload() {
+            job.start()
+        }
+
+        override fun stopDownload() {
+            downloadedBytes = 0
+        }
+
+        override suspend fun joinDownload() {
+            TODO("Not yet implemented")
+        }
+
+        init {
+            downloadedBytes = -1
+            startDownload()
         }
     }
-
-    @Preview
-    @Composable
-    fun button() {
-        val scope = rememberCoroutineScope()
-        Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-            Button(
-                onClick = {
-                    scope.run {
-                        launch {
-
-                        }
-                    }
-                },
-                modifier = Modifier.padding(5.dp)
-            ) {
-                Text("Click me!")
-                Icon(Icons.Default.Delete, "Delete")
-            }
-
-            Button(
-                onClick = {
-                    println("Increased")
-                },
-                modifier = Modifier.padding(5.dp)
-            ) {
-                Icon(Icons.Default.Add, "Increase")
-                Text("Increase max!")
-            }
-        }
+).apply {
+    val first = first()
+    repeat(15) {
+        this += first
     }
 }
 
-class ProgressIndicatorLabeledState<T : Number>(
-    initialAmount: T, initialOf: T, private val labelGenerator: (T, T, Float) -> String
-) {
-    val percentageState: MutableState<Float> = mutableStateOf(initialAmount.toFloat() / initialOf.toFloat())
-    var percentage by percentageState
-        private set
-
-    var amount: T = initialAmount
-        set(value) {
-            field = value
-            percentage = value.toFloat() / of.toFloat()
-            label = labelGenerator(amount, of, percentage)
-        }
-    var of: T = initialOf
-        set(value) {
-            field = value
-            percentage = amount.toFloat() / value.toFloat()
-            label = labelGenerator(amount, of, percentage)
-        }
-
-    val labelState: MutableState<String> = mutableStateOf(labelGenerator(amount, of, percentage))
-    var label by labelState
+object GUI {
+    fun start() = application {
+        DownlomaticApplication()
+    }
 }

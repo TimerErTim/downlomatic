@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation(compose.desktop.currentOs)
+    implementation(compose.materialIconsExtended)
 
     implementation("net.java.dev.jna:jna:5.9.0")
     implementation("net.java.dev.jna:jna-platform:5.9.0")
@@ -40,11 +41,14 @@ compose.desktop {
             vendor = "TimerErTim"
             licenseFile.set(rootProject.file("LICENSE"))
 
+            modules("java.instrument", "jdk.unsupported")
+
             targetFormats(
                 TargetFormat.Deb,
                 TargetFormat.Rpm,
                 TargetFormat.Msi,
-                TargetFormat.Exe
+                TargetFormat.Exe,
+                TargetFormat.Pkg
             )
 
             linux {

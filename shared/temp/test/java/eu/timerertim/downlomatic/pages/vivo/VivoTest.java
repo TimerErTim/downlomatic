@@ -1,7 +1,7 @@
 package eu.timerertim.downlomatic.hosts.vivo;
 
 import eu.timerertim.downlomatic.core.download.Download;
-import eu.timerertim.downlomatic.utils.WebScrapers;
+import eu.timerertim.downlomatic.util.WebScrapers;
 
 import java.io.IOException;
 

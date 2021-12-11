@@ -1,7 +1,7 @@
 package eu.timerertim.downlomatic.core.fetch.nodes
 
-import eu.timerertim.downlomatic.utils.WebScrapers
-import eu.timerertim.downlomatic.utils.logging.Log
+import eu.timerertim.downlomatic.util.WebScrapers
+import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.delay
 import java.net.URI
 import java.net.URL
