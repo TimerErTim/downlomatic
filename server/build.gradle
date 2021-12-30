@@ -11,19 +11,19 @@ dependencies {
     implementation(project(":shared"))
 
 
-    implementation 'org.litote.kmongo:kmongo:4.2.8'
+    implementation 'org.litote.kmongo:kmongo:4.4.0'
 
-    def ktor_version = '1.6.1'
+    def ktor_version = '1.6.7'
     implementation "io.ktor:ktor-server-core:$ktor_version"
     implementation "io.ktor:ktor-server-cio:$ktor_version"
     implementation "io.ktor:ktor-jackson:$ktor_version"
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1'
 
-    implementation "org.reflections:reflections:0.9.12"
+    implementation "org.reflections:reflections:0.10.2"
 
-    implementation 'org.jsoup:jsoup:1.14.1'
-    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
-    implementation 'io.github.bonigarcia:webdrivermanager:4.4.3'
+    implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.1.1'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.0.2'
 
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
 }
