@@ -42,6 +42,8 @@ class VideoDetailsFormatter(pattern: String) {
 
     companion object {
         const val WIKI_URL = "https://github.com/TimerErTim/downlomatic/wiki/Formatting"
+        const val DEFAULT_VIDEO_FORMAT =
+            "/[/S - /[S/s/]/[/?NE/e/]/[/!NEpisode /e/]/N/[/!N/!SUnknown Title/] [/L - /T]/[/!S (/y)/]"
 
         private const val openingBracket = "/["
         private const val closingBracket = "/]"
@@ -82,7 +84,7 @@ class VideoDetailsFormatter(pattern: String) {
 
     private sealed interface Processable {
         /**
-         * Process this object to return a human readable [String].
+         * Process this object to return a human-readable [String].
          */
         fun process(): String
     }
