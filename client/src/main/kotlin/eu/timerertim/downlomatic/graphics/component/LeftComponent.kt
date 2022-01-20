@@ -20,7 +20,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import eu.timerertim.downlomatic.graphics.component.util.*
 import eu.timerertim.downlomatic.graphics.theme.icons
@@ -63,7 +62,7 @@ fun HostSelection() {
             onValueChanged = {
                 selectedEntry = it
             }, prompt = {
-                Text("Select host...", fontWeight = FontWeight.Light, style = MaterialTheme.typography.body2)
+                Text("Select host...", color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body2)
             }, selectedRenderer = {
                 Text(it, style = MaterialTheme.typography.body2)
             }, modifier = Modifier.fillMaxWidth().weight(1F)
@@ -125,7 +124,7 @@ fun VideoSearchField(state: MutableState<String>) {
         textValue,
         setTextValue,
         placeholder = {
-            Text("Search videos...", style = MaterialTheme.typography.caption, fontWeight = FontWeight.Light)
+            Text("Search videos...", style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline)
         }, leadingIcon = {
             Icon(MaterialTheme.icons.Search, "Search", modifier = Modifier.size(18.sdp))
         }, trailingIcon = if (textValue.isNotEmpty()) {

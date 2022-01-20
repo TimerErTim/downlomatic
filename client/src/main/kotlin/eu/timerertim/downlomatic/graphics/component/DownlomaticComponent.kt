@@ -10,9 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.timerertim.downlomatic.graphics.window.sdp
+import eu.timerertim.downlomatic.state.DownloadConfigurationState
+import eu.timerertim.downlomatic.state.DownlomaticState
 
 @Composable
-fun DownlomaticWindowContent() {
+fun DownlomaticWindowContent(downlomaticState: DownlomaticState) {
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
         Row(modifier = Modifier.weight(1F), horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
             Box(modifier = Modifier.weight(1F)) {
@@ -22,7 +24,7 @@ fun DownlomaticWindowContent() {
                 DownlomaticCenter()
             }
             Box(modifier = Modifier.weight(1.5F)) {
-                DownlomaticRight()
+                DownlomaticRight(downlomaticState.downloadConfigurationState)
             }
         }
         Box {
@@ -49,9 +51,9 @@ fun DownlomaticCenter() {
 
 @Preview
 @Composable
-fun DownlomaticRight() {
+fun DownlomaticRight(configurationState: DownloadConfigurationState) {
     Card(elevation = 5.dp) {
-        DownlomaticRightContent()
+        DownlomaticRightContent(configurationState)
     }
 }
 
