@@ -6,6 +6,7 @@ import eu.timerertim.downlomatic.core.download.Download
 import eu.timerertim.downlomatic.core.meta.Metadata
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
+import eu.timerertim.downlomatic.state.GlobalDownlomaticState
 import kotlinx.coroutines.*
 import java.io.File
 import java.net.URL
@@ -84,6 +85,6 @@ val downloadList = mutableStateListOf<Download>(
 
 object GUI {
     fun start() = application {
-        DownlomaticApplication()
+        DownlomaticApplication(GlobalDownlomaticState)
     }
 }
