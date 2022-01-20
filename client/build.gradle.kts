@@ -16,15 +16,18 @@ version = "0.1.0"
 dependencies {
     implementation(project(":shared"))
 
-    val ktorVersion = "1.6.6"
+    val ktorVersion = "1.6.7"
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 
     implementation(compose.desktop.currentOs)
     implementation(compose.materialIconsExtended)
 
     implementation("net.java.dev.jna:jna:5.9.0")
     implementation("net.java.dev.jna:jna-platform:5.9.0")
+
+    testImplementation("io.ktor:ktor-client-tests:$ktorVersion")
 }
 
 compose.desktop {

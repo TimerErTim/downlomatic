@@ -13,10 +13,10 @@ dependencies {
 
     implementation 'org.litote.kmongo:kmongo:4.4.0'
 
-    def ktor_version = '1.6.7'
-    implementation "io.ktor:ktor-server-core:$ktor_version"
-    implementation "io.ktor:ktor-server-cio:$ktor_version"
-    implementation "io.ktor:ktor-jackson:$ktor_version"
+    def ktorVersion = '1.6.7'
+    implementation "io.ktor:ktor-server-core:$ktorVersion"
+    implementation "io.ktor:ktor-server-cio:$ktorVersion"
+    implementation "io.ktor:ktor-jackson:$ktorVersion"
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1'
 
     implementation "org.reflections:reflections:0.10.2"
@@ -25,7 +25,7 @@ dependencies {
     implementation 'org.seleniumhq.selenium:selenium-java:4.1.1'
     implementation 'io.github.bonigarcia:webdrivermanager:5.0.2'
 
-    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "io.ktor:ktor-server-tests:$ktorVersion"
 }
 
 run {
