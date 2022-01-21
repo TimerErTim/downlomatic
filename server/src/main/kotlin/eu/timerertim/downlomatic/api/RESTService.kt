@@ -1,10 +1,12 @@
-package eu.timerertim.downlomatic.core.dispatch
+package eu.timerertim.downlomatic.api
 
 import com.fasterxml.jackson.annotation.JsonFilter
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import eu.timerertim.downlomatic.api.APIPath.ALL_HOSTS
+import eu.timerertim.downlomatic.api.APIPath.ALL_VIDEOS_OF_HOST
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
@@ -35,11 +37,11 @@ private val ktorEngine = embeddedServer(CIO, Utils.KTOR_PORT) {
         }
     }
     routing {
-        get("/hosts/all") {
+        get(ALL_HOSTS.path) {
             call.respond(MongoDBConnection.db.listCollectionNames())
         }
-        get("/videos/{host}/all") {
-            val host = call.parameters["host"] ?: return@get call.respondText(
+        get(ALL_VIDEOS_OF_HOST.path) {
+            val host = call.parameters[ALL_VIDEOS_OF_HOST.HOST_ARGUMENT.name] ?: return@get call.respondText(
                 "Missing or malformed host",
                 status = HttpStatusCode.BadRequest
             )
