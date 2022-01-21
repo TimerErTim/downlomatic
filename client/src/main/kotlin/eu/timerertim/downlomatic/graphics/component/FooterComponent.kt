@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import eu.timerertim.downlomatic.graphics.component.util.LabeledLinearProgressIndicator
 import eu.timerertim.downlomatic.graphics.component.util.LabeledProgressState
 import eu.timerertim.downlomatic.graphics.window.sdp
-import eu.timerertim.downlomatic.util.toHumanReadableBytesBin
+import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
 
 @Composable
 fun DownlomaticFooterContent() {
