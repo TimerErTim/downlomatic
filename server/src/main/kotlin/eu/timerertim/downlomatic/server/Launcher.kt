@@ -1,10 +1,10 @@
 package eu.timerertim.downlomatic.server
 
+import eu.timerertim.downlomatic.api.startKtor
+import eu.timerertim.downlomatic.api.stopKtor
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
-import eu.timerertim.downlomatic.core.dispatch.startKtor
-import eu.timerertim.downlomatic.core.dispatch.stopKtor
 import eu.timerertim.downlomatic.core.fetch.startFetcher
 import eu.timerertim.downlomatic.core.fetch.stopFetcher
 import eu.timerertim.downlomatic.util.ServerUtils

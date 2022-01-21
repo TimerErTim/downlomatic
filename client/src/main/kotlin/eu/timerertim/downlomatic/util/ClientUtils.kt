@@ -3,6 +3,8 @@ package eu.timerertim.downlomatic.util
 import com.sun.jna.Function
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinNT.HANDLE
+import eu.timerertim.downlomatic.api.ktorClient
+import eu.timerertim.downlomatic.api.ktorClientLazy
 import eu.timerertim.downlomatic.console.ClientArgument
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
@@ -75,6 +77,7 @@ object ClientUtils {
     @JvmStatic
     fun cleanup() {
         // Client specific cleanup
+        if (ktorClientLazy.isInitialized()) ktorClient.close()
 
         // Close shared resources
         Utils.cleanup()
