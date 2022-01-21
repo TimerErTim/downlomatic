@@ -3,8 +3,8 @@ package eu.timerertim.downlomatic.util
 import eu.timerertim.downlomatic.util.Utils.floor
 import eu.timerertim.downlomatic.util.Utils.generateSHA512Checksum
 import eu.timerertim.downlomatic.util.Utils.pow
-import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesPowerOfTen
-import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesPowerOfTwo
+import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
+import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesSI
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -45,9 +45,9 @@ class UtilsTest {
 
     @Test
     fun `Number to bytes`() {
-        assertEquals("2.1MB", 2_120_000.toHumanReadableBytesPowerOfTen())
-        assertEquals("20B", 20.toHumanReadableBytesPowerOfTen())
-        assertEquals("30B", 30.toHumanReadableBytesPowerOfTwo())
-        assertEquals("1.9KiB", 2000.toHumanReadableBytesPowerOfTwo())
+        assertEquals("2.1MB", 2_120_000.toHumanReadableBytesSI())
+        assertEquals("20B", 20.toHumanReadableBytesSI())
+        assertEquals("30B", 30.toHumanReadableBytesBin())
+        assertEquals("1.9KiB", 2000.toHumanReadableBytesBin())
     }
 }

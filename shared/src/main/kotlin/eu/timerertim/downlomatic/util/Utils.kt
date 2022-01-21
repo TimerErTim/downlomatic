@@ -58,7 +58,7 @@ object Utils {
      * Formats [this] number to a human readable amount of bytes. Units is MB-like.
      */
     @JvmStatic
-    fun Number.toHumanReadableBytesPowerOfTen(): String {
+    fun Number.toHumanReadableBytesSI(): String {
         val bytes = this.toLong()
 
         return when {
@@ -77,7 +77,7 @@ object Utils {
      * Formats [this] number to a human readable amount of bytes. Units is MiB-like.
      */
     @JvmStatic
-    fun Number.toHumanReadableBytesPowerOfTwo(): String {
+    fun Number.toHumanReadableBytesBin(): String {
         val bytes = this.toLong()
 
         return when {

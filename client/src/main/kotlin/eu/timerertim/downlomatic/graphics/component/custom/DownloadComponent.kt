@@ -23,7 +23,7 @@ import eu.timerertim.downlomatic.graphics.component.util.LabeledLinearProgressIn
 import eu.timerertim.downlomatic.graphics.component.util.TooltipCard
 import eu.timerertim.downlomatic.graphics.theme.icons
 import eu.timerertim.downlomatic.graphics.window.sdp
-import eu.timerertim.downlomatic.util.toHumanReadableBytesBin
+import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
 
 @Composable
 fun CurrentDownloadCard(

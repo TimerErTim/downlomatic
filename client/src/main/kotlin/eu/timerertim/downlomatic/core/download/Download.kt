@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.graphics.component.util.LabeledProgressState
-import eu.timerertim.downlomatic.util.toHumanReadableBytesBin
+import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
 import java.io.File
 
 /**
