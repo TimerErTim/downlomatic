@@ -19,5 +19,5 @@ enum class Language {
     NIGERIAN_FULFULDE, TUNISIAN_SPOKEN_ARABIC, KINYARWANDA, MIN_BEI_CHINESE;
 
     override fun toString() =
-        this.name.toLowerCase().split("_").reduce { acc, s -> acc.capitalize() + " " + s.capitalize() }
+        this.name.split("_").reduce { acc, s -> "$acc $s" }
 }

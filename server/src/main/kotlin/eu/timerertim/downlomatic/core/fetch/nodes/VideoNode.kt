@@ -9,14 +9,15 @@ import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Log
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.replaceOneById
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
-import java.time.Instant
-import java.time.ZoneId
 
 class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend VideoNode.() -> Unit) :
     Node(parentNode as Node), ChildNode {
@@ -71,7 +72,7 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
             val httpType = connection.contentType
             val lastModifiedMillis = connection.lastModified
             val lastModified = if (lastModifiedMillis == 0L) null else {
-                Instant.ofEpochMilli(lastModifiedMillis).atZone(ZoneId.of("UTC")).toLocalDateTime()
+                Instant.fromEpochMilliseconds(lastModifiedMillis).toLocalDateTime(TimeZone.UTC)
             }
 
             // Create new metadata
