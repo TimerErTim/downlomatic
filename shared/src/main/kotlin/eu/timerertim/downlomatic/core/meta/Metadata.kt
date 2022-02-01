@@ -1,14 +1,16 @@
 package eu.timerertim.downlomatic.core.meta
 
 import eu.timerertim.downlomatic.util.Utils.generateSHA512Checksum
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
 import java.io.InputStream
-import java.time.LocalDateTime
 
 /**
  * This class contains all metadata information about a video.
  *
  * It contains information such as size, type, date of last edit and so on.
  */
+@Serializable
 data class Metadata(
     val size: Long = 0,
     val fileType: String = "",

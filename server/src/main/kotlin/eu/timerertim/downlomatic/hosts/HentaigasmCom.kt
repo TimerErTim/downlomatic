@@ -8,12 +8,12 @@ import eu.timerertim.downlomatic.core.meta.Language
 import eu.timerertim.downlomatic.core.meta.Tag
 import eu.timerertim.downlomatic.core.meta.Translation
 import eu.timerertim.downlomatic.util.WebScrapers
+import kotlinx.datetime.toKotlinLocalDate
 import org.openqa.selenium.By
 import java.net.URL
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import java.util.regex.Pattern
 
 object HentaigasmCom : Host("hentaigasm.com",
@@ -66,12 +66,16 @@ object HentaigasmCom : Host("hentaigasm.com",
                                 val extras = driver.findElement(By.id("extras"))?.findElements(By.tagName("h4"))
                                 if (extras != null) {
                                     release = try {
-                                        LocalDate.parse(
-                                            extras[0].text, DateTimeFormatter.ofPattern("MMMM d, yyyy")
-                                                .withZone(ZoneId.of("UTC"))
-                                        )
-                                    } catch (ex: DateTimeParseException) {
-                                        LocalDate.ofYearDay(extras[0].text.split(", ")[1].toInt(), 1)
+                                        LocalDate
+                                            .parse(
+                                                extras[0].text,
+                                                DateTimeFormatter.ofPattern("MMMM d, yyyy").withZone(ZoneId.of("UTC"))
+                                            )
+                                            .toKotlinLocalDate()
+                                    } catch (ex: IllegalArgumentException) {
+                                        LocalDate
+                                            .ofYearDay(extras[0].text.split(", ")[1].toInt(), 1)
+                                            .toKotlinLocalDate()
                                     }
                                     tags = extras[2].findElements(By.tagName("a")).filter {
                                         it.getAttribute("rel") == "tag"

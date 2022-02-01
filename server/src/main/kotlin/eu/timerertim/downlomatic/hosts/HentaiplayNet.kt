@@ -8,6 +8,7 @@ import eu.timerertim.downlomatic.core.meta.Language
 import eu.timerertim.downlomatic.core.meta.Tag
 import eu.timerertim.downlomatic.core.meta.Translation
 import eu.timerertim.downlomatic.util.WebScrapers
+import kotlinx.datetime.toKotlinLocalDate
 import org.openqa.selenium.By
 import java.net.MalformedURLException
 import java.net.URL
@@ -73,7 +74,9 @@ object HentaiplayNet : Host("hentaiplay.net",
                                 it.getAttribute("rel") == "tag"
                             }?.forEachIndexed { index, webElement ->
                                 if (index == 0 && try {
-                                        release = LocalDate.ofYearDay(webElement.text.toInt(), 1)
+                                        release = LocalDate
+                                            .ofYearDay(webElement.text.toInt(), 1)
+                                            .toKotlinLocalDate()
                                         true
                                     } catch (ex: NumberFormatException) {
                                         false

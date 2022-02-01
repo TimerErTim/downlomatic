@@ -1,6 +1,7 @@
 package eu.timerertim.downlomatic.core.meta
 
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 
 /**
  * This uniquely identifies episodes/movies.
@@ -9,6 +10,7 @@ import java.time.LocalDate
  * to create a unique file name and search for a [Video][eu.timerertim.downlomatic.core.video.Video].
  */
 @Suppress("EqualsOrHashCode")
+@Serializable
 data class VideoDetails(
     val title: String? = null,
     val series: String? = null,
