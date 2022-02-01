@@ -184,7 +184,7 @@ class VideoDetailsFormatterTest {
         )
 
         val result = VideoDetailsFormatter(
-            "/[/?N/S/[/!S/?N no series/]/] and/[/?S Episode /e/[ /?y jap /]/]"
+            "/[/?N/S/[/!S/?N no series/]/] and/[/?S Episode /e/[/?y jap /]/]"
         ).format(videoDetails)
 
         assertEquals(expected, result)
