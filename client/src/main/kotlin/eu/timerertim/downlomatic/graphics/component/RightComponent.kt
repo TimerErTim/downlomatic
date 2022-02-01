@@ -41,7 +41,8 @@ fun ColumnScope.FormatField(videoFormatState: MutableState<String>, defaultVideo
             placeholder = {
                 Text(
                     defaultVideoFormat,
-                    style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline, maxLines = 1
+                    style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
             }
         )

@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.graphics.component.util
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import eu.timerertim.downlomatic.graphics.window.sdp
@@ -14,7 +15,19 @@ fun <T> TreeList(
     renderer: @Composable (T, Boolean) -> Unit
 ) {
     Box(modifier) {
-        TreeNodeContent(root, renderer)
+        ScrollableLazyColumn {
+            items(root.children) {
+                Box(Modifier.padding(end = 8.sdp)) {
+                    TreeNodeBlock(it, renderer)
+                }
+            }
+
+            items(root.leafs) {
+                Column(modifier = Modifier.padding(start = 20.sdp, end = 8.sdp)) {
+                    renderer(it, false)
+                }
+            }
+        }
     }
 }
 
@@ -65,7 +78,9 @@ class TreeNode<T> private constructor(
     children: List<TreeNode<T>> = emptyList(),
     leafs: List<T> = emptyList()
 ) : Node<T>() {
-    constructor(value: T) : this(value, mutableStateOf(false))
+    constructor(value: T, config: TreeNode<T>.(T) -> Unit = { }) : this(value, mutableStateOf(false)) {
+        config(value)
+    }
 
     init {
         this.children += children

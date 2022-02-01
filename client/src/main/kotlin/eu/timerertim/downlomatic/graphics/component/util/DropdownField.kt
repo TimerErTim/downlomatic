@@ -29,10 +29,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> DropdownField(
-    values: List<T>,
+    values: List<T>?,
     value: T? = null,
     onValueChanged: (T) -> Unit,
-    prompt: @Composable () -> Unit = { Text("Select Entry") },
+    onClicked: () -> Unit = { },
+    prompt: @Composable BoxScope.() -> Unit = { Text("Select Entry") },
+    placeholder: @Composable ColumnScope.() -> Unit = { },
     modifier: Modifier = Modifier,
     selectedRenderer: @Composable (T) -> Unit,
     menuRenderer: @Composable (T) -> Unit = selectedRenderer
@@ -54,6 +56,7 @@ fun <T> DropdownField(
                     interactionSource.emit(PressInteraction.Release(press))
                 }
                 expanded = true
+                onClicked()
             }.onSizeChanged { width = it.width }
                 .fillMaxWidth()
                 .indication(interactionSource, LocalIndication.current)
@@ -61,7 +64,7 @@ fun <T> DropdownField(
                 .border(1.sdp, color, MaterialTheme.shapes.small)
                 .padding(end = 5.sdp)
         ) {
-            Box(modifier = Modifier.padding(start = 8.sdp, top = 5.sdp, bottom = 5.sdp)) {
+            Box(modifier = Modifier.padding(start = 8.sdp, top = 5.sdp, bottom = 5.sdp).weight(1F)) {
                 if (value == null) {
                     prompt()
                 } else {
@@ -80,6 +83,11 @@ fun <T> DropdownField(
         DropdownMenu(expanded, onDismissRequest = {
             expanded = false
         }, modifier = Modifier.width(width.dp)) {
+            if (values == null) {
+                placeholder()
+                return@DropdownMenu
+            }
+
             for (index in values.indices) {
                 val entry = values[index]
                 if (index > 0) {
