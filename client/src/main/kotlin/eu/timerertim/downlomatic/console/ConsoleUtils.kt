@@ -10,7 +10,7 @@ object ConsoleUtils : Console(
     ConsoleConfig(
         ClientArgument.values(),
         ClientArgumentGroup.values(),
-        "\"downlomatic -d <directory> -h <host> -a | -b <url> | -s <url> " +
+        "\"Downlomatic -d <directory> -h <host> -a | -b <url> | -s <url> " +
                 "[-f <formatting>] [--subdir-format <formatting>] [-t <amount>]\"",
         "",
         "Formatting follows the rules described under the following URL: ${VideoDetailsFormatter.WIKI_URL}"
