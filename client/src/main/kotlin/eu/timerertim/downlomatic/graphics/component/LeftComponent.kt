@@ -6,10 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,19 +18,29 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextOverflow
+import eu.timerertim.downlomatic.api.APIPath
+import eu.timerertim.downlomatic.api.APIRequest
+import eu.timerertim.downlomatic.api.APIRequest.Companion.executeRequest
+import eu.timerertim.downlomatic.api.APIState
+import eu.timerertim.downlomatic.core.video.Video
+import eu.timerertim.downlomatic.core.video.VideoItem
 import eu.timerertim.downlomatic.graphics.component.util.*
 import eu.timerertim.downlomatic.graphics.theme.icons
 import eu.timerertim.downlomatic.graphics.theme.outline
 import eu.timerertim.downlomatic.graphics.window.sdp
 import eu.timerertim.downlomatic.graphics.window.ssp
+import eu.timerertim.downlomatic.state.DownloadSelectionState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.awt.Cursor
 
 @Composable
-fun DownlomaticLeftContent() {
+fun DownlomaticLeftContent(selectionState: DownloadSelectionState) {
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp), modifier = Modifier.padding(5.sdp)) {
         DownloadAllButton()
-        HostSelection()
-        VideoSelection()
+        HostSelection(selectionState)
+        VideoSelection(selectionState.videosRequest)
     }
 }
 
@@ -53,23 +60,74 @@ fun DownloadAllButton() {
 }
 
 @Composable
-fun HostSelection() {
-    var selectedEntry: String? by remember { mutableStateOf(null) }
+fun HostSelection(selectionState: DownloadSelectionState) {
+    val hostsRequest = selectionState.hostsRequest
+    var host by selectionState::selectedHost
+    val hostsRequestState = hostsRequest.state
+    val hosts = if (hostsRequestState is APIState.Loaded) hostsRequestState.payload else null
 
     Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
-        DropdownField(listOf("Hentaigasm.com", "asdasd"),
-            selectedEntry,
+        DropdownField(hosts,
+            value = host,
             onValueChanged = {
-                selectedEntry = it
-            }, prompt = {
-                Text("Select host...", color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body2)
+                host = it
+                val videosRequest = selectionState.videosRequest
+                val videosRequestState = videosRequest?.state
+                if (videosRequestState is APIState.Error) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        videosRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it)
+                    }
+                }
+            },
+            onClicked = {
+                if (hostsRequestState is APIState.Error) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        hostsRequest.executeRequest()
+                    }
+                }
+            },
+            prompt = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "Select host...",
+                        color = MaterialTheme.colors.outline,
+                        style = MaterialTheme.typography.body2
+                    )
+                    when (hostsRequestState) {
+                        is APIState.Waiting ->
+                            CircularProgressIndicator(strokeWidth = 1.sdp, modifier = Modifier.size(16.sdp))
+                        is APIState.Error ->
+                            Icon(
+                                MaterialTheme.icons.ErrorOutline, "Error", tint = MaterialTheme.colors.error,
+                                modifier = Modifier.size(16.sdp)
+                            )
+                        else -> {}
+                    }
+                }
             }, selectedRenderer = {
                 Text(it, style = MaterialTheme.typography.body2)
+            }, placeholder = {
+                when (hostsRequestState) {
+                    is APIState.Waiting -> CircularProgressIndicator(
+                        strokeWidth = 2.sdp,
+                        modifier = Modifier.size(24.sdp).align(Alignment.CenterHorizontally)
+                    )
+                    is APIState.Error -> Text(
+                        hostsRequestState.exception.message ?: "Error occurred",
+                        color = MaterialTheme.colors.error, style = MaterialTheme.typography.body1,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    else -> {}
+                }
             }, modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
         Button(onClick = {
-            println("Single Host Download of $selectedEntry")
+            println("Single Host Download of $host")
         }, modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically), contentPadding = PaddingValues(5.sdp)) {
             Icon(MaterialTheme.icons.Download, "Download", Modifier.size(20.sdp))
         }
@@ -78,45 +136,20 @@ fun HostSelection() {
 }
 
 @Composable
-fun VideoSelection() {
-    var rootNode by remember {
-        mutableStateOf(TreeNode("").apply {
-            repeat(10) {
-                children += TreeNode("Child $it").apply {
-                    repeat(5) {
-                        children += TreeNode("Deep Child $it").apply {
-                            repeat(2) {
-                                leafs += "Deep Leaf $it"
-                            }
-                            children += TreeNode("Hell No").apply {
-                                children += TreeNode("Another Hell No").apply {
-                                    leafs += "This is it"
-                                }
-                            }
-                        }
-                    }
-                    leafs += "Child Leaf"
-                }
-            }
-            repeat(5) {
-                leafs += "Leaf $it"
-            }
-            leafs += "Leaf with a very long text to simulate the name of a very long video/entry"
-        })
-    }
-    var filter = remember { mutableStateOf("") }
-    Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
-        VideoSearchField(filter)
+fun VideoSelection(videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?) {
+    val videosRequestState = videosRequest?.state
+    val (filter, setFilter) = remember { mutableStateOf("") }
 
-        VideoTreeList(rootNode.filter { it.contains(filter.value) })
+    Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
+        VideoSearchField(filter, setFilter)
+
+        VideoTreeList(videosRequestState, filter)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun VideoSearchField(state: MutableState<String>) {
-    val (textValue, setTextValue) = state
-
+fun VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     var hasFocus by remember { mutableStateOf(false) }
 
@@ -147,25 +180,51 @@ fun VideoSearchField(state: MutableState<String>) {
 }
 
 @Composable
-fun VideoTreeList(state: TreeNode<String>) {
-    ScrollableColumn(
-        modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.small).fillMaxHeight()
+fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String) {
+    fun checkVideoItem(videoItem: VideoItem): Boolean {
+        return videoItem.longDescription.contains(filter) || videoItem.videos.all {
+            it.details.tags.any { tag ->
+                tag.value.contains(filter)
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.small).fillMaxSize()
             .padding(5.sdp)
     ) {
-        Box(Modifier.padding(end = 8.sdp)) {
-            TreeList(state, modifier = Modifier.fillMaxSize()) { value, expanded ->
+        when (state) {
+            null -> Text(
+                "No host selected...",
+                color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            is APIState.Waiting -> CircularProgressIndicator(
+                strokeWidth = 2.sdp,
+                modifier = Modifier.size(24.sdp).align(Alignment.CenterHorizontally)
+            )
+            is APIState.Loaded -> TreeList(
+                state.payload.filter(::checkVideoItem),
+                modifier = Modifier.fillMaxSize()
+            ) { value, expanded ->
                 VideoTreeNode(value, expanded)
             }
+            is APIState.Error -> Text(
+                state.exception.message ?: "Error occurred",
+                color = MaterialTheme.colors.error, style = MaterialTheme.typography.body1,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            else -> {}
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun VideoTreeNode(value: String, expanded: Boolean) {
+private fun VideoTreeNode(value: VideoItem, expanded: Boolean) {
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         TooltipArea(tooltip = {
-            TooltipCard(value)
+            TooltipCard(value.longDescription)
         }, modifier = Modifier.weight(1F)) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(5.sdp)
@@ -177,7 +236,7 @@ private fun VideoTreeNode(value: String, expanded: Boolean) {
                     modifier = Modifier.size(15.sdp).align(Alignment.CenterVertically)
                 )
                 Text(
-                    value,
+                    value.shortDescription,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.body2
@@ -189,7 +248,9 @@ private fun VideoTreeNode(value: String, expanded: Boolean) {
             "Download",
             modifier = Modifier.size(15.sdp).align(Alignment.CenterVertically).clip(CircleShape)
                 .clickable(onClick = {
-                    println("$value was clicked")
+                    value.videos.forEach {
+                        println("Started download of: ${it.url}")
+                    }
                 })
         )
     }

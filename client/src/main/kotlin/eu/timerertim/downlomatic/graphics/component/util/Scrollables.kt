@@ -42,7 +42,7 @@ fun ScrollableLazyColumn(
     val (size, setSize) = remember { mutableStateOf(IntSize.Zero) }
     Box(modifier) {
         LazyColumn(
-            Modifier.onSizeChanged(setSize),
+            Modifier.onSizeChanged(setSize).fillMaxWidth(),
             state,
             contentPadding,
             reverseLayout,
@@ -76,7 +76,7 @@ fun ScrollableLazyRow(
     val (size, setSize) = remember { mutableStateOf(IntSize.Zero) }
     Box(modifier) {
         LazyRow(
-            Modifier.onSizeChanged(setSize),
+            Modifier.onSizeChanged(setSize).fillMaxHeight(),
             state,
             contentPadding,
             reverseLayout,
@@ -106,7 +106,7 @@ fun ScrollableColumn(
     val (size, setSize) = remember { mutableStateOf(IntSize.Zero) }
     Box(modifier) {
         Column(
-            Modifier.verticalScroll(state).onSizeChanged(setSize),
+            Modifier.verticalScroll(state).onSizeChanged(setSize).fillMaxWidth(),
             verticalArrangement,
             horizontalAlignment,
             content
@@ -133,7 +133,7 @@ fun ScrollableRow(
     val (size, setSize) = remember { mutableStateOf(IntSize.Zero) }
     Box(modifier) {
         Row(
-            Modifier.horizontalScroll(state).onSizeChanged(setSize),
+            Modifier.horizontalScroll(state).onSizeChanged(setSize).fillMaxHeight(),
             horizontalArrangement,
             verticalAlignment,
             content
