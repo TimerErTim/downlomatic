@@ -55,7 +55,7 @@ object Fetcher {
 fun startFetcher() {
     // Find all hosts to fetch for
     val hostsKlass = try {
-        Reflections("eu.timerertim.downlomatic.pages").getSubTypesOf(Host::class.java).map { it.kotlin }
+        Reflections("eu.timerertim.downlomatic.hosts").getSubTypesOf(Host::class.java).map { it.kotlin }
     } catch (ex: ReflectionsException) {
         emptyList()
     }
