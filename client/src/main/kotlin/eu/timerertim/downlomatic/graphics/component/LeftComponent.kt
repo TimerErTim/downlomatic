@@ -65,17 +65,18 @@ fun HostSelection(selectionState: DownloadSelectionState) {
     var host by selectionState::selectedHost
     val hostsRequestState = hostsRequest.state
     val hosts = if (hostsRequestState is APIState.Loaded) hostsRequestState.payload else null
+    val videosRequest = selectionState.videosRequest
 
     Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
         DropdownField(hosts,
             value = host,
             onValueChanged = {
                 host = it
-                val videosRequest = selectionState.videosRequest
-                val videosRequestState = videosRequest?.state
+                val newVideoRequest = selectionState.videosRequest
+                val videosRequestState = newVideoRequest?.state
                 if (videosRequestState is APIState.Error) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        videosRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it)
+                        newVideoRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it)
                     }
                 }
             },
@@ -126,9 +127,19 @@ fun HostSelection(selectionState: DownloadSelectionState) {
             }, modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
-        Button(onClick = {
-            println("Single Host Download of $host")
-        }, modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically), contentPadding = PaddingValues(5.sdp)) {
+        Button(
+            onClick = {
+                val videosRequestState = videosRequest?.state
+                if (videosRequestState is APIState.Loaded) {
+                    videosRequestState.payload.value.videos.forEach {
+                        println("Started Download of: ${it.url}")
+                    }
+                }
+            },
+            modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically),
+            contentPadding = PaddingValues(5.sdp),
+            enabled = videosRequest?.state is APIState.Loaded
+        ) {
             Icon(MaterialTheme.icons.Download, "Download", Modifier.size(20.sdp))
         }
 
