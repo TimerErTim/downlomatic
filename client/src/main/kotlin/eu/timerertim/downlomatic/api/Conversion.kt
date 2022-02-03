@@ -16,11 +16,11 @@ fun List<Video>.toTree(): TreeNode<VideoItem> =
             2 to setOf(VideoDetailsGroup(VideoDetails::season, "Season /s", "/S - S/s")),
             3 to setOf(
                 VideoDetailsGroup(
-                    VideoDetails::episode, longFormat = VideoDetailsFormatter.DEFAULT_VIDEO_FORMAT,
+                    VideoDetails::episode, longFormat = VideoDetailsFormatter.DEFAULT_ENTRY_FORMAT,
                     shortFormat = "/[E/e /N/]/[/!NEpisode /e/] (/L - /T)/[ (/y)/]"
                 ),
                 VideoDetailsGroup(
-                    VideoDetails::title, longFormat = VideoDetailsFormatter.DEFAULT_VIDEO_FORMAT,
+                    VideoDetails::title, longFormat = VideoDetailsFormatter.DEFAULT_ENTRY_FORMAT,
                     shortFormat = "/N (/L - /T)/[ (/y)/]"
                 )
             )

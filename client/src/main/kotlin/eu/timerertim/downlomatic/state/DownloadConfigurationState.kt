@@ -13,6 +13,6 @@ class DownloadConfigurationState {
     var destinationDirectoryState = mutableStateOf("")
     var destinationDirectory by destinationDirectoryState
 
-    val defaultVideoFormat = VideoDetailsFormatter.DEFAULT_VIDEO_FORMAT
+    val defaultVideoFormat = VideoDetailsFormatter.DEFAULT_PATH_FORMAT
     val defaultDestinationDirectory: String = File("").absolutePath
 }
