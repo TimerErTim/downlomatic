@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.api
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -32,7 +33,7 @@ class APIRequest<I, O>(val path: APIPath, val transformer: (I) -> O) {
                 }
 
                 val newState = try {
-                    val result = mockRequest(path, *arguments) as I //ktorClient.get(query)
+                    val result = ktorClient.get<I>(path = query) //mockRequest(path, *arguments) as I
                     APIState.Loaded(transformer(result))
 
                 } catch (exception: Exception) {

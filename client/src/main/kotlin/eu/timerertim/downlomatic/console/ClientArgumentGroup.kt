@@ -7,9 +7,7 @@ import org.apache.commons.cli.OptionGroup
  * may be used.
  */
 enum class ClientArgumentGroup(vararg args: ClientArgument) : ArgumentGroup {
-    SOURCE(ClientArgument.ALL, ClientArgument.SERIES, ClientArgument.DOWNLOADER, setup = {
-        isRequired = true
-    });
+    ;
 
     override val optionGroup = OptionGroup()
 

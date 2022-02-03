@@ -21,6 +21,8 @@ open class Console(config: ConsoleConfig) {
                 super.parse(options, arguments, properties, stopAtNonOption)
             } catch (ex: MissingOptionException) {
                 cmd.argList.add(0, "missing-required: ${ex.message}")
+            } catch (ex: MissingArgumentException) {
+                cmd.argList.add(0, "missing-parameter: ${ex.message}")
             }
             return cmd
         }
@@ -81,7 +83,7 @@ open class Console(config: ConsoleConfig) {
     fun printHelp() {
         val help = HelpFormatter()
         help.printHelp(
-            (usage ?: "downlomatic") + "\n\n",
+            (usage ?: "Downlomatic") + "\n\n",
             header,
             shownArguments,
             "\n" + footer,
