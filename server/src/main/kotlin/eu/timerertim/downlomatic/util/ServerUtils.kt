@@ -8,6 +8,7 @@ import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.core.fetch.Fetcher
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
+import org.bson.Document
 import kotlin.system.exitProcess
 
 /**
@@ -44,6 +45,11 @@ object ServerUtils {
                         "running and has authorization deactivated!", exception
             )
             exit(Utils.CONNECTION_EXIT_CODE)
+        }
+        if (arguments.hasArgument(ServerArgument.CLEAR)) {
+            MongoDBConnection.db.listCollectionNames().toList().takeIf { it.isNotEmpty() }
+                ?.also { Log.i("The following hosts will be cleared: ${it.joinToString()}") }
+                ?.forEach { MongoDBConnection.db.getCollection(it).deleteMany(Document()) }
         }
 
         // Setup fetcher hostConfig

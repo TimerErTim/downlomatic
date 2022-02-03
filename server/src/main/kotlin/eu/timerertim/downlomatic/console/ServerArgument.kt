@@ -9,6 +9,7 @@ enum class ServerArgument(override val option: Option, override val isHidden: Bo
     HELP(Option(null, "help", false, "shows this")),
     VERBOSE(Option("v", "verbose", false, "enables all levels of log messages")),
     NO_FILE_LOGGING(Option(null, "no-file-logging", false, "disables file logging"), true),
+    CLEAR(Option(null, "clear", false, "clears the database"), true),
     IGNORE_REDUNDANCY(
         Option(
             null, "ignore-redundancy", false,
