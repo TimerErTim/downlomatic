@@ -33,10 +33,10 @@ data class VideoDetails(
         result = 31 * result + (season ?: 0)
         result = 31 * result + (episode ?: 0)
         result = 31 * result + (release?.hashCode() ?: 0)
-        result = 31 * result + (spokenLanguage?.toString().hashCode())
-        result = 31 * result + (subtitleLanguage?.toString().hashCode())
-        result = 31 * result + translation.toString().hashCode()
-        result = 31 * result + audienceLanguage.toString().hashCode()
+        result = 31 * result + (spokenLanguage?.name.hashCode())
+        result = 31 * result + (subtitleLanguage?.name.hashCode())
+        result = 31 * result + translation.name.hashCode()
+        result = 31 * result + audienceLanguage.name.hashCode()
         result
     }
 
