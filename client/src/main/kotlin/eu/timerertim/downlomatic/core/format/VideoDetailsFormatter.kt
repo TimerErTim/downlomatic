@@ -17,7 +17,7 @@ import kotlin.reflect.KProperty1
  * described in that methods JavaDoc documentation. The format template is assigned in the [VideoDetailsFormatter]
  * constructor.
  */
-class VideoDetailsFormatter @JvmOverloads constructor(pattern: String = DEFAULT_VIDEO_FORMAT) {
+class VideoDetailsFormatter @JvmOverloads constructor(pattern: String = DEFAULT_ENTRY_FORMAT) {
     private val contentList = pattern.splitAsSegment(0, 0)
     private lateinit var identifiers: List<Replaceable>
 
@@ -42,8 +42,9 @@ class VideoDetailsFormatter @JvmOverloads constructor(pattern: String = DEFAULT_
 
     companion object {
         const val WIKI_URL = "https://github.com/TimerErTim/downlomatic/wiki/Formatting"
-        const val DEFAULT_VIDEO_FORMAT =
+        const val DEFAULT_ENTRY_FORMAT =
             "/[/S - /[S/s/]/[/?NE/e/]/[/!N Episode /e/] /]/N/[/!N/!SUnknown Title/] (/L - /T)/[/!S (/y)/]"
+        const val DEFAULT_PATH_FORMAT = "/[/S///]/[Season /s///]$DEFAULT_ENTRY_FORMAT"
 
         private const val openingBracket = "/["
         private const val closingBracket = "/]"
