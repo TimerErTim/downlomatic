@@ -9,7 +9,7 @@ interface Argument {
     val option: Option
 
     /**
-     * Whether or not the options should be listed in the help screen.
+     * Whether the options should be listed in the help screen.
      */
     val isHidden: Boolean
 }

@@ -19,7 +19,8 @@ object Utils {
     const val CONNECTION_EXIT_CODE = 2
     const val ARGUMENT_EXIT_CODE = 3
 
-    const val KTOR_PORT = 8081
+    const val DEFAULT_API_PORT = 8081
+    const val DEFAULT_API_SERVER = "timerertim.eu"
 
     /**
      * Initializes stuff which is needed for

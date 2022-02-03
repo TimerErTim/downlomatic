@@ -3,6 +3,7 @@ package eu.timerertim.downlomatic.util
 import com.sun.jna.Function
 import com.sun.jna.platform.win32.WinDef.*
 import com.sun.jna.platform.win32.WinNT.HANDLE
+import eu.timerertim.downlomatic.api.KtorClient
 import eu.timerertim.downlomatic.api.ktorClient
 import eu.timerertim.downlomatic.api.ktorClientLazy
 import eu.timerertim.downlomatic.console.ClientArgument
@@ -50,9 +51,25 @@ object ClientUtils {
                 val setConsoleModeFunc = Function.getFunction("kernel32", "SetConsoleMode")
                 setConsoleModeFunc.invoke(BOOL::class.java, arrayOf<Any>(hOut, dwMode))
             } catch (e: Exception) {
-                println("VT100 Emulation could not be activated for MS Windows: CLI presentation will look very bad")
+                Log.w("VT100 Emulation could not be activated for MS Windows: CLI presentation will look very bad")
             }
             System.setProperty("java.net.preferIPv4Stack", "true") // Required by torrent library
+        }
+
+        // Setup API Parameters
+        if (arguments.hasArgument(ClientArgument.PORT)) {
+            KtorClient.serverPort = arguments[ClientArgument.PORT]?.toIntOrNull()?.takeIf { it in 0..65535 }
+                ?: ConsoleUtils.showErrorHelpMessage(
+                    "Invalid argument for option \"${ClientArgument.PORT}\": Needs to be a number from 0 to 65535"
+                )
+        }
+        if (arguments.hasArgument(ClientArgument.SERVER)) {
+            val serverParameter = arguments[ClientArgument.SERVER]
+            if (serverParameter != null) {
+                KtorClient.server = serverParameter
+            } else {
+                Log.wtf("Argument ${ClientArgument.SERVER} can never have no parsed parameter")
+            }
         }
     }
 

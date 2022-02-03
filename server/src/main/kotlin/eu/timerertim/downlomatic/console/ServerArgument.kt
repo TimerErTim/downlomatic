@@ -11,14 +11,19 @@ enum class ServerArgument(override val option: Option, override val isHidden: Bo
     NO_FILE_LOGGING(Option(null, "no-file-logging", false, "disables file logging"), true),
     IGNORE_REDUNDANCY(
         Option(
-            null, "ignore-redundancy", false, "prevents the server from " +
-                    "removing redundant data and using already available data"
+            null, "ignore-redundancy", false,
+            "prevents the server from removing redundant data and using already available data"
         )
-    );
+    ),
+    PORT(Option(null, "port", true, "on what port to listen"), {
+        argName = "port"
+    });
 
     constructor(option: Option, isHidden: Boolean, setup: Option.() -> Unit) : this(option, isHidden) {
         setup(this.option)
     }
 
     constructor(option: Option, setup: Option.() -> Unit) : this(option, false, setup)
+
+    override fun toString(): String = option.longOpt ?: option.opt
 }

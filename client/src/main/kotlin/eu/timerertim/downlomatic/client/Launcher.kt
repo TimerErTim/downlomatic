@@ -22,22 +22,28 @@ private fun processArgs(arguments: ParsedArguments) {
         ConsoleUtils.printHelp()
     } else {
         // Decide starting method or exit if no viable one was found
-        val start = if (arguments.hasArgument(ClientArgument.NO_GUI) && arguments.hasRequiredArguments()) {
+        val start = if (arguments.hasArgument(ClientArgument.NO_GUI)
+            && arguments.hasRequiredArguments()
+            && arguments.hasRequiredParameters()
+        ) {
             ::startClient
-        } else if (!arguments.hasArgument(ClientArgument.NO_GUI)) {
+        } else if (!arguments.hasArgument(ClientArgument.NO_GUI) && arguments.hasRequiredParameters()) {
             {
                 try {
                     GUI.start()
                 } catch (ex: HeadlessException) {
-                    if (arguments.hasRequiredArguments()) {
+                    if (arguments.hasRequiredArguments() && arguments.hasRequiredParameters()) {
                         startClient()
                     } else {
-                        arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
+                        arguments.missingArgumentMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }
+                        arguments.missingParameterMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }
                     }
                 }
             }
         } else {
-            arguments.missingArgumentMessage!!.let { ConsoleUtils.showErrorHelpMessage(it) }
+            arguments.missingArgumentMessage?.let { ConsoleUtils.showErrorHelpMessage(it) }
+            arguments.missingParameterMessage?.let { ConsoleUtils.showErrorHelpMessage(it) };
+            { }
         }
 
         // Setup program for execution

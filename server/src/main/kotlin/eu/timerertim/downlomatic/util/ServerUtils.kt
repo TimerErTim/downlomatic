@@ -1,6 +1,7 @@
 package eu.timerertim.downlomatic.util
 
 import com.mongodb.MongoClientException
+import eu.timerertim.downlomatic.api.RESTService
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
@@ -24,8 +25,7 @@ object ServerUtils {
 
 
         // Setup logging
-        Log.consoleVerbosity = if (arguments.hasArgument(ServerArgument.VERBOSE)) Level.ALL
-        else Level.INFO
+        Log.consoleVerbosity = if (arguments.hasArgument(ServerArgument.VERBOSE)) Level.ALL else Level.INFO
         if (!arguments.hasArgument(ServerArgument.NO_FILE_LOGGING)) {
             Log.fileLogging = true
         }
@@ -49,6 +49,14 @@ object ServerUtils {
         // Setup fetcher hostConfig
         if (arguments.hasArgument(ServerArgument.IGNORE_REDUNDANCY)) {
             Fetcher.patchRedundancy = false
+        }
+
+        // Setup rest service
+        if (arguments.hasArgument(ServerArgument.PORT)) {
+            RESTService.apiPort = arguments[ServerArgument.PORT]?.toIntOrNull()?.takeIf { it in 0..65535 }
+                ?: ConsoleUtils.showErrorHelpMessage(
+                    "Argument \"${ServerArgument.PORT}\" needs to be a number from 0 to 65535"
+                )
         }
     }
 
