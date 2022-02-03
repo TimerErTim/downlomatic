@@ -182,9 +182,9 @@ fun VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
 @Composable
 fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String) {
     fun checkVideoItem(videoItem: VideoItem): Boolean {
-        return videoItem.longDescription.contains(filter) || videoItem.videos.all {
+        return videoItem.longDescription.contains(filter, true) || videoItem.videos.all {
             it.details.tags.any { tag ->
-                tag.value.contains(filter)
+                tag.value.contains(filter, true)
             }
         }
     }
