@@ -52,7 +52,7 @@ compose.desktop {
                 TargetFormat.Rpm,
                 TargetFormat.Msi,
                 TargetFormat.Exe,
-                TargetFormat.Pkg
+                //TargetFormat.Pkg
             )
 
             linux {
