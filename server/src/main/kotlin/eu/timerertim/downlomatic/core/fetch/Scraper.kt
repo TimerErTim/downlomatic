@@ -9,10 +9,10 @@ import org.reflections.ReflectionsException
 import kotlin.system.measureTimeMillis
 
 /**
- * Object responsible for fetching [Video]s from known [Host]s. Hosts are known if they are
+ * Object responsible for scraping [Video]s from known [Host]s. Hosts are known if they are
  * in the [eu.timerertim.downlomatic.hosts] package.
  */
-object Fetcher {
+object Scraper {
     private val scope = CoroutineScope(Dispatchers.IO)
 
     /**
@@ -32,7 +32,7 @@ object Fetcher {
                             it.fetch()
                         }
                     } catch (ex: Exception) {
-                        Log.e("An error occurred while fetching host ${it.domain}", ex)
+                        Log.e("An error occurred while scraping host ${it.domain}", ex)
                         Long.MAX_VALUE
                     }
                     delay(604800000L - duration) // 604800000 is the amount of ms a week has
@@ -50,9 +50,9 @@ object Fetcher {
 }
 
 /**
- * Starts the fetching process and continues it indefinitely without blocking until [stopFetcher] is invoked.
+ * Starts the fetching process and continues it indefinitely without blocking until [stopScraper] is invoked.
  */
-fun startFetcher() {
+fun startScraper() {
     // Find all hosts to fetch for
     val hostsKlass = try {
         Reflections("eu.timerertim.downlomatic.hosts").getSubTypesOf(Host::class.java).map { it.kotlin }
@@ -69,13 +69,13 @@ fun startFetcher() {
 
     // Informs about found hosts
     Log.d(if (hosts.isEmpty()) {
-        "Found no host to fetch"
+        "Found no host to scrape"
     } else {
-        "Found following hosts to fetch: " + hosts.joinToString { it.domain }
+        "Found following hosts to scrape: " + hosts.joinToString { it.domain }
     })
 
     // Remove redundant host collections from db
-    if (Fetcher.patchRedundancy) {
+    if (Scraper.patchRedundancy) {
         val removableCollections = MongoDBConnection.db.listCollectionNames().toMutableList().apply {
             removeAll(hosts.map { it.domain })
         }
@@ -90,12 +90,12 @@ fun startFetcher() {
         }
     }
 
-    Fetcher.start(hosts)
+    Scraper.start(hosts)
 }
 
 /**
- * Stops the fetching process. Is equivalent to [Fetcher.stop].
+ * Stops the fetching process. Is equivalent to [Scraper.stop].
  */
-fun stopFetcher() {
-    Fetcher.stop()
+fun stopScraper() {
+    Scraper.stop()
 }

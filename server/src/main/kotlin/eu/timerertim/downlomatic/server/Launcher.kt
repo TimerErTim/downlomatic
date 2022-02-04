@@ -5,8 +5,8 @@ import eu.timerertim.downlomatic.api.stopKtor
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
-import eu.timerertim.downlomatic.core.fetch.startFetcher
-import eu.timerertim.downlomatic.core.fetch.stopFetcher
+import eu.timerertim.downlomatic.core.fetch.startScraper
+import eu.timerertim.downlomatic.core.fetch.stopScraper
 import eu.timerertim.downlomatic.util.ServerUtils
 import eu.timerertim.downlomatic.util.Utils
 import eu.timerertim.downlomatic.util.logging.Log
@@ -41,7 +41,7 @@ private fun processArgs(arguments: ParsedArguments) {
 }
 
 private fun startServer() {
-    startFetcher()
+    startScraper()
     startKtor()
     Log.i("Server started")
 
@@ -60,5 +60,5 @@ private fun startServer() {
 private fun stopServer() {
     Log.i("Stopping Server...")
     stopKtor()
-    stopFetcher()
+    stopScraper()
 }

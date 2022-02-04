@@ -30,7 +30,7 @@ private class VivoSx(parentNode: ParentNode, url: URL, private val modify: suspe
                         ?.also { source = it } != null &&
                     source?.startsWith("https://node--")!! && source?.contains("vivo.sx")!!
                 ) {
-                    video(URL(source), modify)
+                    video(URL(source), modify = modify)
                 }
 
             }

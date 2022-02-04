@@ -1,25 +1,25 @@
 package eu.timerertim.downlomatic.core.fetch.nodes
 
-import com.google.common.io.Files
 import com.mongodb.client.model.ReplaceOptions
+import eu.timerertim.downlomatic.api.VideoEntry
+import eu.timerertim.downlomatic.api.toEntry
 import eu.timerertim.downlomatic.core.fetch.Fetcher
 import eu.timerertim.downlomatic.core.fetch.Host
-import eu.timerertim.downlomatic.core.meta.Metadata
-import eu.timerertim.downlomatic.core.meta.VideoDetails
+import eu.timerertim.downlomatic.core.fetch.PlainFetcher
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Log
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import org.litote.kmongo.findOneById
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.replaceOneById
-import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
 
-class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend VideoNode.() -> Unit) :
+class VideoNode(
+    parentNode: ParentNode,
+    url: URL,
+    private val fetcher: Fetcher = PlainFetcher,
+    private val modify: suspend VideoNode.() -> Unit
+) :
     Node(parentNode as Node), ChildNode {
     private val url = URL(
         URI(url.protocol, url.userInfo, url.host, url.port, url.path, url.query, url.ref)
@@ -41,13 +41,12 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
         // Generate video object
         val details = videoDetailsBuilder.build()
         try {
-            val metadata = generateMetadata(details)
-            val video = Video(url, details, metadata)
+            val video = Video(url, fetcher, details)
 
             // Insert into db or display on screen
             if (!hostConfig.testing) {
-                val collection = MongoDBConnection.db.getCollection<Video>(host.domain)
-                collection.replaceOneById(details.idHash, video, ReplaceOptions().apply {
+                val collection = MongoDBConnection.db.getCollection<VideoEntry>(host.domain)
+                collection.replaceOneById(details.idHash, video.toEntry(), ReplaceOptions().apply {
                     upsert(true)
                 })
             } else {
@@ -59,43 +58,6 @@ class VideoNode(parentNode: ParentNode, url: URL, private val modify: suspend Vi
 
         // Register the video as inserted
         host.idVideos += details.idHash
-    }
-
-    private fun generateMetadata(details: VideoDetails): Metadata {
-        val connection = url.openConnection()
-        connection.connectTimeout = 60_000
-        connection.readTimeout = 240_000
-        return if (connection is HttpURLConnection) {
-            // Get Metadata fields
-            val size = connection.contentLengthLong
-            val fileType = Files.getFileExtension(connection.url.path).ifBlank { hostConfig.defaultFileType }
-            val httpType = connection.contentType
-            val lastModifiedMillis = connection.lastModified
-            val lastModified = if (lastModifiedMillis == 0L) null else {
-                Instant.fromEpochMilliseconds(lastModifiedMillis).toLocalDateTime(TimeZone.UTC)
-            }
-
-            // Create new metadata
-            val metadata = Metadata(size, fileType, httpType, lastModified)
-
-            // Compare it to old metadata if there is one
-            val oldVideo = if (!hostConfig.testing) {
-                MongoDBConnection.db.getCollection<Video>(host.domain).findOneById(details.idHash)
-            } else {
-                null
-            }
-            if (oldVideo != null && oldVideo.metadata.isUpToDate(metadata) && Fetcher.patchRedundancy) {
-                Metadata.ChecksumInjector(metadata).inject(oldVideo.metadata)
-            } else {
-                Metadata.ChecksumInjector(metadata).inject(connection.inputStream)
-            }
-
-            connection.disconnect()
-
-            metadata
-        } else {
-            throw IllegalArgumentException("URL must use the http protocol")
-        }
     }
 
     private val Host.idVideos get() = with(this) { _idVideos }
