@@ -5,7 +5,7 @@ import eu.timerertim.downlomatic.api.RESTService
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
-import eu.timerertim.downlomatic.core.fetch.Fetcher
+import eu.timerertim.downlomatic.core.fetch.Scraper
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
 import org.bson.Document
@@ -54,7 +54,7 @@ object ServerUtils {
 
         // Setup fetcher hostConfig
         if (arguments.hasArgument(ServerArgument.IGNORE_REDUNDANCY)) {
-            Fetcher.patchRedundancy = false
+            Scraper.patchRedundancy = false
         }
 
         // Setup rest service

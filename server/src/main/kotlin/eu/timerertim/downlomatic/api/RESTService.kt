@@ -3,7 +3,6 @@ package eu.timerertim.downlomatic.api
 import eu.timerertim.downlomatic.api.APIPath.ALL_HOSTS
 import eu.timerertim.downlomatic.api.APIPath.ALL_VIDEOS_OF_HOST
 import eu.timerertim.downlomatic.api.RESTService.apiPort
-import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.Utils
 import io.ktor.application.*
@@ -14,13 +13,16 @@ import io.ktor.routing.*
 import io.ktor.serialization.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
+import kotlinx.serialization.json.Json
 import org.litote.kmongo.getCollection
 import java.util.concurrent.TimeUnit
 
 private val ktorEngine by lazy {
     embeddedServer(CIO, apiPort) {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                encodeDefaults = true
+            })
         }
 
         routing {
@@ -39,8 +41,8 @@ private val ktorEngine by lazy {
                         status = HttpStatusCode.NotFound
                     )
                 }
-                val videosCollection = MongoDBConnection.db.getCollection<Video>(host)
-                val videos = videosCollection.find()
+                val videosCollection = MongoDBConnection.db.getCollection<VideoEntry>(host)
+                val videos = videosCollection.find().map(VideoEntry::toVideo)
                 call.respond(videos.toList())
             }
         }

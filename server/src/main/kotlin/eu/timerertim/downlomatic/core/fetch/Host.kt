@@ -1,8 +1,8 @@
 package eu.timerertim.downlomatic.core.fetch
 
+import eu.timerertim.downlomatic.api.VideoEntry
 import eu.timerertim.downlomatic.core.fetch.nodes.RootNode
 import eu.timerertim.downlomatic.core.fetch.nodes.VideoNode
-import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
@@ -31,9 +31,9 @@ abstract class Host(
     suspend fun fetch() {
         root.fetch()
         // Remove videos which haven't been fetched.
-        if (Fetcher.patchRedundancy && !config.testing) {
-            val collection = MongoDBConnection.db.getCollection<Video>(domain)
-            val deletedCount = collection.deleteMany(Video::_id nin idVideos).deletedCount
+        if (Scraper.patchRedundancy && !config.testing) {
+            val collection = MongoDBConnection.db.getCollection<VideoEntry>(domain)
+            val deletedCount = collection.deleteMany(VideoEntry::_id nin idVideos).deletedCount
             if (deletedCount > 0) {
                 Log.w("$deletedCount videos were removed from the $domain MongoDB collection")
             }

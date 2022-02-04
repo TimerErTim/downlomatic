@@ -3,7 +3,7 @@ package eu.timerertim.downlomatic.graphics
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.window.application
 import eu.timerertim.downlomatic.core.download.Download
-import eu.timerertim.downlomatic.core.meta.Metadata
+import eu.timerertim.downlomatic.core.fetch.PlainFetcher
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.state.GlobalDownlomaticState
@@ -17,8 +17,8 @@ val downloadList = mutableStateListOf<Download>(
     object : Download(
         Video(
             URL("https://timerertim.eu"),
-            VideoDetails(title = "Target which is very very very long Target which is very very very long Target which is very very very long"),
-            Metadata(size = 2000000000L)
+            PlainFetcher,
+            VideoDetails(title = "Target which is very very very long Target which is very very very long Target which is very very very long")
         ),
         File("path/to/target_which_is_very_long_to_test_overflow_of_text_target_which_is_.mp4")
     ) {

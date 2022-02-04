@@ -12,7 +12,7 @@ import java.io.File
  * Represents a pausable Download targeting a single file.
  */
 /*sealed*/abstract class Download(val video: Video, val targetFile: File) {
-    val size by video.metadata::size
+    val size = 10000000L
     val progressState = LabeledProgressState(-1, size) { amount, max ->
         if (amount < 0) {
             "Fetching..."

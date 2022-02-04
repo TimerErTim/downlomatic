@@ -7,4 +7,5 @@ import kotlinx.serialization.Serializable
  * may be searchable and findable for.
  */
 @Serializable
-data class Tag(val value: String)
+@JvmInline
+value class Tag(val value: String)

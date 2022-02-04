@@ -1,7 +1,9 @@
 package eu.timerertim.downlomatic.core.fetch.nodes
 
+import eu.timerertim.downlomatic.core.fetch.Fetcher
 import eu.timerertim.downlomatic.core.fetch.Host
 import eu.timerertim.downlomatic.core.fetch.HostConfig
+import eu.timerertim.downlomatic.core.fetch.PlainFetcher
 import eu.timerertim.downlomatic.core.meta.VideoDetailsBuilder
 import java.net.URL
 
@@ -50,6 +52,6 @@ fun ParentNode.page(url: URL, fetch: suspend PageNode.(URL) -> Unit) {
  * Creates a new sub [VideoNode]. The given [modify] parameter allows performing convenient modifications on the node.
  */
 @JvmOverloads
-fun ParentNode.video(url: URL, modify: suspend VideoNode.() -> Unit = {}) {
-    VideoNode(this, url, modify)
+fun ParentNode.video(url: URL, fetcher: Fetcher = PlainFetcher, modify: suspend VideoNode.() -> Unit = {}) {
+    VideoNode(this, url, fetcher, modify)
 }
