@@ -1,10 +1,10 @@
 package eu.timerertim.downlomatic.api
 
-import eu.timerertim.downlomatic.api.APIPath.ALL_HOSTS
-import eu.timerertim.downlomatic.api.APIPath.ALL_VIDEOS_OF_HOST
+import eu.timerertim.downlomatic.api.APIPath.*
 import eu.timerertim.downlomatic.api.RESTService.apiPort
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.Utils
+import eu.timerertim.downlomatic.util.routing.get
 import guru.zoroark.ratelimit.RateLimit
 import guru.zoroark.ratelimit.rateLimited
 import io.ktor.application.*
@@ -32,25 +32,12 @@ private val ktorEngine by lazy {
 
         routing {
             rateLimited {
-                get(ALL_HOSTS.path) {
-                    val mongoNames = MongoDBConnection.db.listCollectionNames()
-                    call.respond(mongoNames.toList())
-                }
-                get(ALL_VIDEOS_OF_HOST.path) {
-                    val host = call.parameters[ALL_VIDEOS_OF_HOST.HOST_ARGUMENT.name] ?: return@get call.respondText(
-                        "Missing or malformed host",
-                        status = HttpStatusCode.BadRequest
-                    )
-                    if (!MongoDBConnection.db.listCollectionNames().contains(host)) {
-                        return@get call.respondText(
-                            "No collection of host $host",
-                            status = HttpStatusCode.NotFound
-                        )
-                    }
-                    val videosCollection = MongoDBConnection.db.getCollection<VideoEntry>(host)
-                    val videos = videosCollection.find().map(VideoEntry::toVideo)
-                    call.respond(videos.toList())
-                }
+                getAllHosts()
+                getAllVideos()
+                getAllVideosOfHost()
+            }
+            rateLimited(100L) {
+                getURLOfVideo()
             }
         }
     }
@@ -72,4 +59,42 @@ fun startKtor() {
  */
 fun stopKtor() {
     ktorEngine.stop(1, 5, TimeUnit.SECONDS)
+}
+
+private fun Route.getAllHosts() {
+    get(ALL_HOSTS) {
+        val hostNames = MongoDBConnection.db.listCollectionNames().toList()
+        call.respond(hostNames)
+    }
+}
+
+private fun Route.getAllVideosOfHost() {
+    get(ALL_VIDEOS_OF_HOST) {
+        val host = call.parameters[ALL_VIDEOS_OF_HOST.HOST_ARGUMENT] ?: return@get call.respondText(
+            "Missing or malformed host",
+            status = HttpStatusCode.BadRequest
+        )
+        if (!MongoDBConnection.db.listCollectionNames().contains(host)) {
+            return@get call.respondText(
+                "No collection of host $host",
+                status = HttpStatusCode.NotFound
+            )
+        }
+        val videosCollection = MongoDBConnection.db.getCollection<VideoEntry>(host)
+        val videos = videosCollection.find().map(VideoEntry::toVideo).toList()
+        call.respond(videos)
+    }
+}
+
+private fun Route.getAllVideos() {
+    get(ALL_VIDEOS) {
+        val hostNames = MongoDBConnection.db.listCollectionNames().toList()
+        val videoEntries = hostNames.flatMap { MongoDBConnection.db.getCollection<VideoEntry>(it).find() }
+        val videos = videoEntries.map(VideoEntry::toVideo)
+        call.respond(videos)
+    }
+}
+
+private fun Route.getURLOfVideo() {
+
 }

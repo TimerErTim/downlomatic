@@ -6,6 +6,8 @@ sealed class APIPath(vararg path: CharSequence) {
         val HOST_ARGUMENT = arguments[0]
     }
 
+    object ALL_VIDEOS : APIPath("/videos/all")
+
     private val rawPath = path
     val path: String
     val arguments: List<APIPathArgument>
