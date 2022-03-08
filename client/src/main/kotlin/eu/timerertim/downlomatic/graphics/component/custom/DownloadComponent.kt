@@ -5,6 +5,7 @@ import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import eu.timerertim.downlomatic.core.download.Download
+import eu.timerertim.downlomatic.core.download.DownloadObserver
+import eu.timerertim.downlomatic.core.download.DownloadState
 import eu.timerertim.downlomatic.graphics.component.util.CollapsableBlock
 import eu.timerertim.downlomatic.graphics.component.util.LabeledLinearProgressIndicator
 import eu.timerertim.downlomatic.graphics.component.util.TooltipCard
@@ -27,35 +30,37 @@ import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
 
 @Composable
 fun CurrentDownloadCard(
-    download: Download,
+    downloadObserver: DownloadObserver,
     onStopClick: () -> Unit = { },
     expandedState: MutableState<Boolean> = remember { mutableStateOf(false) }
 ) {
+    val download = downloadObserver.download
     Row(modifier = Modifier.fillMaxWidth().padding(5.sdp), horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
-        val (onClick, buttonContent) = if (download.isRunning) {
-            {
-                download.pauseDownload()
-            } to (MaterialTheme.icons.Pause to "Pause")
-        } else {
-            {
-                download.continueDownload()
-            } to (MaterialTheme.icons.PlayArrow to "Continue")
+        when (download.state) {
+            is DownloadState.Downloading -> Icon(
+                MaterialTheme.icons.Pause, "Pause",
+                modifier = Modifier.requiredSize(22.sdp).align(Alignment.CenterVertically).clip(CircleShape)
+                    .clickable(onClick = download::pauseDownload)
+            )
+            is DownloadState.Paused -> Icon(
+                MaterialTheme.icons.PlayArrow, "Continue",
+                modifier = Modifier.requiredSize(22.sdp).align(Alignment.CenterVertically).clip(CircleShape)
+                    .clickable(onClick = download::startDownload)
+            )
+            else -> CircularProgressIndicator(
+                strokeWidth = 2.sdp,
+                modifier = Modifier.size(22.sdp).align(Alignment.CenterVertically)
+            )
         }
-        val (icon, description) = buttonContent
-        Icon(
-            icon, description,
-            modifier = Modifier.requiredSize(22.sdp).align(Alignment.CenterVertically).clip(CircleShape)
-                .clickable(onClick = onClick)
-        )
 
         Column(modifier = Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(5.sdp)) {
             Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                 DownloadInfo(download, expandedState, modifier = Modifier.weight(1F))
                 Spacer(modifier = Modifier.width(5.sdp))
-                Text("${download.speed.toHumanReadableBytesBin()}/s", style = MaterialTheme.typography.caption)
+                Text("${downloadObserver.speed.toHumanReadableBytesBin()}/s", style = MaterialTheme.typography.caption)
             }
             LabeledLinearProgressIndicator(
-                download.progressState,
+                downloadObserver.progress,
                 height = 10.sdp
             )
         }
@@ -97,10 +102,10 @@ fun DownloadInfo(
     val (expanded, setExpanded) = expandedState
     CollapsableBlock(leadingLabel = {
         TooltipArea(tooltip = {
-            TooltipCard(download.video.details.title ?: "Example Title", maxWidth = 700.sdp)
+            TooltipCard(download.name, maxWidth = 700.sdp)
         }, modifier = Modifier.weight(1F)) {
             Text(
-                download.video.details.title ?: "Example Title",
+                download.name,
                 style = MaterialTheme.typography.caption,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -110,7 +115,7 @@ fun DownloadInfo(
         var overflow by remember { mutableStateOf(false) }
 
         TooltipArea(tooltip = {
-            TooltipCard(download.targetFile.path, maxWidth = 700.sdp)
+            TooltipCard(download.targetFile.absolutePath, maxWidth = 700.sdp)
         }) {
             Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
                 Text(

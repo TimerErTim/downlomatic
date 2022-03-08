@@ -11,7 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.timerertim.downlomatic.graphics.window.sdp
 import eu.timerertim.downlomatic.state.DownloadConfigurationState
-import eu.timerertim.downlomatic.state.DownloadSelectionState
+import eu.timerertim.downlomatic.state.DownloadManagerState
+import eu.timerertim.downlomatic.state.DownloadStatisticsState
 import eu.timerertim.downlomatic.state.DownlomaticState
 
 @Composable
@@ -19,34 +20,34 @@ fun DownlomaticWindowContent(downlomaticState: DownlomaticState) {
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
         Row(modifier = Modifier.weight(1F), horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
             Box(modifier = Modifier.weight(1F)) {
-                DownlomaticLeft(downlomaticState.downloadSelectionState)
+                DownlomaticLeft(downlomaticState)
             }
             Box(modifier = Modifier.weight(2.5F)) {
-                DownlomaticCenter()
+                DownlomaticCenter(downlomaticState.downloadManagerState)
             }
             Box(modifier = Modifier.weight(1.5F)) {
                 DownlomaticRight(downlomaticState.downloadConfigurationState)
             }
         }
         Box {
-            DownlomaticFooter()
+            DownlomaticFooter(downlomaticState.downloadStatisticsState)
         }
     }
 }
 
 @Preview
 @Composable
-fun DownlomaticLeft(selectionState: DownloadSelectionState) {
+fun DownlomaticLeft(state: DownlomaticState) {
     Card(elevation = 5.dp) {
-        DownlomaticLeftContent(selectionState)
+        DownlomaticLeftContent(state)
     }
 }
 
 @Preview
 @Composable
-fun DownlomaticCenter() {
+fun DownlomaticCenter(downloadManagerState: DownloadManagerState) {
     Card(elevation = 5.dp) {
-        DownlomaticCenterContent()
+        DownlomaticCenterContent(downloadManagerState)
     }
 }
 
@@ -60,8 +61,8 @@ fun DownlomaticRight(configurationState: DownloadConfigurationState) {
 
 @Preview
 @Composable
-fun DownlomaticFooter() {
+fun DownlomaticFooter(statisticsState: DownloadStatisticsState) {
     Card(elevation = 5.dp) {
-        DownlomaticFooterContent()
+        DownlomaticFooterContent(statisticsState)
     }
 }

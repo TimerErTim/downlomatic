@@ -109,7 +109,7 @@ fun BasicOutlinedTextField(
 
 @Composable
 fun BasicOutlinedTextField(
-    value: String,
+    value: String?,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -129,8 +129,8 @@ fun BasicOutlinedTextField(
     cursorBrush: Brush = SolidColor(Color.Black),
     shape: Shape = MaterialTheme.shapes.small
 ) {
-    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
-    val textFieldValue = textFieldValueState.copy(text = value)
+    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value ?: "")) }
+    val textFieldValue = textFieldValueState.copy(text = value ?: "")
 
     BasicOutlinedTextField(
         textFieldValue,

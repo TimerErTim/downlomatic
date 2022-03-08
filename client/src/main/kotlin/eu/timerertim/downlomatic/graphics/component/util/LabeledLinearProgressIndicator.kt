@@ -8,10 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +34,8 @@ fun LabeledLinearProgressIndicator(
             .align(Alignment.CenterVertically)
         val color = MaterialTheme.colors.primary
         val percentage = progressState.percentage
-        if (percentage < 0) {
+        val max = progressState.denominator.toDouble()
+        if (max < 0) {
             LinearProgressIndicator(modifier = progressModifier, color = color)
         } else {
             LinearProgressIndicator(percentage, modifier = progressModifier, color = color)
@@ -51,24 +49,19 @@ fun LabeledLinearProgressIndicator(
 }
 
 class LabeledProgressState<T : Number>(
-    initialNominator: T, initialDenominator: T, private val labelGenerator: (T, T) -> String
+    initialNominator: T, initialDenominator: T,
+    private val nominatorGenerator: (() -> T)? = null,
+    private val denominatorGenerator: (() -> T)? = null,
+    private val labelGenerator: (T, T) -> String
 ) {
-    var percentage by mutableStateOf(initialNominator.toFloat() / initialDenominator.toFloat())
-        private set
 
-    var nominator: T = initialNominator
-        set(value) {
-            field = value
-            percentage = value.toFloat() / denominator.toFloat()
-            label = labelGenerator(nominator, denominator)
-        }
-    var denominator: T = initialDenominator
-        set(value) {
-            field = value
-            percentage = nominator.toFloat() / value.toFloat()
-            label = labelGenerator(nominator, denominator)
-        }
+    val percentage by derivedStateOf { nominatorState.toFloat() / denominatorState.toFloat() }
 
-    var label by mutableStateOf(labelGenerator(nominator, denominator))
-        private set
+    var nominator: T by mutableStateOf(initialNominator)
+    var denominator: T by mutableStateOf(initialDenominator)
+
+    private val nominatorState: T by derivedStateOf(nominatorGenerator ?: { nominator })
+    private val denominatorState: T by derivedStateOf(denominatorGenerator ?: { denominator })
+
+    val label get() = labelGenerator(nominatorState, denominatorState)
 }

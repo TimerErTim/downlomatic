@@ -30,7 +30,7 @@ fun DownlomaticRightContent(configurationState: DownloadConfigurationState) {
 }
 
 @Composable
-fun ColumnScope.FormatField(videoFormatState: MutableState<String>, defaultVideoFormat: String) {
+fun ColumnScope.FormatField(videoFormatState: MutableState<String?>, defaultVideoFormat: String) {
     val (format, setFormat) = videoFormatState
 
     Column(verticalArrangement = Arrangement.spacedBy(1.sdp)) {
@@ -50,7 +50,7 @@ fun ColumnScope.FormatField(videoFormatState: MutableState<String>, defaultVideo
 }
 
 @Composable
-fun ColumnScope.DestinationField(destinationDirectory: MutableState<String>, defaultDestinationDirectory: String) {
+fun ColumnScope.DestinationField(destinationDirectory: MutableState<String?>, defaultDestinationDirectory: String) {
     val (destination, setDestination) = destinationDirectory
     val (textFieldSize, setTextFieldSize) = remember { mutableStateOf(IntSize.Zero) }
 

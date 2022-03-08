@@ -74,6 +74,7 @@ object ClientUtils {
         }
 
         // Setup core parameters
+        GlobalDownlomaticState.downloadConfigurationState.destinationDirectory = arguments[ClientArgument.DESTINATION]
         if (arguments.hasArgument(ClientArgument.NSFW)) {
             GlobalDownlomaticState.downloadSelectionState.nsfw = true
         }
