@@ -1,15 +1,21 @@
-package eu.timerertim.downlomatic.core.fetch
+package eu.timerertim.downlomatic.core.scraping
 
+import eu.timerertim.downlomatic.api.HostEntry
+import eu.timerertim.downlomatic.api.toEntry
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.*
+import org.litote.kmongo.eq
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.updateOne
+import org.litote.kmongo.upsert
 import org.reflections.Reflections
 import org.reflections.ReflectionsException
 import kotlin.system.measureTimeMillis
 
 /**
- * Object responsible for scraping [Video]s from known [Host]s. Hosts are known if they are
+ * Object responsible for scraping [Video]s from known [HostScraper]s. Hosts are known if they are
  * in the [eu.timerertim.downlomatic.hosts] package.
  */
 object Scraper {
@@ -21,10 +27,10 @@ object Scraper {
     var patchRedundancy = true
 
     /**
-     * Starts to fetch the given [hosts]. The fetching process continues until [stop] is invoked.
+     * Starts to fetch the given [scrapers]. The fetching process continues until [stop] is invoked.
      */
-    fun start(hosts: List<Host>) {
-        hosts.forEach {
+    fun start(scrapers: List<HostScraper>) {
+        scrapers.forEach {
             scope.launch {
                 while (isActive) {
                     val duration = try {
@@ -32,7 +38,7 @@ object Scraper {
                             it.fetch()
                         }
                     } catch (ex: Exception) {
-                        Log.e("An error occurred while scraping host ${it.domain}", ex)
+                        Log.e("An error occurred while scraping host ${it.host.domain}", ex)
                         Long.MAX_VALUE
                     }
                     delay(604800000L - duration) // 604800000 is the amount of ms a week has
@@ -55,11 +61,11 @@ object Scraper {
 fun startScraper() {
     // Find all hosts to fetch for
     val hostsKlass = try {
-        Reflections("eu.timerertim.downlomatic.hosts").getSubTypesOf(Host::class.java).map { it.kotlin }
+        Reflections("eu.timerertim.downlomatic.hosts").getSubTypesOf(HostScraper::class.java).map { it.kotlin }
     } catch (ex: ReflectionsException) {
         emptyList()
     }
-    val hosts = hostsKlass.mapNotNull {
+    val hostScrapers = hostsKlass.mapNotNull {
         try {
             it.objectInstance ?: it.java.getDeclaredConstructor().newInstance()
         } catch (ex: ReflectiveOperationException) {
@@ -67,30 +73,38 @@ fun startScraper() {
         }
     }
 
-    // Informs about found hosts
-    Log.d(if (hosts.isEmpty()) {
+    // Informs about found hosts to scrape
+    Log.d(if (hostScrapers.isEmpty()) {
         "Found no host to scrape"
     } else {
-        "Found following hosts to scrape: " + hosts.joinToString { it.domain }
+        "Found following hosts to scrape: " + hostScrapers.joinToString { it.host.domain }
     })
+
+    // Initialize hosts in db
+    val hostCollection = MongoDBConnection.hostDB.getCollection<HostEntry>("hosts")
+    hostScrapers.map { it.host.toEntry() }.forEach {
+        hostCollection.updateOne(it, upsert())
+        MongoDBConnection.videoDB.createCollection(it.domain)
+    }
 
     // Remove redundant host collections from db
     if (Scraper.patchRedundancy) {
-        val removableCollections = MongoDBConnection.db.listCollectionNames().toMutableList().apply {
-            removeAll(hosts.map { it.domain })
+        val removableHosts = hostCollection.find().toMutableList().apply {
+            removeAll(hostScrapers.map { it.host.toEntry() })
         }
-        if (removableCollections.isNotEmpty()) {
+        if (removableHosts.isNotEmpty()) {
             Log.w(
                 "Following hosts are redundant and will be removed from the database: " +
-                        removableCollections.joinToString()
+                        removableHosts.joinToString()
             )
-            removableCollections.forEach {
-                MongoDBConnection.db.getCollection(it).drop()
+            removableHosts.forEach {
+                hostCollection.deleteMany(HostEntry::_id eq it._id)
+                MongoDBConnection.videoDB.getCollection(it.domain).drop()
             }
         }
     }
 
-    Scraper.start(hosts)
+    Scraper.start(hostScrapers)
 }
 
 /**

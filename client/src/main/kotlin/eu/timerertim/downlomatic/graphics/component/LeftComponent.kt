@@ -68,7 +68,8 @@ fun HostSelection(selectionState: DownloadSelectionState) {
     val videosRequest = selectionState.videosRequest
 
     Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
-        DropdownField(hosts,
+        DropdownField(
+            if (hosts?.isNotEmpty() == true) hosts else null,
             value = host,
             onValueChanged = {
                 host = it
@@ -76,7 +77,7 @@ fun HostSelection(selectionState: DownloadSelectionState) {
                 val videosRequestState = newVideoRequest?.state
                 if (videosRequestState is APIState.Error) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        newVideoRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it)
+                        newVideoRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it.domain)
                     }
                 }
             },
@@ -110,7 +111,7 @@ fun HostSelection(selectionState: DownloadSelectionState) {
                     }
                 }
             }, selectedRenderer = {
-                Text(it, style = MaterialTheme.typography.body2)
+                Text(it.domain, style = MaterialTheme.typography.body2)
             }, placeholder = {
                 when (hostsRequestState) {
                     is APIState.Waiting -> CircularProgressIndicator(
@@ -120,9 +121,15 @@ fun HostSelection(selectionState: DownloadSelectionState) {
                     is APIState.Error -> Text(
                         hostsRequestState.exception.message ?: "Error occurred",
                         color = MaterialTheme.colors.error, style = MaterialTheme.typography.body1,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 5.sdp)
                     )
-                    else -> {}
+                    else -> {
+                        if (hosts?.isEmpty() == true) Text(
+                            "Server does not provide hosts",
+                            color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
+                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(horizontal = 5.sdp)
+                        )
+                    }
                 }
             }, modifier = Modifier.fillMaxWidth().weight(1F)
         )

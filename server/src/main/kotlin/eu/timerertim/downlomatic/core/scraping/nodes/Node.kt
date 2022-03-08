@@ -1,14 +1,14 @@
-package eu.timerertim.downlomatic.core.fetch.nodes
+package eu.timerertim.downlomatic.core.scraping.nodes
 
-import eu.timerertim.downlomatic.core.fetch.Fetcher
-import eu.timerertim.downlomatic.core.fetch.Host
-import eu.timerertim.downlomatic.core.fetch.HostConfig
-import eu.timerertim.downlomatic.core.fetch.PlainFetcher
 import eu.timerertim.downlomatic.core.meta.VideoDetailsBuilder
+import eu.timerertim.downlomatic.core.parsing.Parser
+import eu.timerertim.downlomatic.core.parsing.PlainParser
+import eu.timerertim.downlomatic.core.scraping.HostConfig
+import eu.timerertim.downlomatic.core.scraping.HostScraper
 import java.net.URL
 
 sealed class Node(
-    protected val host: Host,
+    protected val scraper: HostScraper,
     protected val hostConfig: HostConfig,
     protected val videoDetailsBuilder: VideoDetailsBuilder
 ) {
@@ -24,7 +24,7 @@ sealed class Node(
     var audienceLanguage by videoDetailsBuilder::audienceLanguage
     var tags by videoDetailsBuilder::tags
 
-    constructor(base: Node) : this(base.host, base.hostConfig, base.videoDetailsBuilder.copy())
+    constructor(base: Node) : this(base.scraper, base.hostConfig, base.videoDetailsBuilder.copy())
 
     /**
      * Fetches this node and all potential subnodes for [Video][eu.timerertim.downlomatic.core.video.Video]s.
@@ -52,6 +52,6 @@ fun ParentNode.page(url: URL, fetch: suspend PageNode.(URL) -> Unit) {
  * Creates a new sub [VideoNode]. The given [modify] parameter allows performing convenient modifications on the node.
  */
 @JvmOverloads
-fun ParentNode.video(url: URL, fetcher: Fetcher = PlainFetcher, modify: suspend VideoNode.() -> Unit = {}) {
+fun ParentNode.video(url: URL, fetcher: Parser = PlainParser, modify: suspend VideoNode.() -> Unit = {}) {
     VideoNode(this, url, fetcher, modify)
 }

@@ -63,8 +63,9 @@ fun stopKtor() {
 
 private fun Route.getAllHosts() {
     get(ALL_HOSTS) {
-        val hostNames = MongoDBConnection.db.listCollectionNames().toList()
-        call.respond(hostNames)
+        val hostEntries = MongoDBConnection.hostDB.getCollection<HostEntry>("hosts").find()
+        val hosts = hostEntries.map { it.toHost() }.toList()
+        call.respond(hosts)
     }
 }
 
@@ -74,13 +75,13 @@ private fun Route.getAllVideosOfHost() {
             "Missing or malformed host",
             status = HttpStatusCode.BadRequest
         )
-        if (!MongoDBConnection.db.listCollectionNames().contains(host)) {
+        if (!MongoDBConnection.videoDB.listCollectionNames().contains(host)) {
             return@get call.respondText(
                 "No collection of host $host",
                 status = HttpStatusCode.NotFound
             )
         }
-        val videosCollection = MongoDBConnection.db.getCollection<VideoEntry>(host)
+        val videosCollection = MongoDBConnection.videoDB.getCollection<VideoEntry>(host)
         val videos = videosCollection.find().map(VideoEntry::toVideo).toList()
         call.respond(videos)
     }
@@ -88,8 +89,8 @@ private fun Route.getAllVideosOfHost() {
 
 private fun Route.getAllVideos() {
     get(ALL_VIDEOS) {
-        val hostNames = MongoDBConnection.db.listCollectionNames().toList()
-        val videoEntries = hostNames.flatMap { MongoDBConnection.db.getCollection<VideoEntry>(it).find() }
+        val hostNames = MongoDBConnection.videoDB.listCollectionNames().toList()
+        val videoEntries = hostNames.flatMap { MongoDBConnection.videoDB.getCollection<VideoEntry>(it).find() }
         val videos = videoEntries.map(VideoEntry::toVideo)
         call.respond(videos)
     }
