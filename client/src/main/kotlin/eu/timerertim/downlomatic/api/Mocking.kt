@@ -7,5 +7,6 @@ suspend fun mockRequest(apiPath: APIPath, vararg arguments: Pair<APIPathArgument
         APIPath.ALL_VIDEOS_OF_HOST -> requestVideos(
             argumentValues[APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT] ?: throw IllegalArgumentException()
         )
+        else -> {}
     }
 }

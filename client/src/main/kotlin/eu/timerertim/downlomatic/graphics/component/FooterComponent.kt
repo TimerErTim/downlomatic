@@ -14,21 +14,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import eu.timerertim.downlomatic.graphics.component.util.LabeledLinearProgressIndicator
 import eu.timerertim.downlomatic.graphics.component.util.LabeledProgressState
 import eu.timerertim.downlomatic.graphics.window.sdp
+import eu.timerertim.downlomatic.state.DownloadStatisticsState
 import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
 
 @Composable
-fun DownlomaticFooterContent() {
+fun DownlomaticFooterContent(statisticsState: DownloadStatisticsState) {
     Row(
         modifier = Modifier.padding(5.sdp),
         horizontalArrangement = Arrangement.spacedBy(5.sdp),
         verticalAlignment = Alignment.CenterVertically
     )
     {
-        SpeedInformation(1032000L, modifier = Modifier.weight(1F))
-        ProgressBytesInformation(modifier = Modifier.weight(4F))
-        ProgressDownloadsInformation(state = LabeledProgressState(100000, 999999) { amount, of ->
-            "$amount / $of Downloads"
-        }, modifier = Modifier.weight(1.5F))
+        SpeedInformation(statisticsState.speed, modifier = Modifier.weight(1F))
+        ProgressBytesInformation(state = statisticsState.downloadsProgressState, modifier = Modifier.weight(4F))
+        ProgressDownloadsInformation(statisticsState.downloadedBytes, modifier = Modifier.weight(1.5F))
     }
 }
 
@@ -47,25 +46,21 @@ fun SpeedInformation(speed: Long, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ProgressBytesInformation(modifier: Modifier = Modifier) {
+fun ProgressBytesInformation(state: LabeledProgressState<Long>, modifier: Modifier = Modifier) {
     Row(horizontalArrangement = Arrangement.spacedBy(5.sdp), modifier = modifier) {
         Text("Progress:", style = MaterialTheme.typography.body2)
         LabeledLinearProgressIndicator(
-            progressState = LabeledProgressState(
-                10000L,
-                9999999
-            ) { amount, of ->
-                "${amount.toHumanReadableBytesBin()} / ${of.toHumanReadableBytesBin()}"
-            }, height = 14.sdp, modifier = Modifier.align(Alignment.CenterVertically)
+            progressState = state, height = 14.sdp, modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
 }
 
 @Composable
-fun ProgressDownloadsInformation(state: LabeledProgressState<Int>, modifier: Modifier = Modifier) {
+fun ProgressDownloadsInformation(downloadedBytes: Long, modifier: Modifier = Modifier) {
     Box(modifier = modifier) {
         Text(
-            state.label, modifier = Modifier.align(Alignment.CenterEnd), style = MaterialTheme.typography.body2,
+            "Total Downloaded: ${downloadedBytes.toHumanReadableBytesBin()}",
+            modifier = Modifier.align(Alignment.CenterEnd), style = MaterialTheme.typography.body2,
             maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End
         )
     }

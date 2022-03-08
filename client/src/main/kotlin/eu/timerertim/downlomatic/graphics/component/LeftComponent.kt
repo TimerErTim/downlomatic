@@ -30,22 +30,24 @@ import eu.timerertim.downlomatic.graphics.theme.outline
 import eu.timerertim.downlomatic.graphics.window.sdp
 import eu.timerertim.downlomatic.graphics.window.ssp
 import eu.timerertim.downlomatic.state.DownloadSelectionState
+import eu.timerertim.downlomatic.state.DownlomaticState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.awt.Cursor
 
 @Composable
-fun DownlomaticLeftContent(selectionState: DownloadSelectionState) {
+fun DownlomaticLeftContent(state: DownlomaticState) {
+    val selectionState = state.downloadSelectionState
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp), modifier = Modifier.padding(5.sdp)) {
-        DownloadAllButton()
-        HostSelection(selectionState)
-        VideoSelection(selectionState.videosRequest)
+        DownloadAllButton(state)
+        HostSelection(selectionState, state::enqueueDownload)
+        VideoSelection(selectionState.videosRequest, state::enqueueDownload)
     }
 }
 
 @Composable
-fun DownloadAllButton() {
+fun DownloadAllButton(state: DownlomaticState) {
     Button(onClick = {
         println("Started Download of all hosts")
     }, modifier = Modifier.fillMaxWidth().height(30.sdp), contentPadding = PaddingValues(5.sdp)) {
@@ -60,19 +62,19 @@ fun DownloadAllButton() {
 }
 
 @Composable
-fun HostSelection(selectionState: DownloadSelectionState) {
-    val hostsRequest = selectionState.hostsRequest
-    var host by selectionState::selectedHost
-    val hostsRequestState = hostsRequest.state
+fun HostSelection(
+    selectionState: DownloadSelectionState,
+    enqueueDownload: (Video) -> Unit
+) {
+    val hostsRequestState = selectionState.hostsRequest.state
     val hosts = if (hostsRequestState is APIState.Loaded) hostsRequestState.payload else null
-    val videosRequest = selectionState.videosRequest
 
     Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
         DropdownField(
             if (hosts?.isNotEmpty() == true) hosts else null,
-            value = host,
+            value = selectionState.selectedHost,
             onValueChanged = {
-                host = it
+                selectionState.selectedHost = it
                 val newVideoRequest = selectionState.videosRequest
                 val videosRequestState = newVideoRequest?.state
                 if (videosRequestState is APIState.Error) {
@@ -84,7 +86,7 @@ fun HostSelection(selectionState: DownloadSelectionState) {
             onClicked = {
                 if (hostsRequestState is APIState.Error) {
                     CoroutineScope(Dispatchers.IO).launch {
-                        hostsRequest.executeRequest()
+                        selectionState.hostsRequest.executeRequest()
                     }
                 }
             },
@@ -134,34 +136,39 @@ fun HostSelection(selectionState: DownloadSelectionState) {
             }, modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
-        Button(
-            onClick = {
-                val videosRequestState = videosRequest?.state
-                if (videosRequestState is APIState.Loaded) {
-                    videosRequestState.payload.value.videos.forEach {
-                        println("Started Download of: ${it.url}")
-                    }
-                }
-            },
-            modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically),
-            contentPadding = PaddingValues(5.sdp),
-            enabled = videosRequest?.state is APIState.Loaded
-        ) {
-            Icon(MaterialTheme.icons.Download, "Download", Modifier.size(20.sdp))
-        }
-
+        DownloadHostButton(selectionState.videosRequest, enqueueDownload)
     }
 }
 
 @Composable
-fun VideoSelection(videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?) {
+fun RowScope.DownloadHostButton(
+    videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?,
+    processVideo: (Video) -> Unit
+) {
+    Button(
+        onClick = {
+            val videosRequestState = videosRequest?.state
+            if (videosRequestState is APIState.Loaded) {
+                videosRequestState.payload.value.videos.forEach(processVideo)
+            }
+        },
+        modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically),
+        contentPadding = PaddingValues(5.sdp),
+        enabled = videosRequest?.state is APIState.Loaded
+    ) {
+        Icon(MaterialTheme.icons.Download, "Download", Modifier.size(20.sdp))
+    }
+}
+
+@Composable
+fun VideoSelection(videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?, processVideo: (Video) -> Unit) {
     val videosRequestState = videosRequest?.state
     val (filter, setFilter) = remember { mutableStateOf("") }
 
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
         VideoSearchField(filter, setFilter)
 
-        VideoTreeList(videosRequestState, filter)
+        VideoTreeList(videosRequestState, filter, processVideo)
     }
 }
 
@@ -198,7 +205,7 @@ fun VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
 }
 
 @Composable
-fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String) {
+fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String, processVideo: (Video) -> Unit) {
     fun checkVideoItem(videoItem: VideoItem): Boolean {
         return videoItem.longDescription.contains(filter, true) || videoItem.videos.all {
             it.details.tags.any { tag ->
@@ -225,7 +232,7 @@ fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String) {
                 state.payload.filter(::checkVideoItem),
                 modifier = Modifier.fillMaxSize()
             ) { value, expanded ->
-                VideoTreeNode(value, expanded)
+                VideoTreeNode(value, processVideo, expanded)
             }
             is APIState.Error -> Text(
                 state.exception.message ?: "Error occurred",
@@ -239,7 +246,7 @@ fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun VideoTreeNode(value: VideoItem, expanded: Boolean) {
+private fun VideoTreeNode(value: VideoItem, processVideo: (Video) -> Unit, expanded: Boolean) {
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         TooltipArea(tooltip = {
             TooltipCard(value.longDescription)
@@ -266,9 +273,7 @@ private fun VideoTreeNode(value: VideoItem, expanded: Boolean) {
             "Download",
             modifier = Modifier.size(15.sdp).align(Alignment.CenterVertically).clip(CircleShape)
                 .clickable(onClick = {
-                    value.videos.forEach {
-                        println("Started download of: ${it.url}")
-                    }
+                    value.videos.forEach(processVideo)
                 })
         )
     }

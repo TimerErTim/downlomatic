@@ -19,7 +19,9 @@ import kotlin.system.measureTimeMillis
  * in the [eu.timerertim.downlomatic.hosts] package.
  */
 object Scraper {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    @OptIn(DelicateCoroutinesApi::class)
+    private val dispatcher = newSingleThreadContext("Web Scraper")
+    private val scope = CoroutineScope(dispatcher)
 
     /**
      * Controls the removal and skipping of redundant elements and data.
@@ -51,7 +53,7 @@ object Scraper {
      * Stops the fetching process.
      */
     fun stop() {
-        scope.cancel()
+        dispatcher.close()
     }
 }
 
