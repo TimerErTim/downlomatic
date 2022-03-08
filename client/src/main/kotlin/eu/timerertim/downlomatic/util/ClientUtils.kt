@@ -9,6 +9,7 @@ import eu.timerertim.downlomatic.api.ktorClientLazy
 import eu.timerertim.downlomatic.console.ClientArgument
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
+import eu.timerertim.downlomatic.state.GlobalDownlomaticState
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlin.system.exitProcess
@@ -70,6 +71,11 @@ object ClientUtils {
             } else {
                 Log.wtf("Argument ${ClientArgument.SERVER} can never have no parsed parameter")
             }
+        }
+
+        // Setup core parameters
+        if (arguments.hasArgument(ClientArgument.NSFW)) {
+            GlobalDownlomaticState.downloadSelectionState.nsfw = true
         }
     }
 

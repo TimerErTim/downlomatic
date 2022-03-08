@@ -1,12 +1,12 @@
 package eu.timerertim.downlomatic.hosts
 
-import eu.timerertim.downlomatic.core.fetch.Host
-import eu.timerertim.downlomatic.core.fetch.HostConfig
-import eu.timerertim.downlomatic.core.fetch.nodes.page
-import eu.timerertim.downlomatic.core.fetch.nodes.video
 import eu.timerertim.downlomatic.core.meta.Language
 import eu.timerertim.downlomatic.core.meta.Tag
 import eu.timerertim.downlomatic.core.meta.Translation
+import eu.timerertim.downlomatic.core.scraping.HostConfig
+import eu.timerertim.downlomatic.core.scraping.HostScraper
+import eu.timerertim.downlomatic.core.scraping.nodes.page
+import eu.timerertim.downlomatic.core.scraping.nodes.video
 import eu.timerertim.downlomatic.util.WebScrapers
 import kotlinx.datetime.toKotlinLocalDate
 import org.openqa.selenium.By
@@ -14,10 +14,12 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.time.LocalDate
 
-object HentaiplayNet : Host("hentaiplay.net",
-    HostConfig(
+object HentaiplayNet : HostScraper(
+    "hentaiplay.net", true,
+    config = HostConfig(
         5250..9500L
-    ), {
+    ),
+    fetch = {
         val driver = WebScrapers.noJavaScript()
         driver["https://hentaiplay.net/hentai-index/"]
 

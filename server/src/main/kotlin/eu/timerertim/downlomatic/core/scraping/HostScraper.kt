@@ -1,8 +1,9 @@
-package eu.timerertim.downlomatic.core.fetch
+package eu.timerertim.downlomatic.core.scraping
 
 import eu.timerertim.downlomatic.api.VideoEntry
-import eu.timerertim.downlomatic.core.fetch.nodes.RootNode
-import eu.timerertim.downlomatic.core.fetch.nodes.VideoNode
+import eu.timerertim.downlomatic.core.host.Host
+import eu.timerertim.downlomatic.core.scraping.nodes.RootNode
+import eu.timerertim.downlomatic.core.scraping.nodes.VideoNode
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
@@ -12,16 +13,20 @@ import org.litote.kmongo.nin
 
 /**
  * This is the superclass of all registered Hosts the server provides. It only needs three things:
- * - The [domain] of the host. The Host will be registered with this name both internally and publicly.
+ * - The [host] of the scraper. The scraper will be registered with this host's domain both internally and publicly.
  * - The [config] of the website which contains the technical configuration
  * - A function which describes how to [fetch] videos from the host
- * In order for host implementations to be recognized, they need bo be placed in the package [eu.timerertim.downlomatic.hosts].
+ * In order for scraper implementations to be recognized, they need bo be placed in the package [eu.timerertim.downlomatic.hosts].
  */
-abstract class Host(
-    val domain: String,
+abstract class HostScraper(
+    val host: Host,
     private val config: HostConfig,
     fetch: suspend RootNode.() -> Unit
 ) {
+    constructor(domain: String, isNSWF: Boolean = false, config: HostConfig, fetch: suspend RootNode.() -> Unit) : this(
+        Host(domain, isNSWF), config, fetch
+    )
+
     private val root by lazy { RootNode(this, config, fetch) }
     private val idVideos = mutableListOf<Int>()
 
@@ -32,12 +37,13 @@ abstract class Host(
         root.fetch()
         // Remove videos which haven't been fetched.
         if (Scraper.patchRedundancy && !config.testing) {
-            val collection = MongoDBConnection.db.getCollection<VideoEntry>(domain)
+            val collection = MongoDBConnection.videoDB.getCollection<VideoEntry>(host.domain)
             val deletedCount = collection.deleteMany(VideoEntry::_id nin idVideos).deletedCount
             if (deletedCount > 0) {
-                Log.w("$deletedCount videos were removed from the $domain MongoDB collection")
+                Log.w("$deletedCount videos were removed from the ${host.domain} MongoDB collection")
             }
         }
+        idVideos.clear()
     }
 
     private suspend fun RootNode.fetch() = with(this) { _fetch() }
@@ -47,7 +53,7 @@ abstract class Host(
     /**
      * This class can be used to [test] a specific [host] instance.
      */
-    class Tester(private val host: Host) {
+    class Tester(private val host: HostScraper) {
 
         /**
          * Tests the [host] by executing the fetch method but not using the

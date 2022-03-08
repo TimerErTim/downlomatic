@@ -1,14 +1,16 @@
 package eu.timerertim.downlomatic.util
 
 import com.mongodb.MongoClientException
+import eu.timerertim.downlomatic.api.HostEntry
 import eu.timerertim.downlomatic.api.RESTService
+import eu.timerertim.downlomatic.api.VideoEntry
 import eu.timerertim.downlomatic.console.ConsoleUtils
 import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
-import eu.timerertim.downlomatic.core.fetch.Scraper
+import eu.timerertim.downlomatic.core.scraping.Scraper
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
-import org.bson.Document
+import org.litote.kmongo.getCollection
 import kotlin.system.exitProcess
 
 /**
@@ -47,9 +49,14 @@ object ServerUtils {
             exit(Utils.CONNECTION_EXIT_CODE)
         }
         if (arguments.hasArgument(ServerArgument.CLEAR)) {
-            MongoDBConnection.db.listCollectionNames().toList().takeIf { it.isNotEmpty() }
-                ?.also { Log.i("The following hosts will be cleared: ${it.joinToString()}") }
-                ?.forEach { MongoDBConnection.db.getCollection(it).deleteMany(Document()) }
+            val hostCollection = MongoDBConnection.hostDB.getCollection<HostEntry>("hosts")
+            val hosts = hostCollection.find().toList().takeIf { it.isNotEmpty() }
+            hosts?.also {
+                Log.i("The following hosts will be cleared: ${it.joinToString { host -> host.domain }}")
+                hostCollection.drop()
+            }?.forEach {
+                MongoDBConnection.videoDB.getCollection<VideoEntry>(it.domain).drop()
+            }
         }
 
         // Setup fetcher hostConfig

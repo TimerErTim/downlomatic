@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.core.fetch.nodes
+package eu.timerertim.downlomatic.core.scraping.nodes
 
 
 sealed interface ParentNode {

@@ -1,6 +1,5 @@
 package eu.timerertim.downlomatic.core.video
 
-import eu.timerertim.downlomatic.core.fetch.Fetcher
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.util.json.URLSerializer
 import kotlinx.serialization.Serializable
@@ -14,6 +13,5 @@ import java.net.URL
 data class Video(
     @Serializable(with = URLSerializer::class)
     val url: URL,
-    val fetcher: Fetcher,
     val details: VideoDetails
 )

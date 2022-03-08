@@ -1,12 +1,12 @@
 package eu.timerertim.downlomatic.hosts
 
-import eu.timerertim.downlomatic.core.fetch.Host
-import eu.timerertim.downlomatic.core.fetch.HostConfig
-import eu.timerertim.downlomatic.core.fetch.nodes.page
-import eu.timerertim.downlomatic.core.fetch.nodes.video
 import eu.timerertim.downlomatic.core.meta.Language
 import eu.timerertim.downlomatic.core.meta.Tag
 import eu.timerertim.downlomatic.core.meta.Translation
+import eu.timerertim.downlomatic.core.scraping.HostConfig
+import eu.timerertim.downlomatic.core.scraping.HostScraper
+import eu.timerertim.downlomatic.core.scraping.nodes.page
+import eu.timerertim.downlomatic.core.scraping.nodes.video
 import eu.timerertim.downlomatic.util.WebScrapers
 import kotlinx.datetime.toKotlinLocalDate
 import org.openqa.selenium.By
@@ -16,10 +16,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
 
-object HentaigasmCom : Host("hentaigasm.com",
-    HostConfig(
+object HentaigasmCom : HostScraper(
+    "hentaigasm.com", true,
+    config = HostConfig(
         4000..7500L
-    ), {
+    ),
+    fetch = {
         val driver = WebScrapers.noJavaScript()
 
         var reachedLastPage = false

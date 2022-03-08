@@ -15,8 +15,11 @@ object MongoDBConnection {
     private const val USER = "downlomaticUser"
     private const val PASSWORD = "wzrw<X/!8\$JQC=W&"
     private const val APPLICATION = "downlomatic"
+    private const val HOST_DATABASE_NAME = "${APPLICATION}_HOSTS"
+    private const val VIDEO_DATABASE_NAME = "${APPLICATION}_VIDEOS"
 
-    val db: MongoDatabase
+    val videoDB: MongoDatabase
+    val hostDB: MongoDatabase
 
     init {
         // Logger deactivation
@@ -37,14 +40,17 @@ object MongoDBConnection {
         ).build()
 
         // Connect
-        val client = KMongo.createClient(authSettings)
+        var client = KMongo.createClient(authSettings)
 
         // Get DB
-        db = try {
-            client.getDatabase(APPLICATION).also { it.getCollection("unused").find().forEach { } }
+        videoDB = try {
+            client.getDatabase(VIDEO_DATABASE_NAME).also { it.getCollection("unused").find().forEach { } }
         } catch (e: MongoSecurityException) {
-            KMongo.createClient(unauthSettings).getDatabase(APPLICATION)
+            client = KMongo.createClient(unauthSettings)
+            client.getDatabase(VIDEO_DATABASE_NAME)
         }
+        testConnection()
+        hostDB = client.getDatabase(HOST_DATABASE_NAME)
     }
 
     /**
@@ -52,6 +58,6 @@ object MongoDBConnection {
      */
     @JvmStatic
     fun testConnection() {
-        db.getCollection("unused").find().forEach { }
+        videoDB.getCollection("unused").find().forEach { }
     }
 }

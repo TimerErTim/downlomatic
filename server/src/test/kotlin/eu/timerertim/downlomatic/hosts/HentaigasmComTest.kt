@@ -1,8 +1,8 @@
 package eu.timerertim.downlomatic.hosts
 
-import eu.timerertim.downlomatic.core.fetch.Host
+import eu.timerertim.downlomatic.core.scraping.HostScraper
 
 fun main() {
-    val tester = Host.Tester(HentaigasmCom)
+    val tester = HostScraper.Tester(HentaigasmCom)
     tester.test()
 }

@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.core.fetch
+package eu.timerertim.downlomatic.core.parsing
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,6 +6,6 @@ import java.net.URL
 
 @Serializable
 @SerialName("Plain")
-object PlainFetcher : Fetcher() {
-    override suspend fun fetch(url: URL) = url
+object PlainParser : Parser() {
+    override suspend fun parse(url: URL) = url
 }

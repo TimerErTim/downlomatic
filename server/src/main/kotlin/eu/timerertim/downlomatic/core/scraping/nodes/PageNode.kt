@@ -1,4 +1,4 @@
-package eu.timerertim.downlomatic.core.fetch.nodes
+package eu.timerertim.downlomatic.core.scraping.nodes
 
 import eu.timerertim.downlomatic.util.WebScrapers
 import eu.timerertim.downlomatic.util.logging.Log
@@ -36,7 +36,7 @@ open class PageNode(parentNode: ParentNode, url: URL, private val process: suspe
                 Log.d("Processed page \"$url\"")
             }
         } catch (ex: Exception) {
-            Log.e("An error occurred while processing URL \"$url\" of host ${host.domain}", ex)
+            Log.e("An error occurred while processing URL \"$url\" of host ${scraper.host.domain}", ex)
             return
         }
 

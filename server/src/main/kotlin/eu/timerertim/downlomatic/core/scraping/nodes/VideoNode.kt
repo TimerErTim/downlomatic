@@ -1,11 +1,11 @@
-package eu.timerertim.downlomatic.core.fetch.nodes
+package eu.timerertim.downlomatic.core.scraping.nodes
 
 import com.mongodb.client.model.ReplaceOptions
 import eu.timerertim.downlomatic.api.VideoEntry
 import eu.timerertim.downlomatic.api.toEntry
-import eu.timerertim.downlomatic.core.fetch.Fetcher
-import eu.timerertim.downlomatic.core.fetch.Host
-import eu.timerertim.downlomatic.core.fetch.PlainFetcher
+import eu.timerertim.downlomatic.core.parsing.Parser
+import eu.timerertim.downlomatic.core.parsing.PlainParser
+import eu.timerertim.downlomatic.core.scraping.HostScraper
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.MongoDBConnection
 import eu.timerertim.downlomatic.util.logging.Log
@@ -17,7 +17,7 @@ import java.net.URL
 class VideoNode(
     parentNode: ParentNode,
     url: URL,
-    private val fetcher: Fetcher = PlainFetcher,
+    private val fetcher: Parser = PlainParser,
     private val modify: suspend VideoNode.() -> Unit
 ) :
     Node(parentNode as Node), ChildNode {
@@ -34,19 +34,19 @@ class VideoNode(
         try {
             modify()
         } catch (ex: Exception) {
-            Log.e("An error occurred while modifying video under URL \"$url\" of host ${host.domain}", ex)
+            Log.e("An error occurred while modifying video under URL \"$url\" of host ${scraper.host.domain}", ex)
             return
         }
 
         // Generate video object
         val details = videoDetailsBuilder.build()
         try {
-            val video = Video(url, fetcher, details)
+            val video = Video(url, details)
 
             // Insert into db or display on screen
             if (!hostConfig.testing) {
-                val collection = MongoDBConnection.db.getCollection<VideoEntry>(host.domain)
-                collection.replaceOneById(details.idHash, video.toEntry(), ReplaceOptions().apply {
+                val collection = MongoDBConnection.videoDB.getCollection<VideoEntry>(scraper.host.domain)
+                collection.replaceOneById(details.idHash, video.toEntry(fetcher), ReplaceOptions().apply {
                     upsert(true)
                 })
             } else {
@@ -57,8 +57,8 @@ class VideoNode(
         }
 
         // Register the video as inserted
-        host.idVideos += details.idHash
+        scraper.idVideos += details.idHash
     }
 
-    private val Host.idVideos get() = with(this) { _idVideos }
+    private val HostScraper.idVideos get() = with(this) { _idVideos }
 }
