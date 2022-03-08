@@ -11,7 +11,8 @@
             </option>
             <option name="taskNames">
                 <list>
-                    <option value="runClient"/>
+                    <option value="client:run"/>
+                    <option value="--args=&quot;--verbose -d out/ -x&quot;"/>
                 </list>
             </option>
             <option name="vmOptions" value=""/>

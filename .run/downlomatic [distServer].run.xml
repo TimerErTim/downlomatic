@@ -11,7 +11,7 @@
             </option>
             <option name="taskNames">
                 <list>
-                    <option value="distServer"/>
+                    <option value="server:installDist"/>
                 </list>
             </option>
             <option name="vmOptions" value=""/>

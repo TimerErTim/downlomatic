@@ -11,7 +11,8 @@
             </option>
             <option name="taskNames">
                 <list>
-                    <option value="runClientLocally"/>
+                    <option value="client:run"/>
+                    <option value="--args=&quot;--verbose -x -d out/ --server localhost --port 8082&quot;"/>
                 </list>
             </option>
             <option name="vmOptions" value=""/>
