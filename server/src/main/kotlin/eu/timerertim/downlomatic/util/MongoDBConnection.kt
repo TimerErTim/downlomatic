@@ -15,8 +15,8 @@ object MongoDBConnection {
     private const val USER = "downlomaticUser"
     private const val PASSWORD = "wzrw<X/!8\$JQC=W&"
     private const val APPLICATION = "downlomatic"
-    private const val HOST_DATABASE_NAME = "${APPLICATION}_HOSTS"
-    private const val VIDEO_DATABASE_NAME = "${APPLICATION}_VIDEOS"
+    private const val HOST_DATABASE_NAME = "${APPLICATION}_hosts"
+    private const val VIDEO_DATABASE_NAME = "${APPLICATION}_videos"
 
     val videoDB: MongoDatabase
     val hostDB: MongoDatabase
