@@ -85,8 +85,8 @@ fun startScraper() {
     // Initialize hosts in db
     val hostCollection = MongoDBConnection.hostDB.getCollection<HostEntry>("hosts")
     hostScrapers.map { it.host.toEntry() }.forEach {
-        hostCollection.updateOne(it, upsert())
-        MongoDBConnection.videoDB.createCollection(it.domain)
+        val updateResult = hostCollection.updateOne(it, upsert())
+        if (updateResult.upsertedId != null) MongoDBConnection.videoDB.createCollection(it.domain)
     }
 
     // Remove redundant host collections from db
