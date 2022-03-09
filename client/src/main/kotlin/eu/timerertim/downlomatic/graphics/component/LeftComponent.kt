@@ -40,23 +40,48 @@ import java.awt.Cursor
 fun DownlomaticLeftContent(state: DownlomaticState) {
     val selectionState = state.downloadSelectionState
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp), modifier = Modifier.padding(5.sdp)) {
-        DownloadAllButton(state)
+        DownloadAllButton(selectionState.allVideosRequest, state::enqueueDownload)
         HostSelection(selectionState, state::enqueueDownload)
         VideoSelection(selectionState.videosRequest, state::enqueueDownload)
     }
 }
 
 @Composable
-fun DownloadAllButton(state: DownlomaticState) {
-    Button(onClick = {
-        println("Started Download of all hosts")
-    }, modifier = Modifier.fillMaxWidth().height(30.sdp), contentPadding = PaddingValues(5.sdp)) {
+fun DownloadAllButton(request: APIRequest<List<Video>, List<Video>>, enqueueDownload: (Video) -> Unit) {
+    val requestState = request.state
+    Button(
+        onClick = {
+            CoroutineScope(Dispatchers.IO).launch {
+                request.executeRequest()
+                val newRequestState = request.state
+                if (newRequestState is APIState.Loaded) {
+                    newRequestState.payload.forEach(enqueueDownload)
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth().height(30.sdp),
+        contentPadding = PaddingValues(5.sdp),
+        enabled = requestState !is APIState.Waiting
+    )
+    {
         Row(horizontalArrangement = Arrangement.spacedBy(7.5.sdp)) {
             Icon(
                 MaterialTheme.icons.Download, "Download",
                 modifier = Modifier.size(20.sdp).align(Alignment.CenterVertically)
             )
             Text("All Hosts", fontSize = 15.ssp)
+            when (requestState) {
+                is APIState.Waiting -> CircularProgressIndicator(
+                    strokeWidth = 2.sdp,
+                    modifier = Modifier.size(20.sdp).align(Alignment.CenterVertically)
+                )
+                is APIState.Error -> Icon(
+                    MaterialTheme.icons.ErrorOutline, "Error",
+                    tint = MaterialTheme.colors.error,
+                    modifier = Modifier.size(20.sdp).align(Alignment.CenterVertically)
+                )
+                else -> {}
+            }
         }
     }
 }
