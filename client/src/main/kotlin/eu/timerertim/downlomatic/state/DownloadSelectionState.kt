@@ -18,6 +18,7 @@ class DownloadSelectionState {
     val selectedHostState = mutableStateOf<Host?>(null)
     var selectedHost by selectedHostState
 
+    val allVideosRequest = APIRequest<List<Video>>(APIPath.ALL_VIDEOS)
 
     val hostsRequest by lazy {
         val request = APIRequest<List<Host>, List<Host>>(APIPath.ALL_HOSTS) {
