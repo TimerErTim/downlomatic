@@ -40,7 +40,7 @@ compose.desktop {
             packageName = "Downlomatic"
             packageVersion = version.toString()
             description = "Automatic Multimedia Download Tool"
-            copyright = "© 2021 Tim Peko"
+            copyright = "© 2022 Tim Peko"
             vendor = "TimerErTim"
             licenseFile.set(rootProject.file("LICENSE"))
 
