@@ -29,6 +29,7 @@ open class Console(config: ConsoleConfig) {
     }
 
     private val usage = config.usage
+    private val name = config.executableName
     private val header = config.header
     private val footer = config.footer
 
@@ -83,8 +84,8 @@ open class Console(config: ConsoleConfig) {
     fun printHelp() {
         val help = HelpFormatter()
         help.printHelp(
-            (usage ?: "Downlomatic") + "\n\n",
-            header,
+            (usage ?: name ?: "Downlomatic"),
+            "\n\n" + header,
             shownArguments,
             "\n" + footer,
             usage == null

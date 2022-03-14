@@ -10,7 +10,8 @@ data class ConsoleConfig(
     val argumentGroups: Array<out ArgumentGroup>,
     val usage: String? = null,
     val header: String = "",
-    val footer: String = ""
+    val footer: String = "",
+    val executableName: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

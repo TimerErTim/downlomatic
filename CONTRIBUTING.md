@@ -80,7 +80,7 @@ reporter.
 
 ### Pull Requests
 
-Pull Requests are always welcome and a great way to your changes and fixes included in the next release.
+Pull Requests are always welcome and a great way to include your changes and fixes in the next release.
 
 This project follows the ["fork-and-pull" Git workflow](https://github.com/susam/gitpr). This includes:
 
@@ -90,8 +90,6 @@ This project follows the ["fork-and-pull" Git workflow](https://github.com/susam
 
 Here is a quick list of things your Pull Request should do:
 
-- Increase the version numbers in `build.gradle` under the effected module to the new version that this Pull Request
-  would represent. The [versioning scheme](#versioning-scheme) Downlomatic uses is [SemVer](http://semver.org/).
 - Only fix/add the functionality in question
 - Pass a thorough [testing procedure](#testing)
 - Include [documentation](#documentation) via JavaDoc/KDoc
@@ -111,19 +109,19 @@ style and custom run configurations are used for this repository.
 
 ### Adding Hosts
 
-The most common contribution is implementing more hosts. Hosts are crawled for videos by the server. The code
-implementation tells the server how to do that.
+The most common contribution is implementing more hosts. Hosts are websites which the server scrapes for videos. The
+code implementation tells the server how to do that.
 
-Unfortunately not all websites are technically possible to implement. The following guidelines help you find a valid
-page:
+Unfortunately not all websites are technically possible to implement. The following guidelines help you find an ideal
+one:
 
 - [ ] Access to video may not be protected by reCaptcha
 - [ ] Video may not be a "blob:" link or torrent download (only HTTP protocol supported at the moment)
 - [ ] Website should not be protected by Cloudflare DDoS protection (while not ideal, it's still possible to implement
   such a website)
 
-To add support for a specific website/host, all you have to do is extending the abstract `Host` class with a no argument
-constructor. How to do that and what to watch out for is documented with KDoc. You can also inspect existing
+To add support for a specific website/host, all you have to do is extending the abstract `HostScraper` class with a no
+argument constructor. How to do that and what to watch out for is documented with KDoc. You can also inspect existing
 implementations.
 
 The resulting subclass must reside inside the `eu.timerertim.downlomatic.hosts` package in the server module. You should
@@ -168,10 +166,8 @@ commit message.
 
 ### Versioning Scheme
 
-The version of this project is defined in the `build.gradle` file. The scheme used is [SemVer](http://semver.org/).
-Please update the version in the according module before submitting your Pull Requests. You may find, that the current
-version has a suffix indicating pre-releases. If that's the case, leave the suffix as is and only change the major,
-minor, and patch number.
+The version of this project is defined in the gradle file for each module. The scheme used is
+[SemVer](http://semver.org/).
 
 If you already know what kind of change you will make (bug fix, backward compatible, or breaking) you can use that to
 figure out whether to open an issue before you submit a PR. Incrementing
@@ -185,8 +181,8 @@ Even though it's not always necessary, you can very well create issues before su
 ## Testing
 
 Always test your code before submitting Pull Requests and make sure any changes or additions you make actually work.
-Write your tests in the test module under `src/test`. Tests should be named after the class they test appended with
-"**Test**" and be placed in the same package as the tested class. Create that package if it doesn't exist already.
+Write your tests in the test module under `<module_name>/test`. Tests should be named after the class they test appended
+with "**Test**" and be placed in the same package as the tested class. Create that package if it doesn't exist already.
 
 The project provides JUnit for automated testing. You can use this library or test manually. Either way, be confident
 the code works and doesn't break anything.

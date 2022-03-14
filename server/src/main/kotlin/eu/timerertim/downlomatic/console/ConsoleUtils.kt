@@ -8,6 +8,6 @@ object ConsoleUtils : Console(
     ConsoleConfig(
         ServerArgument.values(),
         ServerArgumentGroup.values(),
-        "java -jar downlomatic"
+        "server [--ignore-redundancy] [--port <port>]"
     )
 )

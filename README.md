@@ -20,14 +20,14 @@ Downloads many animes, series, movies - you name it - of your choice automatical
 ## Installation
 
 Go to the [release section](https://github.com/TimerErTim/downlomatic/releases) and download the latest version for your
-operating system. Extract the .zip file to your desired destination. Inside the extracted archive you will find a folder
-called "bin" containing a "downlomatic" file. You can create a shortcut to this file (or to the equally named .bat file
-if you happen to use Windows).
+operating system. You can choose the installer or the portable version. If you choose the portable, extract the .zip
+file to your desired destination. Inside the extracted archive you will find an executable "Downlomatic" file. You can
+create a shortcut to this file and place it on the desktop or the start menu for easier access.
 
 ## Usage
 
-Now you can start the GUI by double-clicking either said shortcut, or the target file directly. If you want to start it
-per command line, you can get more information by executing `downlomatic --help`.
+Now you can start the GUI by double-clicking either said shortcut, or the executable directly. If you want to start it
+per command line, you can get more information by executing `Downlomatic --help`.
 
 ## Support
 
@@ -37,8 +37,8 @@ business.
 
 ## Contributing
 
-Contributions are always welcome. This can be done by creating issues, promoting the project, implement more media
-providers/hosts or working on the source code. Everything that helps the project growing is deeply appreciated.  
+Contributions are always welcome. This can be done by creating issues, promoting the project, implement more hosts or
+working on the source code. Everything that helps the project growing is deeply appreciated.
 
 Please read through the [contribution guideline](CONTRIBUTING.md) before contributing as it contains information which
 may be helpful for you.
@@ -46,9 +46,9 @@ may be helpful for you.
 ## Roadmap
 
 - [x] Create easily extendable server
-- [ ] Release CLI client program
-- [ ] Release GUI on top of already working CLI version
-- [ ] Add more supported media providers
+- [x] Release GUI client
+- [ ] Release CLI mode for client
+- [ ] Add more supported hosts
 
 ## Credits
 

@@ -13,7 +13,7 @@ enum class ClientArgument(override val option: Option, override val isHidden: Bo
     VERBOSE(Option("v", "verbose", false, "enables all levels of log messages")),
     NO_FILE_LOGGING(Option(null, "no-file-logging", false, "disables logging to file"), true),
     DESTINATION(Option("d", "destination", true, "where to download the videos to"), {
-        argName = "directory "
+        argName = "directory"
     }),
     NSFW(Option("x", "nsfw", false, "display NSFW hosts")),
     PORT(Option(null, "port", true, "on what port of the server to connect to"), true, {
