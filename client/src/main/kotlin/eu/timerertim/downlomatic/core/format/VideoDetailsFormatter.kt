@@ -9,7 +9,7 @@ import java.util.stream.Collectors
 import kotlin.reflect.KProperty1
 
 /**
- * Allows to format video titles comparable to [java.time.format.DateTimeFormatter].
+ * Allows formatting video titles comparable to [java.time.format.DateTimeFormatter].
  *
  *
  * The formatting happens
