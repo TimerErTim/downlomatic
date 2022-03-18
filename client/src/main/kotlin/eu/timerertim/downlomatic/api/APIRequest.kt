@@ -33,7 +33,7 @@ class APIRequest<I, O>(val path: APIPath, val transformer: (I) -> O) {
                 }
 
                 val newState = try {
-                    val result = ktorClient.get<I>(path = query) //mockRequest(path, *arguments) as I
+                    val result = ktorClient.get<I>(path = query)
                     APIState.Loaded(transformer(result))
 
                 } catch (exception: Exception) {

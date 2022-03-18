@@ -1,25 +1,40 @@
 package eu.timerertim.downlomatic.graphics.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerIconDefaults
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import eu.timerertim.downlomatic.core.format.VideoDetailsFormatter
 import eu.timerertim.downlomatic.graphics.component.util.BasicOutlinedTextField
+import eu.timerertim.downlomatic.graphics.component.util.TooltipCard
+import eu.timerertim.downlomatic.graphics.component.util.TooltipType
+import eu.timerertim.downlomatic.graphics.component.util.openDirectoryDialog
+import eu.timerertim.downlomatic.graphics.theme.icons
 import eu.timerertim.downlomatic.graphics.theme.outline
 import eu.timerertim.downlomatic.graphics.window.sdp
 import eu.timerertim.downlomatic.graphics.window.ssp
 import eu.timerertim.downlomatic.state.DownloadConfigurationState
-import javax.swing.JFileChooser
 
 @Composable
 fun DownlomaticRightContent(configurationState: DownloadConfigurationState) {
@@ -29,9 +44,11 @@ fun DownlomaticRightContent(configurationState: DownloadConfigurationState) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun ColumnScope.FormatField(videoFormatState: MutableState<String?>, defaultVideoFormat: String) {
     val (format, setFormat) = videoFormatState
+    val uriHandler = LocalUriHandler.current
 
     Column(verticalArrangement = Arrangement.spacedBy(1.sdp)) {
         Text("Video Format", style = MaterialTheme.typography.overline.copy(letterSpacing = 0.5.ssp))
@@ -44,6 +61,25 @@ fun ColumnScope.FormatField(videoFormatState: MutableState<String?>, defaultVide
                     style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline,
                     maxLines = 1, overflow = TextOverflow.Ellipsis
                 )
+            },
+            trailingIcon = {
+                TooltipArea(tooltip = {
+                    TooltipCard(
+                        VideoDetailsFormatter.IDENTIFIER_DESCRIPTION + "\n" +
+                                "\n" +
+                                "Clicking this opens a more detailed webpage",
+                        maxWidth = 500.sdp, type = TooltipType.INFO
+                    )
+                }) {
+                    Icon(
+                        MaterialTheme.icons.HelpOutline, "Format Help", tint = MaterialTheme.colors.primary,
+                        modifier = Modifier.requiredSize(16.sdp).clip(CircleShape)
+                            .clickable(onClick = {
+                                uriHandler.openUri(VideoDetailsFormatter.WIKI_URL)
+                            })
+                            .pointerHoverIcon(PointerIconDefaults.Default)
+                    )
+                }
             }
         )
     }
@@ -71,8 +107,8 @@ fun ColumnScope.DestinationField(destinationDirectory: MutableState<String?>, de
             )
             Button(
                 onClick = {
-                    //openFileDialog(title = "Destination", allowedExtensions = emptyList())
-                    JFileChooser().showSaveDialog(null)
+                    val directory = openDirectoryDialog(title = "Destination")
+                    if (directory != null) setDestination(directory)
                 },
                 modifier = Modifier.size(textFieldSize.height.dp).align(Alignment.CenterVertically),
                 contentPadding = PaddingValues(5.sdp)

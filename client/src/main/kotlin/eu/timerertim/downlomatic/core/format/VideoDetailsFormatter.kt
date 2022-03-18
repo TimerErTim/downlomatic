@@ -81,6 +81,39 @@ class VideoDetailsFormatter @JvmOverloads constructor(pattern: String = DEFAULT_
             }
         )
 
+        /***
+         * This is a human-readable description of the available identifiers and their function. This should always
+         * be up-to-date, as it is also presented to the user.
+         */
+        val IDENTIFIER_DESCRIPTION = """
+            You have the following tools to describe a universal file name for every
+            video downloaded
+            
+            Identifiers:
+            • /N → the general name/title of the video
+            • /S → the name of the series
+            • /s → the number of the season
+            • /e → the number of the episode
+            • /L → the main audience language of the episode
+            • /A → the spoken (audio) language of the episode
+            • /V → the subtitle (video) language of the episode
+            • /T → the type of translation
+            • /y → the release year
+
+            Literals:
+            • // → the OS specific directory separator ("/" on Unix, "\" on Windows)
+            
+            Illegals:
+            • /, \, [, ], :, *, ?, ", <, >, |
+            
+            Segments:
+            • /[ → Beginning of a segment
+            • /] → End of a segment
+
+            Modified Identifiers:
+            • /?N, /?S,... → Segment needs that value
+            • /!N, /!S,... → Segment may not have that value
+        """.trimIndent()
     }
 
     private sealed interface Processable {

@@ -26,3 +26,20 @@ fun openFileDialog(
         isVisible = true
     }.files.toSet()
 }
+
+fun openDirectoryDialog(
+    window: ComposeWindow? = null,
+    title: String
+): String? {
+    return FileDialog(window, title, FileDialog.SAVE).apply {
+        // windows
+        file = null // e.g. '*.jpg'
+
+        // linux
+        setFilenameFilter { _, _ ->
+            false
+        }
+
+        isVisible = true
+    }.directory
+}

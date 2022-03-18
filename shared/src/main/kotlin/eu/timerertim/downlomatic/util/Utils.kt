@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.security.MessageDigest
+import java.util.*
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -130,19 +131,29 @@ object Utils {
                 yield()
             }
 
-        // Generate the checksum
-        val digest = MessageDigest.getInstance("SHA-512")
-        val hash = digest.digest(checksumBuffer.toByteArray())
+            // Generate the checksum
+            val digest = MessageDigest.getInstance("SHA-512")
+            val hash = digest.digest(checksumBuffer.toByteArray())
 
-        // Create Hex String
-        val hexString = StringBuilder()
-        for (byte in hash) {
-            var h: String = Integer.toHexString(0xFF and byte.toInt())
-            while (h.length < 2)
-                h = "0$h"
-            hexString.append(h)
-            yield()
-        }
+            // Create Hex String
+            val hexString = StringBuilder()
+            for (byte in hash) {
+                var h: String = Integer.toHexString(0xFF and byte.toInt())
+                while (h.length < 2)
+                    h = "0$h"
+                hexString.append(h)
+                yield()
+            }
             hexString.toString()
+        }
+
+    /**
+     * Capitalizes this string by title casing the first char if it is lowercase
+     */
+    @JvmStatic
+    fun String.capitalized() = replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+            Locale.getDefault()
+        ) else it.toString()
     }
 }

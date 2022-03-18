@@ -239,19 +239,19 @@ fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String, process
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.small).fillMaxSize()
             .padding(5.sdp)
     ) {
         when (state) {
             null -> Text(
-                "No host selected...",
+                "Video List",
                 color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.Center)
             )
             is APIState.Waiting -> CircularProgressIndicator(
                 strokeWidth = 2.sdp,
-                modifier = Modifier.size(24.sdp).align(Alignment.CenterHorizontally)
+                modifier = Modifier.size(24.sdp).align(Alignment.Center)
             )
             is APIState.Loaded -> TreeList(
                 state.payload.filter(::checkVideoItem),
@@ -262,7 +262,7 @@ fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String, process
             is APIState.Error -> Text(
                 state.exception.message ?: "Error occurred",
                 color = MaterialTheme.colors.error, style = MaterialTheme.typography.body1,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.TopCenter)
             )
             else -> {}
         }

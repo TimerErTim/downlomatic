@@ -18,10 +18,12 @@ class DownloadSelectionState {
     val selectedHostState = mutableStateOf<Host?>(null)
     var selectedHost by selectedHostState
 
-    val allVideosRequest = APIRequest<List<Video>>(APIPath.ALL_VIDEOS)
+    val allVideosRequest = APIRequest(APIPath.ALL_VIDEOS) { it: List<Video> ->
+        it.filter { true }
+    }
 
     val hostsRequest by lazy {
-        val request = APIRequest<List<Host>, List<Host>>(APIPath.ALL_HOSTS) {
+        val request = APIRequest(APIPath.ALL_HOSTS) { it: List<Host> ->
             it.filter { host -> !host.isNSFW || nsfw }
         }
         CoroutineScope(Dispatchers.IO).launch {

@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.timerertim.downlomatic.core.download.Download
 import eu.timerertim.downlomatic.core.download.DownloadObserver
@@ -26,32 +28,52 @@ fun DownlomaticCenterContent(downloadManagerState: DownloadManagerState) {
 
 @Composable
 fun ColumnScope.CurrentDownloadList(downloadPool: MutableList<DownloadObserver>) {
-    ScrollableLazyColumn(
+    Box(
         modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.medium).padding(5.sdp)
-            .weight(2F)
+            .fillMaxWidth().weight(2F)
     ) {
-        itemsIndexed(downloadPool) { index, it ->
-            Box(Modifier.padding(end = 4.sdp)) {
-                if (index > 0) Divider(thickness = 1.sdp, modifier = Modifier.padding(end = 4.sdp))
-                CurrentDownloadCard(it)
+        if (downloadPool.isNotEmpty()) {
+            ScrollableLazyColumn {
+                itemsIndexed(downloadPool) { index, it ->
+                    Box(Modifier.padding(end = 4.sdp)) {
+                        if (index > 0) Divider(thickness = 1.sdp, modifier = Modifier.padding(end = 4.sdp))
+                        CurrentDownloadCard(it)
+                    }
+                }
             }
+        } else {
+            Text(
+                "Current Downloads",
+                color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
 
 @Composable
 fun ColumnScope.QueuedDownloadList(downloadQueue: MutableList<Download>) {
-    ScrollableLazyColumn(
+    Box(
         modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.medium).padding(5.sdp)
-            .weight(3F)
+            .fillMaxWidth().weight(3F)
     ) {
-        itemsIndexed(downloadQueue) { index, it ->
-            Box(Modifier.padding(end = 4.sdp)) {
-                if (index > 0) Divider(thickness = 1.sdp, modifier = Modifier.padding(end = 4.sdp))
-                QueuedDownloadCard(it, onStopClick = {
-                    downloadQueue.remove(it)
-                })
+        if (downloadQueue.isNotEmpty()) {
+            ScrollableLazyColumn {
+                itemsIndexed(downloadQueue) { index, it ->
+                    Box(Modifier.padding(end = 4.sdp)) {
+                        if (index > 0) Divider(thickness = 1.sdp, modifier = Modifier.padding(end = 4.sdp))
+                        QueuedDownloadCard(it, onStopClick = {
+                            downloadQueue.remove(it)
+                        })
+                    }
+                }
             }
+        } else {
+            Text(
+                "Queued Downloads",
+                color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
 }
