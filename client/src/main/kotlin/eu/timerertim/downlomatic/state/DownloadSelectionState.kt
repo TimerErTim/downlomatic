@@ -18,8 +18,8 @@ class DownloadSelectionState {
     val selectedHostState = mutableStateOf<Host?>(null)
     var selectedHost by selectedHostState
 
-    val allVideosRequest = APIRequest(APIPath.ALL_VIDEOS) { it: List<Video> ->
-        it.filter { true }
+    val allVideosRequest = APIRequest(APIPath.ALL_VIDEOS) { videos: List<Video> ->
+        videos.filter { it.host.isNSFW || nsfw }
     }
 
     val hostsRequest by lazy {

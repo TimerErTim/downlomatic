@@ -3,7 +3,6 @@ package eu.timerertim.downlomatic.state
 import eu.timerertim.downlomatic.core.download.Download
 import eu.timerertim.downlomatic.core.download.DownloadObserver
 import eu.timerertim.downlomatic.core.download.DownloadState
-import eu.timerertim.downlomatic.core.download.HTTPDownload
 import eu.timerertim.downlomatic.core.format.VideoDetailsFormatter
 import eu.timerertim.downlomatic.core.video.Video
 import java.io.File
@@ -24,10 +23,7 @@ open class DownlomaticState {
     fun enqueueDownload(video: Video) {
         val pathFormatter = VideoDetailsFormatter(downloadConfigurationState.videoFormatOrDefault)
 
-        val directory = File(downloadConfigurationState.destinationDirectoryOrDefault)
-        val path = pathFormatter.format(video.details)
-        val target = directory
-            .resolve(path)
+        val target = File(downloadConfigurationState.destinationDirectoryOrDefault, pathFormatter.format(video.details))
 
         lateinit var refill: (Download) -> Unit
 
@@ -35,7 +31,7 @@ open class DownlomaticState {
             download.startDownload()
             downloadManagerState.downloadPool.add(DownloadObserver(download, onEnd = {
                 if (it is DownloadState.Finished) downloadManagerState.finishedDownloads++
-                finishedDownloadedBytes += download.downloadedBytes
+                finishedDownloadedBytes += download.totalBytes
                 refill(download)
             }))
         }
@@ -49,7 +45,7 @@ open class DownlomaticState {
                 }
         }
 
-        val download = HTTPDownload(video, target)
+        val download = Download(video, target)
         downloadManagerState.downloadPool.firstOrNull { it.download.video.url.host == video.url.host }?.let {
             downloadManagerState.downloadQueue += download
         } ?: startDownload(download)
@@ -58,7 +54,7 @@ open class DownlomaticState {
     private fun calculateOverallSpeed() = downloadManagerState.downloadPool.sumOf { it.speed }
 
     private fun calculateOverallDownloaded() = finishedDownloadedBytes +
-            downloadManagerState.downloadPool.sumOf { it.progress.nominator }
+            downloadManagerState.downloadPool.sumOf { it.totalBytes }
 
     private fun calculateOverallPlannedDownloads() = downloadManagerState.downloadPool.size +
             downloadManagerState.downloadQueue.size +

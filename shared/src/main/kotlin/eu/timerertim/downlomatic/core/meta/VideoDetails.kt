@@ -28,15 +28,15 @@ data class VideoDetails(
     val tags: List<Tag> = emptyList()
 ) {
     val idHash by lazy {
-        var result = title?.hashCode() ?: 0
-        result = 31 * result + (series?.hashCode() ?: 0)
-        result = 31 * result + (season ?: 0)
-        result = 31 * result + (episode ?: 0)
-        result = 31 * result + (release?.hashCode() ?: 0)
-        result = 31 * result + (spokenLanguage?.name.hashCode())
-        result = 31 * result + (subtitleLanguage?.name.hashCode())
-        result = 31 * result + translation.name.hashCode()
-        result = 31 * result + audienceLanguage.name.hashCode()
+        var result = 1L * (title?.hashCode() ?: 0)
+        result = 63 * result + (series?.hashCode() ?: 0)
+        result = 63 * result + (season ?: 0)
+        result = 63 * result + (episode ?: 0)
+        result = 63 * result + (release?.hashCode() ?: 0)
+        result = 63 * result + (spokenLanguage?.name.hashCode())
+        result = 63 * result + (subtitleLanguage?.name.hashCode())
+        result = 63 * result + translation.name.hashCode()
+        result = 63 * result + audienceLanguage.name.hashCode()
         result
     }
 

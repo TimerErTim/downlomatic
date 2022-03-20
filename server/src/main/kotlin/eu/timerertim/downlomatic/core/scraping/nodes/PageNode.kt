@@ -1,6 +1,6 @@
 package eu.timerertim.downlomatic.core.scraping.nodes
 
-import eu.timerertim.downlomatic.util.WebScrapers
+import eu.timerertim.downlomatic.util.WebDrivers
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.delay
 import java.net.URI
@@ -48,9 +48,9 @@ open class PageNode(parentNode: ParentNode, url: URL, private val process: suspe
                     // Load parent page after delay
                     delay(hostConfig.delay.random())
                     if (hostConfig.requiresJS) {
-                        WebScrapers.javaScript().get(url.toString())
+                        WebDrivers.javaScript().get(url.toString())
                     } else {
-                        WebScrapers.noJavaScript().get(url.toString())
+                        WebDrivers.noJavaScript().get(url.toString())
                     }
                     if (hostConfig.testing) { // Logging for testing purposes
                         Log.d("Automatically loaded page \"$url\"")

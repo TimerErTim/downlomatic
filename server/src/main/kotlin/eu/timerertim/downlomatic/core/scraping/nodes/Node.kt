@@ -52,6 +52,6 @@ fun ParentNode.page(url: URL, fetch: suspend PageNode.(URL) -> Unit) {
  * Creates a new sub [VideoNode]. The given [modify] parameter allows performing convenient modifications on the node.
  */
 @JvmOverloads
-fun ParentNode.video(url: URL, fetcher: Parser = PlainParser, modify: suspend VideoNode.() -> Unit = {}) {
-    VideoNode(this, url, fetcher, modify)
+fun ParentNode.video(url: URL, parser: Parser = PlainParser(), modify: suspend VideoNode.() -> Unit = {}) {
+    VideoNode(this, url, parser, modify)
 }

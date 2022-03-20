@@ -1,13 +1,13 @@
 package eu.timerertim.downlomatic.core.scraping
 
-import eu.timerertim.downlomatic.api.HostEntry
 import eu.timerertim.downlomatic.api.toEntry
+import eu.timerertim.downlomatic.core.db.HostEntry
+import eu.timerertim.downlomatic.core.db.VideoEntry
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.*
 import org.litote.kmongo.eq
-import org.litote.kmongo.getCollection
 import org.litote.kmongo.updateOne
 import org.litote.kmongo.upsert
 import org.reflections.Reflections
@@ -83,10 +83,9 @@ fun startScraper() {
     })
 
     // Initialize hosts in db
-    val hostCollection = MongoDBConnection.hostDB.getCollection<HostEntry>("hosts")
+    val hostCollection = MongoDB.hostCollection
     hostScrapers.map { it.host.toEntry() }.forEach {
-        val updateResult = hostCollection.updateOne(it, upsert())
-        if (updateResult.upsertedId != null) MongoDBConnection.videoDB.createCollection(it.domain)
+        hostCollection.updateOne(it, upsert())
     }
 
     // Remove redundant host collections from db
@@ -100,8 +99,8 @@ fun startScraper() {
                         removableHosts.joinToString()
             )
             removableHosts.forEach {
-                hostCollection.deleteMany(HostEntry::_id eq it._id)
-                MongoDBConnection.videoDB.getCollection(it.domain).drop()
+                hostCollection.deleteMany(HostEntry::domain eq it.domain)
+                MongoDB.videoCollection.deleteMany(VideoEntry::host eq it)
             }
         }
     }

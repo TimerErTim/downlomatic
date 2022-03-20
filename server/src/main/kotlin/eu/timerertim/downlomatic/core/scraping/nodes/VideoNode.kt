@@ -1,23 +1,24 @@
 package eu.timerertim.downlomatic.core.scraping.nodes
 
-import com.mongodb.client.model.ReplaceOptions
-import eu.timerertim.downlomatic.api.VideoEntry
+import com.mongodb.client.model.FindOneAndReplaceOptions
+import com.mongodb.client.model.ReturnDocument
 import eu.timerertim.downlomatic.api.toEntry
+import eu.timerertim.downlomatic.core.db.VideoEntry
 import eu.timerertim.downlomatic.core.parsing.Parser
 import eu.timerertim.downlomatic.core.parsing.PlainParser
 import eu.timerertim.downlomatic.core.scraping.HostScraper
 import eu.timerertim.downlomatic.core.video.Video
-import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.logging.Log
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.replaceOneById
+import org.litote.kmongo.deleteOneById
+import org.litote.kmongo.eq
 import java.net.URI
 import java.net.URL
 
 class VideoNode(
     parentNode: ParentNode,
     url: URL,
-    private val fetcher: Parser = PlainParser,
+    private val parser: Parser = PlainParser(),
     private val modify: suspend VideoNode.() -> Unit
 ) :
     Node(parentNode as Node), ChildNode {
@@ -41,16 +42,15 @@ class VideoNode(
         // Generate video object
         val details = videoDetailsBuilder.build()
         try {
-            val video = Video(url, details)
+            val video = Video(url, scraper.host, details)
+            val videoEntry = video.toEntry(parser)
 
             // Insert into db or display on screen
             if (!hostConfig.testing) {
-                val collection = MongoDBConnection.videoDB.getCollection<VideoEntry>(scraper.host.domain)
-                collection.replaceOneById(details.idHash, video.toEntry(fetcher), ReplaceOptions().apply {
-                    upsert(true)
-                })
+                insertIntoDB(videoEntry)
             } else {
-                Log.d(video.toString())
+                Log.d(video)
+                Log.d(parser(video.url))
             }
         } catch (ex: Exception) {
             Log.e("A problem occurred while trying to fetch video from URL \"$url\"", ex)
@@ -58,6 +58,22 @@ class VideoNode(
 
         // Register the video as inserted
         scraper.idVideos += details.idHash
+    }
+
+    private fun insertIntoDB(videoEntry: VideoEntry) {
+        val oldVideo = MongoDB.videoCollection.findOneAndReplace(VideoEntry::id eq videoEntry.id, videoEntry,
+            FindOneAndReplaceOptions().apply {
+                upsert(true)
+                returnDocument(ReturnDocument.BEFORE)
+            })
+        if (oldVideo != null && oldVideo != videoEntry) {
+            val deletedCount = MongoDB.downloaderCollection.deleteOneById(oldVideo.id).deletedCount
+            if (deletedCount > 0) {
+                val id = oldVideo.id
+                val domain = oldVideo.host.domain
+                Log.i("Downloader $id of host $domain was removed because it is outdated")
+            }
+        }
     }
 
     private val HostScraper.idVideos get() = with(this) { _idVideos }

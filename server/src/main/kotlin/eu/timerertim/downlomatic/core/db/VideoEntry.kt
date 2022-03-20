@@ -1,8 +1,9 @@
-package eu.timerertim.downlomatic.api
+package eu.timerertim.downlomatic.core.db
 
 import eu.timerertim.downlomatic.core.meta.VideoDetails
 import eu.timerertim.downlomatic.core.parsing.Parser
 import eu.timerertim.downlomatic.util.json.URLSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.net.URL
 
@@ -10,8 +11,16 @@ import java.net.URL
 data class VideoEntry(
     @Serializable(with = URLSerializer::class)
     val url: URL,
-    val fetcher: Parser,
+    val host: HostEntry,
+    val parser: Parser,
     val details: VideoDetails
 ) {
-    val _id = details.idHash
+    val idHash by lazy {
+        var result = 1L * (details.idHash)
+        result = 63 * result + (host.hashCode())
+        result
+    }
+
+    @SerialName("_id")
+    val id = idHash
 }

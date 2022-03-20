@@ -17,7 +17,7 @@ class DownloadObserver(
     val download: Download,
     val sizeDelay: Duration = 50.milliseconds,
     val speedDelay: Duration = 1.seconds,
-    val onEnd: (DownloadState) -> Unit
+    val onEnd: (DownloadState) -> Unit = {}
 ) {
     val progress = LabeledProgressState(download.downloadedBytes, download.size) { amount, max ->
         val downloadState = download.state
@@ -34,6 +34,8 @@ class DownloadObserver(
 
     var speed by mutableStateOf(0L)
         private set
+    var totalBytes by mutableStateOf(0L)
+        private set
 
     private var size by progress::denominator
     private var downloadedBytes by progress::nominator
@@ -45,6 +47,7 @@ class DownloadObserver(
                 val realDelay = measureTime {
                     size = download.size
                     downloadedBytes = download.downloadedBytes
+                    totalBytes = download.totalBytes
                     delay(sizeDelay)
                 }
             }
@@ -61,12 +64,13 @@ class DownloadObserver(
             }
         }
 
+        val checkDelay = (if (sizeDelay < speedDelay) sizeDelay else speedDelay) / 2
         while (!download.state.let {
                 it is DownloadState.Stopped
                         || it is DownloadState.Finished
                         || it is DownloadState.Error
             } && isActive) {
-            delay(10.milliseconds)
+            delay(checkDelay)
         }
 
         sizeJob.cancel()

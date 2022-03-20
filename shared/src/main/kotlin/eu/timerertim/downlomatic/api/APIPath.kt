@@ -7,6 +7,9 @@ sealed class APIPath(vararg path: CharSequence) {
     }
 
     object ALL_VIDEOS : APIPath("/videos/all")
+    object DOWNLOADER_OF_VIDEO : APIPath("/downloaders/", APIPathArgument("id")) {
+        val VIDEO_ID = arguments[0]
+    }
 
     private val rawPath = path
     val path: String
@@ -27,7 +30,7 @@ sealed class APIPath(vararg path: CharSequence) {
         this.arguments = arguments
     }
 
-    fun query(vararg argumentValues: Pair<APIPathArgument, String>): String {
+    fun query(vararg argumentValues: Pair<APIPathArgument, Any>): String {
         val argumentMap = argumentValues.toMap()
         var pathBuilder = ""
 

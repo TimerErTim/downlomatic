@@ -7,7 +7,7 @@ import eu.timerertim.downlomatic.core.scraping.HostConfig
 import eu.timerertim.downlomatic.core.scraping.HostScraper
 import eu.timerertim.downlomatic.core.scraping.nodes.page
 import eu.timerertim.downlomatic.core.scraping.nodes.video
-import eu.timerertim.downlomatic.util.WebScrapers
+import eu.timerertim.downlomatic.util.WebDrivers
 import kotlinx.datetime.toKotlinLocalDate
 import org.openqa.selenium.By
 import java.net.URL
@@ -22,7 +22,7 @@ object HentaigasmCom : HostScraper(
         4000..7500L
     ),
     fetch = {
-        val driver = WebScrapers.noJavaScript()
+        val driver = WebDrivers.noJavaScript()
 
         var reachedLastPage = false
 

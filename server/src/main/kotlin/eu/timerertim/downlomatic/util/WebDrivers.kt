@@ -5,13 +5,14 @@ import org.openqa.selenium.WebDriver
 import org.openqa.selenium.firefox.FirefoxDriver
 import org.openqa.selenium.firefox.FirefoxDriverLogLevel
 import org.openqa.selenium.firefox.FirefoxOptions
+import java.net.URL
 import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
  * Provides webscrapers for usage. Has to be initialized at least once in order to work.
  */
-object WebScrapers {
+object WebDrivers {
     private lateinit var jSoupDriver: JSoupDriver
     private lateinit var firefoxDriver: FirefoxDriver
 
@@ -86,4 +87,7 @@ object WebScrapers {
     private fun initializeJSoupDriver() {
         jSoupDriver = JSoupDriver()
     }
+
+
+    operator fun WebDriver.get(url: URL) = get(url.toString())
 }

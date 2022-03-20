@@ -1,14 +1,18 @@
 package eu.timerertim.downlomatic.core.scraping
 
-import eu.timerertim.downlomatic.api.VideoEntry
+import eu.timerertim.downlomatic.api.toEntry
+import eu.timerertim.downlomatic.core.db.DownloaderEntry
+import eu.timerertim.downlomatic.core.db.VideoEntry
 import eu.timerertim.downlomatic.core.host.Host
 import eu.timerertim.downlomatic.core.scraping.nodes.RootNode
 import eu.timerertim.downlomatic.core.scraping.nodes.VideoNode
-import eu.timerertim.downlomatic.util.MongoDBConnection
+import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.getCollection
+import org.litote.kmongo.`in`
+import org.litote.kmongo.and
+import org.litote.kmongo.eq
 import org.litote.kmongo.nin
 
 /**
@@ -28,7 +32,7 @@ abstract class HostScraper(
     )
 
     private val root by lazy { RootNode(this, config, fetch) }
-    private val idVideos = mutableListOf<Int>()
+    private val idVideos = mutableListOf<Long>()
 
     /**
      * Executes the fetching process in a blocking way.
@@ -37,10 +41,26 @@ abstract class HostScraper(
         root.fetch()
         // Remove videos which haven't been fetched.
         if (Scraper.patchRedundancy && !config.testing) {
-            val collection = MongoDBConnection.videoDB.getCollection<VideoEntry>(host.domain)
-            val deletedCount = collection.deleteMany(VideoEntry::_id nin idVideos).deletedCount
-            if (deletedCount > 0) {
-                Log.w("$deletedCount videos were removed from the ${host.domain} MongoDB collection")
+            val removableVideos = MongoDB.videoCollection.find(
+                and(
+                    VideoEntry::id nin idVideos,
+                    VideoEntry::host eq host.toEntry()
+                )
+            ).toList()
+            if (removableVideos.isNotEmpty()) {
+                Log.w("${removableVideos.size} videos will be removed from ${host.domain}")
+                val deletedCount = MongoDB.videoCollection.deleteMany(
+                    VideoEntry::id `in` removableVideos.map { it.id }
+                ).deletedCount
+                val deletedAmountMessage = "$deletedCount videos were removed from ${host.domain}"
+                if (deletedCount != removableVideos.size.toLong()) {
+                    Log.w("$deletedAmountMessage, but ${removableVideos.size} should have been deleted")
+                } else {
+                    Log.i(deletedAmountMessage)
+                }
+                MongoDB.downloaderCollection.deleteMany(
+                    DownloaderEntry::id `in` removableVideos.map { it.id }
+                )
             }
         }
         idVideos.clear()
@@ -57,7 +77,7 @@ abstract class HostScraper(
 
         /**
          * Tests the [host] by executing the fetch method but not using the
-         * [MongoDBConnection][eu.timerertim.downlomatic.util.MongoDBConnection]. The resulting
+         * [MongoDBConnection][eu.timerertim.downlomatic.util.db.MongoDB]. The resulting
          * [Video][eu.timerertim.downlomatic.core.video.Video] will be printed on the screen instead of being inserted
          * into the database.
          */
