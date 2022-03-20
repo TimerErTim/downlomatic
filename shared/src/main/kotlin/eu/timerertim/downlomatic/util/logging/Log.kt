@@ -86,8 +86,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun d(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.DEBUG, message, cause))
+    fun d(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.DEBUG, message.toString(), cause))
     }
 
     /**
@@ -96,8 +96,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun i(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.INFO, message, cause))
+    fun i(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.INFO, message.toString(), cause))
     }
 
     /**
@@ -106,8 +106,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun w(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.WARN, message, cause))
+    fun w(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.WARN, message.toString(), cause))
     }
 
     /**
@@ -116,8 +116,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun e(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.ERROR, message, cause))
+    fun e(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.ERROR, message.toString(), cause))
     }
 
     /**
@@ -126,8 +126,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun f(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.FATAL, message, cause))
+    fun f(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.FATAL, message.toString(), cause))
     }
 
     /**
@@ -136,8 +136,8 @@ object Log {
     @JvmStatic
     @JvmOverloads
     @Synchronized
-    fun wtf(message: String, cause: Throwable? = null) {
-        logger.log(createLogEntry(Level.ASSERT, message, cause))
+    fun wtf(message: Any?, cause: Throwable? = null) {
+        logger.log(createLogEntry(Level.ASSERT, message.toString(), cause))
     }
 
     /**
