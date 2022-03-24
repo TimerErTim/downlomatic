@@ -47,8 +47,8 @@ may be helpful for you.
 
 - [x] Create easily extendable server
 - [x] Release GUI client
-- [ ] Release CLI mode for client
 - [ ] Add more supported hosts
+- [ ] Release CLI mode for client
 
 ## Credits
 

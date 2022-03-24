@@ -18,6 +18,7 @@ during addressing feature ideas, helping you finalize Pull Requests (PRs), and l
     2. [Pull Requests](#pull-requests)
         1. [Setup](#setup)
     3. [Adding Hosts](#adding-hosts)
+    4. [Adding Parsers](#adding-parsers)
 4. [Conventions](#conventions)
     1. [Code Style](#code-style)
     2. [Documentation](#documentation)
@@ -126,6 +127,16 @@ implementations.
 
 The resulting subclass must reside inside the `eu.timerertim.downlomatic.hosts` package in the server module. You should
 name that class after the domain of the host (e.g. "animetoast.com" results in a class name of "AnimetoastCom").
+
+### Adding Parsers
+
+A parser is an object, which generates a downloader from a given url. It is responsible for providing a valid way of
+downloading a certain video, as some hosts require authentication or other temporary parameters to allow a request. They
+have a duration after which the downloader object has to be regenerated due to the old one becoming invalid.
+
+Parsers should reside inside the `eu.timerertim.downlomatic.core.parsing` package in the server module. You should name
+the class after the website it parses from or another short descriptive name (e.g. "vivo.sx" results in a class name of
+"VivoSxParser").
 
 ## Conventions
 
