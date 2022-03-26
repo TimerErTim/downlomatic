@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.hours
 @Serializable
 @SerialName("VivoSxParser")
 object VivoSxParser : Parser() {
-    override val duration = 12.hours
+    override val duration = 6.hours
 
     @Throws(NoSuchElementException::class)
     override suspend fun parse(url: URL): HTTPDownloader {
