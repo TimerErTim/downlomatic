@@ -18,7 +18,7 @@ import java.net.URL
 class VideoNode(
     parentNode: ParentNode,
     url: URL,
-    private val parser: Parser = PlainParser(),
+    private val parser: Parser = PlainParser,
     private val modify: suspend VideoNode.() -> Unit
 ) :
     Node(parentNode as Node), ChildNode {
@@ -50,7 +50,7 @@ class VideoNode(
                 insertIntoDB(videoEntry)
             } else {
                 Log.d(video)
-                Log.d(parser(video.url))
+                Log.d(parser(video.url).descriptor)
             }
         } catch (ex: Exception) {
             Log.e("A problem occurred while trying to fetch video from URL \"$url\"", ex)
