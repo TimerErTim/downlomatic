@@ -39,17 +39,15 @@ class HTTPDownloader(override val descriptor: HTTPDescriptor) : Downloader<HTTPD
 
     override suspend fun startDownload() {
         downloadJob = downloadJob ?: runBlocking {
+            val connection = createURLConnection()
             val fileSize = withContext(Dispatchers.IO) {
-                val connection = createURLConnection()
-                openURLConnection(connection)
-                size = connection.contentLengthLong
-                connection.disconnect()
                 destinationFile.length()
             }
 
             CoroutineScope(Dispatchers.IO).launch {
+                sourceChannel = generateSourceChannel(connection)
+                size = connection.contentLengthLong
                 if (fileSize != size) {
-                    sourceChannel = generateSourceChannel()
                     destinationChannel = generateDestinationChannel()
 
                     destinationChannel?.transferFrom(sourceChannel, 0, Long.MAX_VALUE)
@@ -90,8 +88,7 @@ class HTTPDownloader(override val descriptor: HTTPDescriptor) : Downloader<HTTPD
     }
 
     @Throws(IOException::class)
-    private fun generateSourceChannel(): ReadableByteChannel {
-        val urlConnection = createURLConnection()
+    private fun generateSourceChannel(urlConnection: HttpURLConnection = createURLConnection()): ReadableByteChannel {
         val inputStream = if (downloadedBytes > 0) {
             urlConnection.setRequestProperty("Range", "bytes=$downloadedBytes-")
             val stream = openURLConnection(urlConnection)
