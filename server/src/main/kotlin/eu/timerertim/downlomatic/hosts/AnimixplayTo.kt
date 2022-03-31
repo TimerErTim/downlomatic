@@ -1,12 +1,21 @@
 package eu.timerertim.downlomatic.hosts
 
+import eu.timerertim.downlomatic.core.meta.Language
+import eu.timerertim.downlomatic.core.meta.Translation
 import eu.timerertim.downlomatic.core.scraping.HostConfig
 import eu.timerertim.downlomatic.core.scraping.HostScraper
+import eu.timerertim.downlomatic.core.scraping.nodes.page
+import eu.timerertim.downlomatic.util.WebDrivers
+import eu.timerertim.downlomatic.util.WebDrivers.get
+import org.openqa.selenium.By
+import org.openqa.selenium.support.ui.Select
+import org.openqa.selenium.support.ui.UnexpectedTagNameException
+import java.net.URL
 
 object AnimixplayTo : HostScraper("animixplay.to",
     config = HostConfig(4250L..7250L, true),
     fetch = {
-        /*val driver = WebDrivers.javaScript()
+        val driver = WebDrivers.javaScript()
 
         page(URL("https://animixplay.to/list")) {
             driver[it]
@@ -55,6 +64,6 @@ object AnimixplayTo : HostScraper("animixplay.to",
                     }
                 }
             }
-        }*/
+        }
     }
 )
