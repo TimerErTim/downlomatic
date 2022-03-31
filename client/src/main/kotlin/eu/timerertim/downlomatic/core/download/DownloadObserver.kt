@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import eu.timerertim.downlomatic.graphics.component.util.LabeledProgressState
 import eu.timerertim.downlomatic.util.Utils.toHumanReadableBytesBin
+import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -71,6 +72,14 @@ class DownloadObserver(
                         || it is DownloadState.Error
             } && isActive) {
             delay(checkDelay)
+        }
+
+        val downloadState = download.state
+        if (downloadState is DownloadState.Error) {
+            Log.e(
+                "Download ${download.name} with url ${download.video.url} has terminated with an error",
+                downloadState.exception
+            )
         }
 
         sizeJob.cancel()
