@@ -7,6 +7,9 @@ import eu.timerertim.downlomatic.console.ParsedArguments
 import eu.timerertim.downlomatic.console.ServerArgument
 import eu.timerertim.downlomatic.core.scraping.Scraper
 import eu.timerertim.downlomatic.util.db.MongoDB
+import eu.timerertim.downlomatic.util.db.dbPassword
+import eu.timerertim.downlomatic.util.db.dbUser
+import eu.timerertim.downlomatic.util.db.dbVerifier
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
 import org.litote.kmongo.deleteMany
@@ -33,6 +36,9 @@ object ServerUtils {
         }
 
         // Setup database connection
+        dbUser = arguments[ServerArgument.DATABASE_USER]
+        dbPassword = arguments[ServerArgument.DATABASE_PASSWORD]
+        dbVerifier = arguments[ServerArgument.DATABASE_VERIFIER]
         try {
             try {
                 MongoDB.testConnection()
@@ -43,7 +49,7 @@ object ServerUtils {
         } catch (exception: MongoClientException) {
             Log.f(
                 "An error occurred while attempting to connect to the local MongoDB. Make sure MongoDB is " +
-                        "running and has authorization deactivated!", exception
+                        "running and authorization has been configured correctly!", exception
             )
             exit(Utils.CONNECTION_EXIT_CODE)
         }

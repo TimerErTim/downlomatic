@@ -18,7 +18,25 @@ enum class ServerArgument(override val option: Option, override val isHidden: Bo
     ),
     PORT(Option(null, "port", true, "on what port to listen"), {
         argName = "port"
-    });
+    }),
+    DATABASE_USER(Option(null, "db-user", true, "the database authentication user"), {
+        argName = "username"
+    }),
+    DATABASE_PASSWORD(
+        Option(
+            null, "db-password", true,
+            "the database authentication password"
+        ), {
+            argName = "password"
+        }),
+    DATABASE_VERIFIER(
+        Option(
+            null, "db-verifier", true,
+            "the name of the database where the user is stored"
+        ), {
+            argName = "database"
+        })
+    ;
 
     constructor(option: Option, isHidden: Boolean, setup: Option.() -> Unit) : this(option, isHidden) {
         setup(this.option)

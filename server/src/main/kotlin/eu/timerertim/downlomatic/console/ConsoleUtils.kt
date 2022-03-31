@@ -8,6 +8,6 @@ object ConsoleUtils : Console(
     ConsoleConfig(
         ServerArgument.values(),
         ServerArgumentGroup.values(),
-        "server [--ignore-redundancy] [--port <port>]"
+        "server [--ignore-redundancy] [--port <port>] [--db-user <username>] [--db-password <password>] [--db-verifier <database>]"
     )
 )

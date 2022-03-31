@@ -2,7 +2,6 @@ package eu.timerertim.downlomatic.util.db
 
 import com.mongodb.MongoClientSettings
 import com.mongodb.MongoCredential
-import com.mongodb.MongoSecurityException
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.IndexOptions
@@ -18,8 +17,10 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
-private const val USER = "downlomaticUser"
-private const val PASSWORD = "wzrw<X/!8\$JQC=W&"
+var dbUser: String? = null
+var dbPassword: String? = null
+var dbVerifier: String? = null
+
 private const val APPLICATION = "downlomatic"
 
 /**
@@ -31,7 +32,7 @@ object MongoDB : Closeable, MongoDatabase by establishDatabaseConnection() {
     val downloaderCollection = getCollection<DownloaderEntry>("downloaders")
 
     init {
-        testConnection()
+        Log.d("Initializing MongoDB Object")
 
         val expireAfter = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
         downloaderCollection.ensureIndex(DownloaderEntry::expireAt, indexOptions = expireAfter)
@@ -66,23 +67,21 @@ private fun establishDatabaseConnection(): MongoDatabase {
     settingsBuilder.applicationName(APPLICATION)
 
     // Settings generation
-    val unauthSettings = settingsBuilder.build()
-    val authSettings = settingsBuilder.credential(
-        MongoCredential.createCredential(
-            USER,
-            APPLICATION,
-            PASSWORD.toCharArray()
+    val dbUser = dbUser
+    if (dbUser != null) {
+        settingsBuilder.credential(
+            MongoCredential.createCredential(
+                dbUser,
+                dbVerifier ?: APPLICATION,
+                dbPassword?.toCharArray() ?: charArrayOf()
+            )
         )
-    ).build()
+    }
+
+    val settings = settingsBuilder.build()
 
     // Connect
-    val client = try {
-        KMongo.createClient(authSettings).also {
-            it.listDatabaseNames().toList()
-        }
-    } catch (ex: MongoSecurityException) {
-        KMongo.createClient(unauthSettings)
-    }
+    val client = KMongo.createClient(settings)
     mongoClient = client
 
     return client.getDatabase(APPLICATION)
