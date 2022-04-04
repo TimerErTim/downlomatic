@@ -41,8 +41,8 @@ class VideoNode(
 
         // Generate video object
         val details = videoDetailsBuilder.build()
+        val video = Video(url, scraper.host, details)
         try {
-            val video = Video(url, scraper.host, details)
             val videoEntry = video.toEntry(parser)
 
             // Insert into db or display on screen
@@ -57,7 +57,7 @@ class VideoNode(
         }
 
         // Register the video as inserted
-        scraper.idVideos += details.idHash
+        scraper.idVideos += video.idHash
     }
 
     private fun insertIntoDB(videoEntry: VideoEntry) {
