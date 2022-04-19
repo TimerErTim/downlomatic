@@ -29,13 +29,16 @@ private const val APPLICATION = "downlomatic"
 object MongoDB : Closeable, MongoDatabase by establishDatabaseConnection() {
     val hostCollection = getCollection<HostEntry>("hosts")
     val videoCollection = getCollection<VideoEntry>("videos")
-    val downloaderCollection = getCollection<DownloaderEntry>("downloaders")
+    val downloaderCollection by lazy {
+        val collection = getCollection<DownloaderEntry>("downloaders")
+
+        val expireAfter = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
+        collection.ensureIndex(DownloaderEntry::expireAt, indexOptions = expireAfter)
+        collection
+    }
 
     init {
         Log.d("Initializing MongoDB Object")
-
-        val expireAfter = IndexOptions().expireAfter(0, TimeUnit.SECONDS)
-        downloaderCollection.ensureIndex(DownloaderEntry::expireAt, indexOptions = expireAfter)
     }
 
     /**
