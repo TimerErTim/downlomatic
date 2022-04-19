@@ -22,6 +22,7 @@ import eu.timerertim.downlomatic.api.APIPath
 import eu.timerertim.downlomatic.api.APIRequest
 import eu.timerertim.downlomatic.api.APIRequest.Companion.executeRequest
 import eu.timerertim.downlomatic.api.APIState
+import eu.timerertim.downlomatic.core.host.Host
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.core.video.VideoItem
 import eu.timerertim.downlomatic.graphics.component.util.*
@@ -41,8 +42,8 @@ fun DownlomaticLeftContent(state: DownlomaticState) {
     val selectionState = state.downloadSelectionState
     Column(verticalArrangement = Arrangement.spacedBy(5.sdp), modifier = Modifier.padding(5.sdp)) {
         DownloadAllButton(selectionState.allVideosRequest, state::enqueueDownload)
-        HostSelection(selectionState, state::enqueueDownload)
-        VideoSelection(selectionState.videosRequest, state::enqueueDownload)
+        HostSelection(selectionState)
+        VideoSelection(selectionState.videosRequest, selectionState.selectedHost, state::enqueueDownload)
     }
 }
 
@@ -88,8 +89,7 @@ fun DownloadAllButton(request: APIRequest<List<Video>, List<Video>>, enqueueDown
 
 @Composable
 fun HostSelection(
-    selectionState: DownloadSelectionState,
-    enqueueDownload: (Video) -> Unit
+    selectionState: DownloadSelectionState
 ) {
     val hostsRequestState = selectionState.hostsRequest.state
     val hosts = if (hostsRequestState is APIState.Loaded) hostsRequestState.payload else null
@@ -100,20 +100,6 @@ fun HostSelection(
             value = selectionState.selectedHost,
             onValueChanged = {
                 selectionState.selectedHost = it
-                val newVideoRequest = selectionState.videosRequest
-                val videosRequestState = newVideoRequest?.state
-                if (videosRequestState is APIState.Error) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        newVideoRequest.executeRequest(APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to it.domain)
-                    }
-                }
-            },
-            onClicked = {
-                if (hostsRequestState is APIState.Error) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        selectionState.hostsRequest.executeRequest()
-                    }
-                }
             },
             prompt = {
                 Row(
@@ -127,8 +113,6 @@ fun HostSelection(
                         style = MaterialTheme.typography.body2
                     )
                     when (hostsRequestState) {
-                        is APIState.Waiting ->
-                            CircularProgressIndicator(strokeWidth = 1.sdp, modifier = Modifier.size(16.sdp))
                         is APIState.Error ->
                             Icon(
                                 MaterialTheme.icons.ErrorOutline, "Error", tint = MaterialTheme.colors.error,
@@ -161,7 +145,9 @@ fun HostSelection(
             }, modifier = Modifier.fillMaxWidth().weight(1F)
         )
 
-        DownloadHostButton(selectionState.videosRequest, enqueueDownload)
+        if (hostsRequestState !is APIState.Initial) {
+            APIRequestReloader(selectionState.hostsRequest, size = 16.sdp)
+        }
     }
 }
 
@@ -170,40 +156,52 @@ fun RowScope.DownloadHostButton(
     videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?,
     processVideo: (Video) -> Unit
 ) {
-    Button(
-        onClick = {
-            val videosRequestState = videosRequest?.state
-            if (videosRequestState is APIState.Loaded) {
-                videosRequestState.payload.value.videos.forEach(processVideo)
-            }
-        },
-        modifier = Modifier.size(28.sdp).align(Alignment.CenterVertically),
-        contentPadding = PaddingValues(5.sdp),
-        enabled = videosRequest?.state is APIState.Loaded
-    ) {
-        Icon(MaterialTheme.icons.Download, "Download", Modifier.size(20.sdp))
+    if (videosRequest?.state is APIState.Loaded) {
+        Icon(MaterialTheme.icons.Download, "Download",
+            Modifier.size(20.sdp).align(Alignment.Bottom).clip(CircleShape).clickable {
+                val videosRequestState = videosRequest.state
+                if (videosRequestState is APIState.Loaded) {
+                    videosRequestState.payload.value.videos.forEach(processVideo)
+                }
+            })
     }
 }
 
 @Composable
-fun VideoSelection(videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?, processVideo: (Video) -> Unit) {
+fun VideoSelection(
+    videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?,
+    host: Host?,
+    processVideo: (Video) -> Unit
+) {
     val videosRequestState = videosRequest?.state
     val (filter, setFilter) = remember { mutableStateOf("") }
 
-    Column(verticalArrangement = Arrangement.spacedBy(5.sdp)) {
-        VideoSearchField(filter, setFilter)
-
+    Column(
+        verticalArrangement = Arrangement.spacedBy(5.sdp), modifier = Modifier
+            .border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.small).fillMaxSize().padding(5.sdp)
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(5.sdp)) {
+            DownloadHostButton(videosRequest, processVideo)
+            VideoSearchField(filter, setFilter)
+            if (videosRequest != null && host != null) {
+                APIRequestReloader(videosRequest, size = 16.sdp) {
+                    listOf(
+                        APIPath.ALL_VIDEOS_OF_HOST.HOST_ARGUMENT to host.domain
+                    )
+                }
+            }
+        }
         VideoTreeList(videosRequestState, filter, processVideo)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
+fun RowScope.VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     var hasFocus by remember { mutableStateOf(false) }
 
-    BasicOutlinedTextField(
+    BasicUnderlinedTextField(
         textValue,
         setTextValue,
         placeholder = {
@@ -221,7 +219,7 @@ fun VideoSearchField(textValue: String, setTextValue: (String) -> Unit) {
                 )
             }
         } else null,
-        modifier = Modifier.fillMaxWidth().onFocusChanged {
+        modifier = Modifier.fillMaxWidth().weight(1F).onFocusChanged {
             hasFocus = it.hasFocus
         },
         textStyle = MaterialTheme.typography.caption,
@@ -239,25 +237,26 @@ fun VideoTreeList(state: APIState<TreeNode<VideoItem>>?, filter: String, process
         }
     }
 
-    Box(
-        modifier = Modifier.border(1.sdp, MaterialTheme.colors.outline, MaterialTheme.shapes.small).fillMaxSize()
-            .padding(5.sdp)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         when (state) {
-            null -> Text(
+            null, is APIState.Waiting -> Text(
                 "Video List",
                 color = MaterialTheme.colors.outline, style = MaterialTheme.typography.body1,
                 modifier = Modifier.align(Alignment.Center)
             )
-            is APIState.Waiting -> CircularProgressIndicator(
-                strokeWidth = 2.sdp,
-                modifier = Modifier.size(24.sdp).align(Alignment.Center)
-            )
-            is APIState.Loaded -> TreeList(
-                state.payload.filter(::checkVideoItem),
-                modifier = Modifier.fillMaxSize()
-            ) { value, expanded ->
-                VideoTreeNode(value, processVideo, expanded)
+            is APIState.Loaded -> if (state.payload.isEmpty()) {
+                Text(
+                    "No Videos for this Host",
+                    color = MaterialTheme.colors.error, style = MaterialTheme.typography.body1,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+            } else {
+                TreeList(
+                    state.payload.filter(::checkVideoItem),
+                    modifier = Modifier.fillMaxSize()
+                ) { value, expanded ->
+                    VideoTreeNode(value, processVideo, expanded)
+                }
             }
             is APIState.Error -> Text(
                 state.exception.message ?: "Error occurred",

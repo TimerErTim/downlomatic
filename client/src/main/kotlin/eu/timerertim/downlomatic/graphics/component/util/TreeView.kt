@@ -70,6 +70,8 @@ sealed class Node<T> {
     val leafs = mutableStateListOf<T>()
 
     abstract fun filter(predicate: (T) -> Boolean): Node<T>
+
+    open fun isEmpty() = children.isEmpty() && leafs.isEmpty()
 }
 
 class TreeNode<T> private constructor(
