@@ -151,19 +151,24 @@ fun HostSelection(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RowScope.DownloadHostButton(
     videosRequest: APIRequest<List<Video>, TreeNode<VideoItem>>?,
     processVideo: (Video) -> Unit
 ) {
     if (videosRequest?.state is APIState.Loaded) {
-        Icon(MaterialTheme.icons.Download, "Download",
-            Modifier.size(20.sdp).align(Alignment.Bottom).clip(CircleShape).clickable {
-                val videosRequestState = videosRequest.state
-                if (videosRequestState is APIState.Loaded) {
-                    videosRequestState.payload.value.videos.forEach(processVideo)
-                }
-            })
+        TooltipArea(tooltip = {
+            TooltipCard("Download All Videos", type = TooltipType.INFO)
+        }, modifier = Modifier.align(Alignment.Bottom)) {
+            Icon(MaterialTheme.icons.Download, "Download",
+                Modifier.size(18.sdp).clip(CircleShape).clickable {
+                    val videosRequestState = videosRequest.state
+                    if (videosRequestState is APIState.Loaded) {
+                        videosRequestState.payload.value.videos.forEach(processVideo)
+                    }
+                })
+        }
     }
 }
 
@@ -205,7 +210,7 @@ fun RowScope.VideoSearchField(textValue: String, setTextValue: (String) -> Unit)
         textValue,
         setTextValue,
         placeholder = {
-            Text("Search videos...", style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline)
+            Text("Filter videos...", style = MaterialTheme.typography.caption, color = MaterialTheme.colors.outline)
         }, leadingIcon = {
             Icon(MaterialTheme.icons.Search, "Search", modifier = Modifier.size(18.sdp))
         }, trailingIcon = if (textValue.isNotEmpty()) {
