@@ -56,7 +56,7 @@ object ServerUtils {
         if (arguments.hasArgument(ServerArgument.CLEAR)) {
             val hosts = MongoDB.hostCollection.find().toList().takeIf { it.isNotEmpty() }
             if (hosts != null) {
-                Log.w("The following hosts will be cleared: ${hosts.joinToString { host -> host.domain }}")
+                Log.w("The following hosts will be cleared: ${hosts.joinToString { entry -> entry.host.domain }}")
                 MongoDB.hostCollection.deleteMany()
             }
             MongoDB.videoCollection.deleteMany()

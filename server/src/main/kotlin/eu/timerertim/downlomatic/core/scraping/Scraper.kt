@@ -3,10 +3,12 @@ package eu.timerertim.downlomatic.core.scraping
 import eu.timerertim.downlomatic.api.toEntry
 import eu.timerertim.downlomatic.core.db.HostEntry
 import eu.timerertim.downlomatic.core.db.VideoEntry
+import eu.timerertim.downlomatic.core.host.Host
 import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.*
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.updateOne
 import org.litote.kmongo.upsert
@@ -99,8 +101,8 @@ fun startScraper() {
                         removableHosts.joinToString()
             )
             removableHosts.forEach {
-                hostCollection.deleteMany(HostEntry::domain eq it.domain)
-                MongoDB.videoCollection.deleteMany(VideoEntry::host eq it)
+                hostCollection.deleteMany(HostEntry::host / Host::domain eq it.host.domain)
+                MongoDB.videoCollection.deleteMany(VideoEntry::video / Video::host / Host::domain eq it.host.domain)
             }
         }
     }

@@ -4,6 +4,8 @@ import eu.timerertim.downlomatic.api.APIPath.*
 import eu.timerertim.downlomatic.api.RESTService.apiPort
 import eu.timerertim.downlomatic.core.db.HostEntry
 import eu.timerertim.downlomatic.core.db.VideoEntry
+import eu.timerertim.downlomatic.core.host.Host
+import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.Utils
 import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.routing.get
@@ -19,6 +21,7 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import kotlinx.datetime.Clock
 import kotlinx.serialization.json.Json
+import org.litote.kmongo.div
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.findOneById
@@ -80,11 +83,11 @@ private fun Route.getAllVideosOfHost() {
             "Missing or malformed host parameter",
             status = HttpStatusCode.BadRequest
         )
-        val host = MongoDB.hostCollection.findOne(HostEntry::domain eq hostName) ?: return@get call.respondText(
+        MongoDB.hostCollection.findOne(HostEntry::host / Host::domain eq hostName) ?: return@get call.respondText(
             "No host $hostName available",
             status = HttpStatusCode.NotFound
         )
-        val videosCollection = MongoDB.videoCollection.find(VideoEntry::host eq host)
+        val videosCollection = MongoDB.videoCollection.find(VideoEntry::video / Video::host / Host::domain eq hostName)
         val videos = videosCollection.map(VideoEntry::toVideo).toList()
         call.respond(videos)
     }
@@ -108,14 +111,14 @@ private fun Route.getDownloaderOfVideo() {
             "Wrong datatype for video id parameter: has to be number",
             status = HttpStatusCode.BadRequest
         )
-        val video = MongoDB.videoCollection.findOneById(videoID) ?: return@get call.respondText(
+        val videoEntry = MongoDB.videoCollection.findOneById(videoID) ?: return@get call.respondText(
             "No video $videoID available",
             status = HttpStatusCode.NotFound
         )
 
         val downloader = MongoDB.downloaderCollection.findOneById(videoID)?.toDownloader() ?: try {
-            val parser = video.parser
-            val downloader = parser(video.url)
+            val parser = videoEntry.parser
+            val downloader = parser(videoEntry.video.url)
             val duration = parser.duration
             val instant = if (duration != null) Clock.System.now() + duration else null
             val downloaderEntry = downloader.toEntry(videoID, instant)

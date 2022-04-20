@@ -1,19 +1,16 @@
 package eu.timerertim.downlomatic.core.scraping
 
-import eu.timerertim.downlomatic.api.toEntry
 import eu.timerertim.downlomatic.core.db.DownloaderEntry
 import eu.timerertim.downlomatic.core.db.VideoEntry
 import eu.timerertim.downlomatic.core.host.Host
 import eu.timerertim.downlomatic.core.scraping.nodes.RootNode
 import eu.timerertim.downlomatic.core.scraping.nodes.VideoNode
+import eu.timerertim.downlomatic.core.video.Video
 import eu.timerertim.downlomatic.util.db.MongoDB
 import eu.timerertim.downlomatic.util.logging.Level
 import eu.timerertim.downlomatic.util.logging.Log
 import kotlinx.coroutines.runBlocking
-import org.litote.kmongo.`in`
-import org.litote.kmongo.and
-import org.litote.kmongo.eq
-import org.litote.kmongo.nin
+import org.litote.kmongo.*
 
 /**
  * This is the superclass of all registered Hosts the server provides. It only needs three things:
@@ -44,7 +41,7 @@ abstract class HostScraper(
             val removableVideos = MongoDB.videoCollection.find(
                 and(
                     VideoEntry::id nin idVideos,
-                    VideoEntry::host eq host.toEntry()
+                    VideoEntry::video / Video::host / Host::domain eq host.domain
                 )
             ).toList()
             if (removableVideos.isNotEmpty()) {

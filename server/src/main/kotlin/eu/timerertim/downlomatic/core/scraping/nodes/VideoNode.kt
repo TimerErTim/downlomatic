@@ -43,11 +43,9 @@ class VideoNode(
         val details = videoDetailsBuilder.build()
         val video = Video(url, scraper.host, details)
         try {
-            val videoEntry = video.toEntry(parser)
-
             // Insert into db or display on screen
             if (!hostConfig.testing) {
-                insertIntoDB(videoEntry)
+                insertIntoDB(video)
             } else {
                 Log.d(video)
                 Log.d(parser(video.url).descriptor)
@@ -60,17 +58,20 @@ class VideoNode(
         scraper.idVideos += video.idHash
     }
 
-    private fun insertIntoDB(videoEntry: VideoEntry) {
+    private fun insertIntoDB(video: Video) {
+        val videoEntry = video.toEntry(parser)
+
         val oldVideo = MongoDB.videoCollection.findOneAndReplace(VideoEntry::id eq videoEntry.id, videoEntry,
             FindOneAndReplaceOptions().apply {
                 upsert(true)
                 returnDocument(ReturnDocument.BEFORE)
             })
+
         if (oldVideo != null && oldVideo != videoEntry) {
             val deletedCount = MongoDB.downloaderCollection.deleteOneById(oldVideo.id).deletedCount
             if (deletedCount > 0) {
                 val id = oldVideo.id
-                val domain = oldVideo.host.domain
+                val domain = oldVideo.video.host.domain
                 Log.i("Downloader $id of host $domain was removed because it is outdated")
             }
         }

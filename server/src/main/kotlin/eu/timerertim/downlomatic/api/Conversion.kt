@@ -12,12 +12,12 @@ import kotlinx.datetime.toJavaInstant
 
 fun Downloader<*>.toEntry(id: Long, expireAt: Instant?) = DownloaderEntry(id, expireAt?.toJavaInstant(), this)
 
-fun DownloaderEntry.toDownloader() = this.downloader
+fun DownloaderEntry.toDownloader() = downloader
 
-fun Video.toEntry(parser: Parser) = VideoEntry(url, host.toEntry(), parser, details)
+fun Video.toEntry(parser: Parser) = VideoEntry(parser, this)
 
-fun VideoEntry.toVideo() = Video(url, host.toHost(), details)
+fun VideoEntry.toVideo() = video
 
-fun Host.toEntry() = HostEntry(domain, isNSFW)
+fun Host.toEntry() = HostEntry(this)
 
-fun HostEntry.toHost() = Host(domain, isNSFW)
+fun HostEntry.toHost() = host
