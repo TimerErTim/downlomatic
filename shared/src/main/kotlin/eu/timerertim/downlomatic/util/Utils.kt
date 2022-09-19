@@ -21,7 +21,7 @@ object Utils {
     const val ARGUMENT_EXIT_CODE = 3
 
     const val DEFAULT_API_PORT = 8080
-    const val DEFAULT_API_SERVER = "timerertim.eu"
+    const val DEFAULT_API_SERVER = "server.timerertim.eu"
 
     /**
      * Initializes stuff which is needed for
